@@ -1,0 +1,11 @@
+.ccls
+.ccls-cache/
+
+a.out 
+bin/
+
+src/*.o
+src/*.tab.cpp
+src/*.tab.hpp
+src/*.yy.cpp
+
