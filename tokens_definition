@@ -1,0 +1,63 @@
+## Token defination
+
+Defined tokens
+
+/* keyword */
+/* used for basic requirements */
+return                            T_RETURN
+int                               T_INT
+while                             T_WHILE
+if                                T_IF
+else                              T_ELSE
+else[ ]if                         T_ELSEIF
+
+/* more keywords for intermediate features */ 
+for                               T_FOR
+enum                              T_ENUM
+switch                            T_SWITCH
+break                             T_BREAK
+continue                          T_CONTINUE
+
+/* keyword used for afvanced features */
+double                            return T_DOUBLE
+float                             return T_FLOAT
+char                              return T_CHAR
+unsigned                          return T_UNSIGNED
+struct                            return T_STRUCT
+typedef                           return T_TYPEDEF
+sizeof                            return T_SIZEOF
+\n
+
+
+/* calculation */
+\+                                T_ADD
+\*                                T_MULT
+\^                                T_EXP
+\-                                T_MINUS
+\/                                T_DIVIDE
+\%                                T_MODE
+\&                                T_AND
+\|                                T_OR
+\~                                T_NOT
+\>                                T_GRATER
+\<                                T_LESS
+\=\=                              T_EQUAL
+\>\=                              T_GE
+\<\=                              T_LE
+\!\=                              T_NE
+\&\&                              T_LAND
+\|\|                              T_LOR
+\!                                T_LNOT
+\=                                T_ASSIGN
+\{                                T_LB
+\}                                T_RB
+\(                                T_LBC
+\)                                T_RBC
+\[                                T_LBS
+\]                                T_RBS  
+[_a-zA-z]+([0-9]|[_a-zA-Z])*      T_NAME
+
+
+/* Number */
+[0-9]+                            {yylval.number=strtod(yytext, 0);  return T_INT;}
+[a-zA-Z]+                         {yylval.string=new std::string(yytext);  return T_STRING;}
