@@ -4,10 +4,10 @@ Defined tokens
 
 /* keyword */
 /* used for basic requirements */
-return                            T_RETURN 
-int                               T_INT
-while                             T_WHILE
-if                                T_IF
+return                            T_RETURN\
+int                               T_INT\
+while                             T_WHILE\
+if                                T_IF\
 else                              {yylval.string=new std::string(yytext);   return T_ELSE;}
 else[ ]if                         {yylval.string=new std::string(yytext);   return T_ELSEIF;}
 
