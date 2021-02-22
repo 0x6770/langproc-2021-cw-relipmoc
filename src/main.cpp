@@ -1,26 +1,22 @@
 #include "arg.hpp"
-#include "log.hpp"
+#include "ast.hpp"
 
 int main(int argc, char **argv) {
   char OUTPUT_FILE[] = "a.out";
   struct arguments arguments;
 
-  // Default values.
-  arguments.level = debug;
+  // Default values for arguments
   arguments.source_file = 0;
   arguments.output_file = OUTPUT_FILE;
 
   argp_parse(&argp, argc, argv, 0, 0, &arguments);
 
-  fprintf(stdout, "SOURCE_FILE = %s\n", arguments.source_file);
-  fprintf(stdout, "OUTPUT_FILE = %s\n", arguments.output_file);
-  fprintf(stdout, "OUTPUT_LEVEL= %d\n", arguments.level);
+  printf("SOURCE_FILE = %s\n", arguments.source_file);
+  printf("OUTPUT_FILE = %s\n", arguments.output_file);
+  printf("\n");
 
-  Log *new_log = new Log(arguments.level);
-  new_log->debug("debuging %0.2f\n", 1.0);
-  new_log->info("aaa\n");
-  new_log->warn("warn %s\n", "abc");
-  new_log->error("error\n");
+  const Program *ast = parseAST();
+  // ast->print(std::cout);
 
   exit(0);
 }

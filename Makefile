@@ -4,17 +4,9 @@ CPPFLAGS += -I include # search header files in `/include`
 
 #header_files := $(wildcard include/*.hpp) 
 source_files := $(shell find src -name *.cpp)
-object_files := $(source_files:%=%.o)
-target			 := bin/c_compiler
+object_files := $(source_files:.c=.o)
 
-all: $(target)
-
-src/%.cpp.o: src/%.cpp 
-	gcc $(CPPFLAGS) -c $< -o $@
-
-$(target): $(object_files)
-	mkdir -p bin 
-	g++ $(CPPFLAGS) -o $@ $^
+all: bin/c_compiler
 
 src/c_parser.tab.cpp src/c_parser.tab.hpp: src/c_parser.y 
 	bison -v -d src/c_parser.y -o src/c_parser.tab.cpp 
@@ -22,9 +14,14 @@ src/c_parser.tab.cpp src/c_parser.tab.hpp: src/c_parser.y
 src/c_lexer.yy.cpp: src/c_lexer.flex src/c_parser.tab.hpp 
 	flex -o src/c_lexer.yy.cpp src/c_lexer.flex 
 
+bin/c_compiler : $(object_files) src/c_lexer.yy.o src/c_parser.tab.o 
+	mkdir -p bin 
+	g++ $(CPPFLAGS) -o $@ $^
+
 clean: 
 	@echo Cleaning ... 
 	-rm -f src/*.o 
+	-rm -f src/*.output
 	-rm -f src/*.tab.cpp 
 	-rm -f src/*.tab.hpp 
 	-rm -f src/*.yy.cpp	

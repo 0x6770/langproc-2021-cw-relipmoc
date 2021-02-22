@@ -18,7 +18,7 @@ switch                            T_SWITCH
 break                             T_BREAK
 continue                          T_CONTINUE
 
-/* keyword used for afvanced features */
+/* keyword used for advanced features */
 double                            return T_DOUBLE
 float                             return T_FLOAT
 char                              return T_CHAR
@@ -26,20 +26,20 @@ unsigned                          return T_UNSIGNED
 struct                            return T_STRUCT
 typedef                           return T_TYPEDEF
 sizeof                            return T_SIZEOF
-\n
+[\n\t\r ]
 
 
 /* calculation */
 \+                                T_ADD
-\*                                T_MULT
+\*                                T_MUL
 \^                                T_EXP
-\-                                T_MINUS
-\/                                T_DIVIDE
-\%                                T_MODE
+\-                                T_SUB
+\/                                T_DIV
+\%                                T_MOD
 \&                                T_AND
 \|                                T_OR
 \~                                T_NOT
-\>                                T_GRATER
+\>                                T_GREATER
 \<                                T_LESS
 \=\=                              T_EQUAL
 \>\=                              T_GE
@@ -54,10 +54,11 @@ sizeof                            return T_SIZEOF
 \(                                T_LBC
 \)                                T_RBC
 \[                                T_LBS
-\]                                T_RBS  
-[_a-zA-z]+([0-9]|[_a-zA-Z])*      T_NAME
+\]                                T_RBS
+\;                                T_SEMI 
+[_a-zA-Z]+[0-9_a-zA-Z]*           T_NAME
 
 
 /* Number */
 [0-9]+                            {yylval.number=strtod(yytext, 0);  return T_INT;}
-[a-zA-Z]+                         {yylval.string=new std::string(yytext);  return T_STRING;}
+#[a-zA-Z]+                         {yylval.string=new std::string(yytext);  return T_STRING;}
