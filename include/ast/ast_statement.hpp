@@ -5,9 +5,15 @@
 
 class Statement : public Program {
  private:
-  Program *expressions[];
+  ProgramPtr expression;
 
  public:
-  Statement() {}
+  Statement(ProgramPtr _expression) : expression(_expression) {
+    printf("construct Statement\n");
+  }
+  virtual void print(std::ostream &dst) const override {
+    dst << "return ";
+    expression->print(dst);
+  }
 };
 #endif

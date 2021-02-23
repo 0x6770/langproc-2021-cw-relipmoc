@@ -16,7 +16,7 @@ int main(int argc, char **argv) {
   printf("\n");
 
   const Program *ast = parseAST();
-  // ast->print(std::cout);
+  ast->print(std::cout);
 
   exit(0);
 }

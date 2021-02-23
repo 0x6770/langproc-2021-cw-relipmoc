@@ -3,6 +3,7 @@
   #include "string"
   #include <cassert>
 
+  extern const Program *root;
   int yylex(void);
   void yyerror(const char *);
 }
@@ -10,6 +11,8 @@
 %union{
   int integer;
   std::string *string;
+  Program *program;
+  c_type type;
 }
 
 %token T_NAME T_RETURN 
@@ -17,49 +20,45 @@
 %token T_CHAR T_STRING
 %token T_UNSIGNED T_STRUCT T_TYPEDEF T_SIZEOF T_ENUM
 %token T_INT_VALUE T_FLOAT_VALUE T_DOUBLE_VALUE T_CHAR_VALUE 
-%token T_ADD T_SUB T_MUL T_DIV T_MOD T_EXP 
-%token T_AND T_OR T_NOT T_GREATER T_LESS T_EQUAL T_GE T_LE T_NE 
-%token T_LAND T_LOR T_LNOT 
 %token T_WHILE T_FOR T_SWITCH T_IF T_ELSE T_ELSEIF T_BREAK T_CONTINUE
-%token T_ASSIGN T_LB T_RB T_LBC T_RBC T_LBS T_RBS T_SEMI
+ 
+%type <program> program function statement expr type
+%type <type> T_INT
+%type <integer> T_INT_VALUE number
+%type <string> T_NAME 
 
-/*%type <expr> expr */
-/*%type <integer> T_INT */
+%left '<' '>' "<=" ">=" "!="
+%left '+' '-'
+%left '*' '/' '%'
+%right '^'
 
-%left T_GREATER T_LESS T_LE T_GE T_NE 
-%left T_ADD T_SUB 
-%left T_MUL T_DIV T_MOD 
-%right T_POW 
-
-%start progam  
+%start program  
 
 %%
 
-type : T_INT 
+type : T_INT { $$ = new Type($1); }
      ;
 
-progam : function  
+program : function  { root = $1; }
        ;
 
-function : type T_NAME T_LB T_RB T_LBC statement T_RBC 
+function : type T_NAME '(' ')' '{' statement '}' { $$ = new Function($1, $2, $6); } 
          ;
 
-statement : T_RETURN expr T_SEMI
+statement : T_RETURN expr ';' { $$ = new Statement($2); }
           ;
 
-number : T_INT_VALUE
-       | T_FLOAT_VALUE 
-       | T_DOUBLE_VALUE 
+number : T_INT_VALUE  { $$ = $1; }
        ;
 
-expr : T_LB expr T_RB
-     | expr T_ADD expr 
-     | expr T_SUB expr 
-     | expr T_MUL expr 
-     | expr T_DIV expr 
-     | expr T_MOD expr 
-     | expr T_EXP expr 
-     | number 
+expr : '(' expr ')'   { $$ = $2; }
+     | expr '+' expr  { $$ = $1; }
+     | expr '-' expr  { $$ = $1; }
+     | expr '*' expr  { $$ = $1; }
+     | expr '/' expr  { $$ = $1; }
+     | expr '%' expr  { $$ = $1; }
+     | expr '^' expr  { $$ = $1; }
+     | number         { $$ = new Expression($1); }
      ;
 
 %%
@@ -67,7 +66,7 @@ expr : T_LB expr T_RB
 const Program *root;
 
 const Program *parseAST() {
- root = 0;
- yyparse();
- return root;
+  root = 0;
+  yyparse();
+  return root;
 }

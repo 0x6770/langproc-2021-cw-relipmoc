@@ -4,7 +4,13 @@
 #include "ast_program.hpp"
 
 class Expression : public Program {
+ private:
+  int number;
+
  public:
-  Expression() {}
+  Expression(int _number) : number(_number) {
+    printf("construct Expression\n");
+  }
+  virtual void print(std::ostream &dst) const override { dst << number; }
 };
 #endif
