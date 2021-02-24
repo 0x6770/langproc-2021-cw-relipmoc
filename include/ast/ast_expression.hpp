@@ -10,6 +10,7 @@ class Integer : public Program {
  public:
   Integer(int _value) : value(_value) {
     fprintf(stderr, "construct Integer\n");
+    node_type = 'i';
   }
   virtual void print(std::ostream &dst) const override { dst << value; }
   virtual int evaluate() const override { return value; }
@@ -23,6 +24,7 @@ class Addition : public Program {
  public:
   Addition(ProgramPtr _left, ProgramPtr _right) : left(_left), right(_right) {
     fprintf(stderr, "construct Addition\n");
+    node_type = 'a';
   }
   virtual void print(std::ostream &dst) const override {
     dst << "(";

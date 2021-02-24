@@ -1,7 +1,7 @@
-#include <fstream>
-
 #include "arg.hpp"
 #include "ast.hpp"
+
+extern FILE *yyin;
 
 int main(int argc, char **argv) {
   char OUTPUT_FILE[] = "a.out";
@@ -17,17 +17,9 @@ int main(int argc, char **argv) {
   printf("OUTPUT_FILE = %s\n", arguments.output_file);
   printf("\n");
 
-  std::ifstream source_file(arguments.source_file);
-  char c = source_file.get();
-
-  while (source_file.good()) {
-    std::cout << c;
-    c = source_file.get();
-  }
-
-  source_file.close();
-
-  const Program *ast = parseAST();
+  FILE *source_file = fopen(arguments.source_file, "r");
+  yyin = source_file;
+  const Program *ast = parseAST(source_file);
 
   std::cout << "====================\n";
   std::cout << "formatted: \n";

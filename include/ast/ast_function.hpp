@@ -14,6 +14,7 @@ class Function : public Program {
   Function(std::string *_type, std::string *_name, StatementList *_statements)
       : type(_type), name(_name), statements(_statements) {
     fprintf(stderr, "construct Function\n");
+    node_type = 'F';
   }
   virtual void print(std::ostream &dst) const override {
     dst << *type;
