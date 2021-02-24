@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 
 enum c_type { c_int, c_float, c_double };
 
@@ -14,5 +15,6 @@ class Program {
  public:
   virtual ~Program() {}
   virtual void print(std::ostream &dst) const = 0;
+  virtual int evaluate() const = 0;
 };
 #endif

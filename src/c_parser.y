@@ -2,6 +2,7 @@
   #include "ast.hpp"
   #include "string"
   #include <cassert>
+  #include <map>
 
   extern const Program *root;
   int yylex(void);
@@ -11,8 +12,9 @@
 %union{
   int integer;
   std::string *string;
-  Program *program;
-  c_type type;
+  Statement *statement;
+  StatementList *statements;
+  ProgramPtr program;
 }
 
 %token T_NAME T_RETURN 
@@ -22,10 +24,11 @@
 %token T_INT_VALUE T_FLOAT_VALUE T_DOUBLE_VALUE T_CHAR_VALUE 
 %token T_WHILE T_FOR T_SWITCH T_IF T_ELSE T_ELSEIF T_BREAK T_CONTINUE
  
-%type <program> program function statement expr type
-%type <type> T_INT
+%type <program> program function expr 
+%type <statement> statement 
+%type <statements> statement_list
 %type <integer> T_INT_VALUE number
-%type <string> T_NAME 
+%type <string> type T_NAME T_INT
 
 %left '<' '>' "<=" ">=" "!="
 %left '+' '-'
@@ -36,32 +39,42 @@
 
 %%
 
-type : T_INT { $$ = new Type($1); }
+type : T_INT  { $$ = $1; }
      ;
 
 program : function  { root = $1; }
-       ;
+        ;
 
-function : type T_NAME '(' ')' '{' statement '}' { $$ = new Function($1, $2, $6); } 
+function : type T_NAME '(' ')' '{' statement_list '}'  { $$ = new Function($1, $2, $6); } 
          ;
 
-statement : T_RETURN expr ';' { $$ = new Statement($2); }
+statement_list : statement                 { $$ = new StatementList($1); }
+               | statement_list statement  { if ($2) $1->addStatement($2); $$ = $1; }
+               ;
+
+statement : T_RETURN expr ';'         { $$ = new Statement($2, 1); }
+          | type T_NAME '=' expr ';'  { }
+          | type T_NAME ';'           { }
+          | T_NAME '=' expr ';'       { }
+          | expr ';'                  { $$ = new Statement($1, 0); }
           ;
 
 number : T_INT_VALUE  { $$ = $1; }
        ;
 
 expr : '(' expr ')'   { $$ = $2; }
-     | expr '+' expr  { $$ = $1; }
+     | expr '+' expr  { $$ = new Addition($1, $3); }
      | expr '-' expr  { $$ = $1; }
      | expr '*' expr  { $$ = $1; }
      | expr '/' expr  { $$ = $1; }
      | expr '%' expr  { $$ = $1; }
      | expr '^' expr  { $$ = $1; }
-     | number         { $$ = new Expression($1); }
+     | number         { $$ = new Integer($1); }
      ;
 
 %%
+
+std::map<std::string, ProgramPtr> variables;
 
 const Program *root;
 

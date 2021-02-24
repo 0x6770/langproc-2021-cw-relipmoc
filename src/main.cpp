@@ -1,3 +1,5 @@
+#include <fstream>
+
 #include "arg.hpp"
 #include "ast.hpp"
 
@@ -15,8 +17,27 @@ int main(int argc, char **argv) {
   printf("OUTPUT_FILE = %s\n", arguments.output_file);
   printf("\n");
 
+  std::ifstream source_file(arguments.source_file);
+  char c = source_file.get();
+
+  while (source_file.good()) {
+    std::cout << c;
+    c = source_file.get();
+  }
+
+  source_file.close();
+
   const Program *ast = parseAST();
+
+  std::cout << "====================\n";
+  std::cout << "formatted: \n";
   ast->print(std::cout);
+  std::cout << std::endl;
+
+  std::cout << "====================\n";
+  std::cout << "exit status: ";
+  std::cout << ast->evaluate();
+  std::cout << std::endl;
 
   exit(0);
 }

@@ -8,7 +8,7 @@ class Type : public Program {
   c_type type;
 
  public:
-  Type(c_type _type) : type(_type) { printf("construct Type\n"); }
+  Type(c_type _type) : type(_type) { fprintf(stderr, "construct Type\n"); }
   virtual void print(std::ostream &dst) const override {
     switch (type) {
       case c_type::c_int:
@@ -19,15 +19,7 @@ class Type : public Program {
         exit(1);
     }
   }
-};
-
-class Integer : public Program {
- private:
-  int value;
-
- public:
-  Integer(int _value) : value(_value) { printf("construct Integer\n"); }
-  virtual void print(std::ostream &dst) const override { dst << value; }
+  virtual int evaluate() const override { exit(1); }
 };
 
 #endif

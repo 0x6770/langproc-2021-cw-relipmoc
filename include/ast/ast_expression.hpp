@@ -3,14 +3,37 @@
 
 #include "ast_program.hpp"
 
-class Expression : public Program {
+class Integer : public Program {
  private:
-  int number;
+  int value;
 
  public:
-  Expression(int _number) : number(_number) {
-    printf("construct Expression\n");
+  Integer(int _value) : value(_value) {
+    fprintf(stderr, "construct Integer\n");
   }
-  virtual void print(std::ostream &dst) const override { dst << number; }
+  virtual void print(std::ostream &dst) const override { dst << value; }
+  virtual int evaluate() const override { return value; }
 };
+
+class Addition : public Program {
+ private:
+  ProgramPtr left;
+  ProgramPtr right;
+
+ public:
+  Addition(ProgramPtr _left, ProgramPtr _right) : left(_left), right(_right) {
+    fprintf(stderr, "construct Addition\n");
+  }
+  virtual void print(std::ostream &dst) const override {
+    dst << "(";
+    left->print(dst);
+    dst << "+";
+    right->print(dst);
+    dst << ")";
+  }
+  virtual int evaluate() const override {
+    return left->evaluate() + right->evaluate();
+  }
+};
+
 #endif
