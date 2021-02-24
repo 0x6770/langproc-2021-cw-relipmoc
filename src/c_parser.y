@@ -26,10 +26,10 @@
 %token T_INT_VALUE T_FLOAT_VALUE T_DOUBLE_VALUE T_CHAR_VALUE 
 %token T_WHILE T_FOR T_SWITCH T_IF T_ELSE T_ELSEIF T_BREAK T_CONTINUE
  
-%type <program> program function expr 
-%type <statement> statement 
+%type <program> program function term unary factor expr
+%type <statement> statement
 %type <statements> statement_list
-%type <integer> T_INT_VALUE number
+%type <integer> T_INT_VALUE 
 %type <string> type T_NAME T_INT
 
 %left '<' '>' "<=" ">=" "!="
@@ -61,17 +61,26 @@ statement : T_RETURN expr ';'         { $$ = new Statement('R', $2); }
           | expr ';'                  { $$ = new Statement('E', $1); }
           ;
 
-number : T_INT_VALUE  { $$ = $1; }
-       ;
+expr : term          { $$ = $1;}
+     | expr '+' term  { $$ = new Addition($1, $3); }
+     | expr '-' term  { $$ = new SubOperator($1,$3); }
+     ;
 
-expr : '(' expr ')'   { $$ = $2; }
-     | expr '+' expr  { $$ = new Addition($1, $3); }
-     | expr '-' expr  { $$ = $1; }
-     | expr '*' expr  { $$ = $1; }
-     | expr '/' expr  { $$ = $1; }
-     | expr '%' expr  { $$ = $1; }
-     | expr '^' expr  { $$ = $1; }
-     | number         { $$ = new Integer($1); }
+
+term : unary             { $$ = $1;}
+    | term '*' unary    { $$ = new MulOperator($1,$3);}
+    | term '/' unary    { $$ = new DivOperator($1,$3);}
+    | term '%' unary    { $$ = new Modulus($1,$3);}
+    ;
+
+unary : factor         { $$ = $1;}
+      | '-' factor     { $$ = $2;}    
+      ;   
+
+factor : T_INT_VALUE     { $$ = new Integer($1); }
+     | '(' expr ')'     { $$ = $2;}
+     | T_NAME           { $$ = new Variable(*$1);}
+     | factor '^' unary { $$ = new ExpOperator($1,$3);}
      ;
 
 %%
