@@ -29,7 +29,7 @@
 %type <program> program function term unary factor expr
 %type <statement> statement
 %type <statements> statement_list
-%type <integer> T_INT_VALUE number
+%type <integer> T_INT_VALUE 
 %type <string> type T_NAME T_INT
 
 %left '<' '>' "<=" ">=" "!="
