@@ -36,4 +36,8 @@ class Addition : public Program {
   }
 };
 
+class division : public ProgramP{
+  
+}
+
 #endif
