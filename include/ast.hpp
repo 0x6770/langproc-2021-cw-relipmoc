@@ -7,6 +7,6 @@
 #include "ast/ast_program.hpp"
 #include "ast/ast_statement.hpp"
 
-extern const Program *parseAST();
+extern const Program *parseAST(FILE *source_file);
 
 #endif

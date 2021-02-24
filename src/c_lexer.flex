@@ -77,8 +77,9 @@ sizeof                            {fprintf(stderr, "T_SIZEOF\n");   return T_SIZ
 
 %%
 
-void yyerror (char const*s)
+void yyerror (FILE *source_file, const char *msg)
 {
-  fprintf (stderr, "Parse error : %s\n", s);
+  fprintf (stderr, "Parse error : %s\n", msg);
+  fclose(source_file);
   exit(1);
 }

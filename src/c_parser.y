@@ -6,8 +6,10 @@
 
   extern const Program *root;
   int yylex(void);
-  void yyerror(const char *);
+  void yyerror(FILE *source_file, const char *msg);
 }
+
+%parse-param { FILE *source_file}
 
 %union{
   int integer;
@@ -52,11 +54,11 @@ statement_list : statement                 { $$ = new StatementList($1); }
                | statement_list statement  { if ($2) $1->addStatement($2); $$ = $1; }
                ;
 
-statement : T_RETURN expr ';'         { $$ = new Statement($2, 1); }
+statement : T_RETURN expr ';'         { $$ = new Statement('R', $2); }
           | type T_NAME '=' expr ';'  { }
-          | type T_NAME ';'           { }
+          | type T_NAME ';'           { $$ = new Statement('A', 0); }
           | T_NAME '=' expr ';'       { }
-          | expr ';'                  { $$ = new Statement($1,0);}
+          | expr ';'                  { $$ = new Statement('E', $1); }
           ;
 
 expr : term          { $$ = $1;}
@@ -83,12 +85,10 @@ factor : T_INT_VALUE     { $$ = new Integer($1); }
 
 %%
 
-std::map<std::string, ProgramPtr> variables;
-
 const Program *root;
 
-const Program *parseAST() {
+const Program *parseAST(FILE *source_file) {
   root = 0;
-  yyparse();
+  yyparse(source_file);
   return root;
 }
