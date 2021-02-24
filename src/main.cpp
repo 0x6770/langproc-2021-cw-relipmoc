@@ -20,6 +20,7 @@ int main(int argc, char **argv) {
   FILE *source_file = fopen(arguments.source_file, "r");
   yyin = source_file;
   const Program *ast = parseAST(source_file);
+  fclose(source_file);
 
   std::cout << "====================\n";
   std::cout << "formatted: \n";
