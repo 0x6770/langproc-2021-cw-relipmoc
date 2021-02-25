@@ -2,12 +2,14 @@
 #define ast_program_hpp
 
 #include <iostream>
+#include <map>
 #include <string>
 #include <vector>
 
 class Program;
 
 typedef const Program *ProgramPtr;
+typedef std::map<std::string, ProgramPtr> Binding;
 
 // node_type
 //
@@ -26,6 +28,7 @@ typedef const Program *ProgramPtr;
 // statement      S
 // statement_list L
 // assignment     A
+// declaration    D
 // return         R
 // if else        I
 // while          W
@@ -38,7 +41,7 @@ class Program {
  public:
   virtual ~Program() {}
   virtual void print(std::ostream &dst) const = 0;
-  virtual int evaluate() const = 0;
+  virtual int evaluate(Binding *binding) const = 0;
   int getType() const { return node_type; };
 };
 #endif

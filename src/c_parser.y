@@ -51,13 +51,13 @@ function : type T_NAME '(' ')' '{' statement_list '}'  { $$ = new Function($1, $
          ;
 
 statement_list : statement                 { $$ = new StatementList($1); }
-               | statement_list statement  { if ($2) $1->addStatement($2); $$ = $1; }
+               | statement_list statement  { $1->addStatement($2); $$ = $1; }
                ;
 
 statement : T_RETURN expr ';'         { $$ = new Statement('R', $2); }
-          | type T_NAME '=' expr ';'  { }
-          | type T_NAME ';'           { $$ = new Statement('A', 0); }
-          | T_NAME '=' expr ';'       { }
+          | type T_NAME '=' expr ';'  { $$ = new Statement('D', $1, $2, $4); }
+          | type T_NAME ';'           { $$ = new Statement('D', $1, $2, 0); }
+          | T_NAME '=' expr ';'       { $$ = new Statement('A', $1, $3); }
           | expr ';'                  { $$ = new Statement('E', $1); }
           ;
 
