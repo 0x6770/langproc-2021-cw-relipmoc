@@ -49,14 +49,14 @@ sizeof                            {fprintf(stderr, "T_SIZEOF\n");   return T_SIZ
 \&                                {fprintf(stderr, "&\n");    return yytext[0];}
 \|                                {fprintf(stderr, "|\n");    return yytext[0];}
 \~                                {fprintf(stderr, "~\n");    return yytext[0];}
-\>                                {fprintf(stderr, ">\n");    return yytext[0];}
-\<                                {fprintf(stderr, "<\n");    return yytext[0];}
-\=\=                              {fprintf(stderr, "==\n");   return yytext[0];}
-\>\=                              {fprintf(stderr, ">=\n");   return yytext[0];}
-\<\=                              {fprintf(stderr, "<=\n");   return yytext[0];}
-\!\=                              {fprintf(stderr, "!=\n");   return yytext[0];}
-\&\&                              {fprintf(stderr, "&&\n");   return yytext[0];}
-\|\|                              {fprintf(stderr, "||\n");   return yytext[0];}
+\>                                {fprintf(stderr, ">\n");    return T_GREATER;}
+\<                                {fprintf(stderr, "<\n");    return T_LESS;}
+\=\=                              {fprintf(stderr, "==\n");   return T_EQUAL;}
+\>\=                              {fprintf(stderr, ">=\n");   return T_GREATER_E;}
+\<\=                              {fprintf(stderr, "<=\n");   return T_LESS_E;}
+\!\=                              {fprintf(stderr, "!=\n");   return T_NOT_EQUAL;}
+\&\&                              {fprintf(stderr, "&&\n");   return T_AND_L;}
+\|\|                              {fprintf(stderr, "||\n");   return T_OR_L;}
 \!                                {fprintf(stderr, "!\n");    return yytext[0];}
 \=                                {fprintf(stderr, "=\n");    return yytext[0];}
 \{                                {fprintf(stderr, "{\n");    return yytext[0];}
@@ -66,6 +66,8 @@ sizeof                            {fprintf(stderr, "T_SIZEOF\n");   return T_SIZ
 \[                                {fprintf(stderr, "[\n");    return yytext[0];}
 \]                                {fprintf(stderr, "]\n");    return yytext[0];}
 \;                                {fprintf(stderr, ";\n");    return yytext[0];}
+\<\<                              {fprintf(stderr, "<<\n");   return T_SHIFT_L;}
+\>\>                              {fprintf(stderr, ">>\n");   return T_SHIFT_R;}
 [_a-zA-Z][0-9_a-zA-Z]*            {fprintf(stderr, "T_NAME\n"); std::string *x=new std::string(yytext); yylval.string=x; return T_NAME;}
 
 

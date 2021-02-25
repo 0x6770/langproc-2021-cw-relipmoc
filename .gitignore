@@ -10,3 +10,4 @@ src/*.tab.hpp
 src/*.yy.cpp
 src/*.output
 
+test

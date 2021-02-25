@@ -24,6 +24,8 @@ class Function : public Program {
     statements->print(dst);
     dst << "}";
   }
-  virtual int evaluate() const override { return statements->evaluate(); }
+  virtual int evaluate(Binding *binding) const override {
+    return statements->evaluate(binding);
+  }
 };
 #endif
