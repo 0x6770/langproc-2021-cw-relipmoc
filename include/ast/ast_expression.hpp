@@ -168,4 +168,226 @@ class Modulus : public Program {
   }
 };
 
+class Shift_left : public Program {
+ protected:
+  ProgramPtr left;
+  ProgramPtr right;
+
+ public:
+  Shift_left(ProgramPtr _left, ProgramPtr _right) : left(_left), right(_right) {
+    fprintf(stderr, "construct ExpOperator\n");
+  }
+  virtual void print(std::ostream &dst) const override {
+    dst << "(";
+    left->print(dst);
+    dst << "<<";
+    right->print(dst);
+    dst << ")";
+  }
+  virtual int evaluate(Binding *binding) const override {
+    return (left->evaluate(binding) << right->evaluate(binding));
+  }
+};
+
+class Shift_right : public Program {
+ protected:
+  ProgramPtr left;
+  ProgramPtr right;
+
+ public:
+  Shift_right(ProgramPtr _left, ProgramPtr _right) : left(_left), right(_right) {
+    fprintf(stderr, "construct ExpOperator\n");
+  }
+  virtual void print(std::ostream &dst) const override {
+    dst << "(";
+    left->print(dst);
+    dst << ">>";
+    right->print(dst);
+    dst << ")";
+  }
+  virtual int evaluate(Binding *binding) const override {
+    return (left->evaluate(binding) >> right->evaluate(binding));
+  }
+};
+
+class Smaller_equal : public Program {
+ protected:
+  ProgramPtr left;
+  ProgramPtr right;
+  int is_equal;
+
+ public:
+  Smaller_equal(ProgramPtr _left, ProgramPtr _right,int _is_equal) : left(_left), right(_right),is_equal(_is_equal){
+    fprintf(stderr, "construct ExpOperator\n");
+  }
+  virtual void print(std::ostream &dst) const override {
+    dst << "(";
+    left->print(dst);
+    if(is_equal == 1){
+      dst << "<=";
+    }
+    else{
+      dst << "<";
+    }
+    right->print(dst);
+    dst << ")";
+  }
+  virtual int evaluate(Binding *binding) const override {
+    if(is_equal == 1){
+      return (left->evaluate(binding) <= right->evaluate(binding));
+    }
+    else{
+      return (left->evaluate(binding) < right->evaluate(binding));
+    }
+  }
+};
+
+class Larger_equal : public Program {
+ protected:
+  ProgramPtr left;
+  ProgramPtr right;
+  int is_equal;
+
+ public:
+  Larger_equal(ProgramPtr _left, ProgramPtr _right, int _is_equal) : left(_left), right(_right) ,is_equal(_is_equal) {
+    fprintf(stderr, "construct ExpOperator\n");
+  }
+  virtual void print(std::ostream &dst) const override {
+    dst << "(";
+    left->print(dst);
+    if(is_equal == 1){
+      dst << ">=";
+    }
+    else{
+      dst << ">";
+    }
+    right->print(dst);
+    dst << ")";
+  }
+  virtual int evaluate(Binding *binding) const override {
+    if(is_equal == 1){
+      return (left->evaluate(binding) >= right->evaluate(binding));
+    }
+    else{
+      return (left->evaluate(binding) > right->evaluate(binding));
+    }
+  }
+};
+
+class Equal : public Program {
+ protected:
+  ProgramPtr left;
+  ProgramPtr right;
+  int is_equal;
+
+ public:
+  Equal(ProgramPtr _left, ProgramPtr _right, int _is_equal) : left(_left), right(_right) ,is_equal(_is_equal) {
+    fprintf(stderr, "construct ExpOperator\n");
+  }
+  virtual void print(std::ostream &dst) const override {
+    dst << "(";
+    left->print(dst);
+    if(is_equal == 1){
+      dst << "!=";
+    }
+    else{
+      dst << "==";
+    }
+    right->print(dst);
+    dst << ")";
+  }
+  virtual int evaluate(Binding *binding) const override {
+    if(is_equal == 1){
+      return (left->evaluate(binding) != right->evaluate(binding));
+    }
+    else{
+      return (left->evaluate(binding) == right->evaluate(binding));
+    }
+  }
+};
+
+class Bitwise_AND : public Program {
+ protected:
+  ProgramPtr left;
+  ProgramPtr right;
+
+ public:
+  Bitwise_AND(ProgramPtr _left, ProgramPtr _right) : left(_left), right(_right) {
+    fprintf(stderr, "construct ExpOperator\n");
+  }
+  virtual void print(std::ostream &dst) const override {
+    dst << "(";
+    left->print(dst);
+    dst << "&";
+    right->print(dst);
+    dst << ")";
+  }
+  virtual int evaluate(Binding *binding) const override {
+    return (left->evaluate(binding) & right->evaluate(binding));
+  }
+};
+
+class Bitwise_OR : public Program {
+ protected:
+  ProgramPtr left;
+  ProgramPtr right;
+
+ public:
+  Bitwise_OR(ProgramPtr _left, ProgramPtr _right) : left(_left), right(_right) {
+    fprintf(stderr, "construct ExpOperator\n");
+  }
+  virtual void print(std::ostream &dst) const override {
+    dst << "(";
+    left->print(dst);
+    dst << "|";
+    right->print(dst);
+    dst << ")";
+  }
+  virtual int evaluate(Binding *binding) const override {
+    return (left->evaluate(binding) | right->evaluate(binding));
+  }
+};
+
+class Logical_AND : public Program {
+ protected:
+  ProgramPtr left;
+  ProgramPtr right;
+
+ public:
+  Logical_AND(ProgramPtr _left, ProgramPtr _right) : left(_left), right(_right) {
+    fprintf(stderr, "construct ExpOperator\n");
+  }
+  virtual void print(std::ostream &dst) const override {
+    dst << "(";
+    left->print(dst);
+    dst << "&&";
+    right->print(dst);
+    dst << ")";
+  }
+  virtual int evaluate(Binding *binding) const override {
+    return (left->evaluate(binding) && right->evaluate(binding));
+  }
+};
+
+class Logical_OR : public Program {
+ protected:
+  ProgramPtr left;
+  ProgramPtr right;
+
+ public:
+  Logical_OR(ProgramPtr _left, ProgramPtr _right) : left(_left), right(_right) {
+    fprintf(stderr, "construct ExpOperator\n");
+  }
+  virtual void print(std::ostream &dst) const override {
+    dst << "(";
+    left->print(dst);
+    dst << "||";
+    right->print(dst);
+    dst << ")";
+  }
+  virtual int evaluate(Binding *binding) const override {
+    return (left->evaluate(binding) || right->evaluate(binding));
+  }
+};
+
 #endif

@@ -19,14 +19,16 @@
   ProgramPtr program;
 }
 
-%token T_NAME T_RETURN 
+%token T_SHIFT_L T_SHIFT_R T_GREATER_E T_LESS_E T_GREATER T_LESS T_EQUAL T_NOT_EQUAL
+%token T_NAME T_RETURN T_AND_L T_OR_L
 %token T_INT T_FLOAT T_DOUBLE 
 %token T_CHAR T_STRING
 %token T_UNSIGNED T_STRUCT T_TYPEDEF T_SIZEOF T_ENUM
 %token T_INT_VALUE T_FLOAT_VALUE T_DOUBLE_VALUE T_CHAR_VALUE 
 %token T_WHILE T_FOR T_SWITCH T_IF T_ELSE T_ELSEIF T_BREAK T_CONTINUE
  
-%type <program> program function term unary factor expr
+%type <program> program function term unary factor expr add_sub shift_operator relational
+%type <program> relational_equal bitwise_and bitwise_or logical_and
 %type <statement> statement
 %type <statements> statement_list
 %type <integer> T_INT_VALUE 
@@ -61,9 +63,41 @@ statement : T_RETURN expr ';'         { $$ = new Statement('R', $2); }
           | expr ';'                  { $$ = new Statement('E', $1); }
           ;
 
-expr : term          { $$ = $1;}
-     | expr '+' term  { $$ = new Addition($1, $3); }
-     | expr '-' term  { $$ = new SubOperator($1,$3); }
+
+expr :      logical_and                                   { $$ = $1;}
+           | expr T_OR_L logical_and                      { $$ = new Logical_OR($1,$3);}
+           ; 
+
+logical_and : bitwise_or                                   { $$ = $1;}
+            | logical_and T_AND_L bitwise_or               { $$ = new Logical_AND($1,$3);}
+            ;
+
+bitwise_or : bitwise_and                                   { $$ = $1;}
+           | bitwise_or '|' bitwise_and                    { $$ = new Bitwise_OR($1,$3);}
+           ;
+
+bitwise_and : relational_equal                             { $$ = $1;}
+            | bitwise_and '&' relational_equal             { $$ = new Bitwise_AND($1,$3);}
+            ;
+relational_equal : relational                               { $$ = $1;}
+                 | relational_equal T_EQUAL shift_operator              { $$ = new Equal($1, $3, 0); }
+                 | relational_equal T_NOT_EQUAL shift_operator          { $$ = new Equal($1,$3, 1); }
+                  ;
+
+relational : shift_operator                   { $$ = $1;}
+           | shift_operator T_LESS_E shift_operator         { $$ = new Smaller_equal($1, $3, 1); }
+           | shift_operator T_LESS shift_operator          { $$ = new Smaller_equal($1,$3, 0); }
+           | shift_operator T_GREATER_E shift_operator         { $$ = new Larger_equal($1, $3, 1); }
+           | shift_operator T_GREATER shift_operator          { $$ = new Larger_equal($1,$3, 0); }
+     ;
+
+shift_operator : add_sub          { $$ = $1;}   
+                  | shift_operator T_SHIFT_L add_sub  { $$ = new Shift_left($1, $3); }
+                  | shift_operator T_SHIFT_R add_sub  { $$ = new Shift_right($1,$3); }
+                  ;
+add_sub : term               { $$ = $1;}
+        | add_sub '+' term  { $$ = new Addition($1, $3); }
+        | add_sub '-' term  { $$ = new SubOperator($1,$3); }
      ;
 
 
