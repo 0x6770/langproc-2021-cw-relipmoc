@@ -11,22 +11,8 @@ class Function : public Program {
   StatementList *statements;
 
  public:
-  Function(std::string *_type, std::string *_name, StatementList *_statements)
-      : type(_type), name(_name), statements(_statements) {
-    fprintf(stderr, "construct Function\n");
-    node_type = 'F';
-  }
-  virtual void print(std::ostream &dst, int indentation) const override {
-    print_indent(dst, indentation);
-    dst << *type;
-    dst << " ";
-    dst << *name;
-    dst << "() {\n";
-    statements->print(dst, indentation);
-    dst << "}";
-  }
-  virtual int evaluate(Binding *binding) const override {
-    return statements->evaluate(binding);
-  }
+  Function(std::string *_type, std::string *_name, StatementList *_statements);
+  virtual void print(std::ostream &dst, int indentation) const override;
+  virtual int evaluate(Binding *binding) const override;
 };
 #endif

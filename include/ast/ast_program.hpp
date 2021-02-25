@@ -44,10 +44,7 @@ class Program {
   virtual ~Program() {}
   virtual void print(std::ostream &dst, int indentation) const = 0;
   virtual int evaluate(Binding *binding) const = 0;
-  int getType() const { return node_type; };
-  void print_indent(std::ostream &dst, int &indentation) const {
-    std::string indent_space(indentation++ * N_SPACE, ' ');
-    dst << indent_space;
-  }
+  int getType() const;
+  void print_indent(std::ostream &dst, int &indentation) const;
 };
 #endif
