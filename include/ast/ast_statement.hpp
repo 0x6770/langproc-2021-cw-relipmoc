@@ -31,23 +31,24 @@ class Statement : public Program {
     fprintf(stderr, "construct A Statement\n");
     node_type = _node_type;
   }
-  virtual void print(std::ostream &dst) const override {
+  virtual void print(std::ostream &dst, int indentation) const override {
     int matched = 1;
+    print_indent(dst, indentation);
     switch (getType()) {
       case 'R':
         dst << "return ";
-        expression->print(dst);
+        expression->print(dst, indentation);
         break;
       case 'D':
         dst << type << " " << name;
         if (expression != 0) {
           dst << " = ";
-          expression->print(dst);
+          expression->print(dst, indentation);
         }
         break;
       case 'A':
         dst << name << " = ";
-        expression->print(dst);
+        expression->print(dst, indentation);
         break;
       default:
         matched = 0;
@@ -90,7 +91,7 @@ class StatementList : public Program {
         if (binding.find(name) == binding.end()) {
           fprintf(stdout, "No delcaration, variable %s has not been declared\n",
                   name.c_str());
-          _statement->print(std::cout);
+          _statement->print(std::cout, 0);
           exit(1);
         }
         binding.at(name) = expr;
@@ -106,9 +107,9 @@ class StatementList : public Program {
     statements.push_back(_statement);
     return statements;
   }
-  virtual void print(std::ostream &dst) const override {
+  virtual void print(std::ostream &dst, int indentation) const override {
     for (auto it : statements) {
-      it->print(dst);
+      it->print(dst, indentation);
       if (it->getType() == 'R') break;
     }
   }

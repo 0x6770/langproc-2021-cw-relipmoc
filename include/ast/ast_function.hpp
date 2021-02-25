@@ -16,12 +16,13 @@ class Function : public Program {
     fprintf(stderr, "construct Function\n");
     node_type = 'F';
   }
-  virtual void print(std::ostream &dst) const override {
+  virtual void print(std::ostream &dst, int indentation) const override {
+    print_indent(dst, indentation);
     dst << *type;
     dst << " ";
     dst << *name;
     dst << "() {\n";
-    statements->print(dst);
+    statements->print(dst, indentation);
     dst << "}";
   }
   virtual int evaluate(Binding *binding) const override {

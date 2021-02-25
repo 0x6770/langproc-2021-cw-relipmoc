@@ -1,6 +1,8 @@
 #ifndef ast_program_hpp
 #define ast_program_hpp
 
+#define N_SPACE 2  // indentation in number of spaces
+
 #include <iostream>
 #include <map>
 #include <string>
@@ -40,8 +42,12 @@ class Program {
 
  public:
   virtual ~Program() {}
-  virtual void print(std::ostream &dst) const = 0;
+  virtual void print(std::ostream &dst, int indentation) const = 0;
   virtual int evaluate(Binding *binding) const = 0;
   int getType() const { return node_type; };
+  void print_indent(std::ostream &dst, int &indentation) const {
+    std::string indent_space(indentation++ * N_SPACE, ' ');
+    dst << indent_space;
+  }
 };
 #endif

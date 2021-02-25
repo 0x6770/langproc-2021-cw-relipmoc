@@ -14,7 +14,9 @@ class Integer : public Program {
     fprintf(stderr, "construct Integer\n");
     node_type = 'i';
   }
-  virtual void print(std::ostream &dst) const override { dst << value; }
+  virtual void print(std::ostream &dst, int indentation) const override {
+    dst << value;
+  }
   virtual int evaluate(Binding *binding) const override { return value; }
 };
 
@@ -27,7 +29,9 @@ class Variable : public Program {
     fprintf(stderr, "construct Variable\n");
   }
   const std::string getId() const { return id; }
-  virtual void print(std::ostream &dst) const override { dst << id; }
+  virtual void print(std::ostream &dst, int indentation) const override {
+    dst << id;
+  }
   virtual int evaluate(Binding *binding) const override {
     if (binding->find(id) == binding->end()) {
       fprintf(stdout, "%s has not been declared", id.c_str());
@@ -47,11 +51,11 @@ class Addition : public Program {
     fprintf(stderr, "construct Addition\n");
     node_type = 'a';
   }
-  virtual void print(std::ostream &dst) const override {
+  virtual void print(std::ostream &dst, int indentation) const override {
     dst << "(";
-    left->print(dst);
+    left->print(dst, indentation);
     dst << "+";
-    right->print(dst);
+    right->print(dst, indentation);
     dst << ")";
   }
   virtual int evaluate(Binding *binding) const override {
@@ -69,11 +73,11 @@ class SubOperator : public Program {
       : left(_left), right(_right) {
     fprintf(stderr, "construct subOperator\n");
   }
-  virtual void print(std::ostream &dst) const override {
+  virtual void print(std::ostream &dst, int indentation) const override {
     dst << "(";
-    left->print(dst);
+    left->print(dst, indentation);
     dst << "-";
-    right->print(dst);
+    right->print(dst, indentation);
     dst << ")";
   }
   virtual int evaluate(Binding *binding) const override {
@@ -91,11 +95,11 @@ class MulOperator : public Program {
       : left(_left), right(_right) {
     fprintf(stderr, "construct MulOperator\n");
   }
-  virtual void print(std::ostream &dst) const override {
+  virtual void print(std::ostream &dst, int indentation) const override {
     dst << "(";
-    left->print(dst);
+    left->print(dst, indentation);
     dst << "*";
-    right->print(dst);
+    right->print(dst, indentation);
     dst << ")";
   }
   virtual int evaluate(Binding *binding) const override {
@@ -113,11 +117,11 @@ class DivOperator : public Program {
       : left(_left), right(_right) {
     fprintf(stderr, "construct DivOperator\n");
   }
-  virtual void print(std::ostream &dst) const override {
+  virtual void print(std::ostream &dst, int indentation) const override {
     dst << "(";
-    left->print(dst);
+    left->print(dst, indentation);
     dst << "/";
-    right->print(dst);
+    right->print(dst, indentation);
     dst << ")";
   }
   virtual int evaluate(Binding *binding) const override {
@@ -135,11 +139,11 @@ class ExpOperator : public Program {
       : left(_left), right(_right) {
     fprintf(stderr, "construct ExpOperator\n");
   }
-  virtual void print(std::ostream &dst) const override {
+  virtual void print(std::ostream &dst, int indentation) const override {
     dst << "(";
-    left->print(dst);
+    left->print(dst, indentation);
     dst << "^";
-    right->print(dst);
+    right->print(dst, indentation);
     dst << ")";
   }
   virtual int evaluate(Binding *binding) const override {
@@ -156,11 +160,11 @@ class Modulus : public Program {
   Modulus(ProgramPtr _left, ProgramPtr _right) : left(_left), right(_right) {
     fprintf(stderr, "construct ExpOperator\n");
   }
-  virtual void print(std::ostream &dst) const override {
+  virtual void print(std::ostream &dst, int indentation) const override {
     dst << "(";
-    left->print(dst);
+    left->print(dst, indentation);
     dst << "%";
-    right->print(dst);
+    right->print(dst, indentation);
     dst << ")";
   }
   virtual int evaluate(Binding *binding) const override {
