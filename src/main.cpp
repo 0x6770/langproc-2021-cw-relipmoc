@@ -29,7 +29,7 @@ int main(int argc, char **argv) {
 
   std::cout << "====================\n";
   std::cout << "exit status: ";
-  std::cout << ast->evaluate();
+  std::cout << ast->evaluate(0);
   std::cout << std::endl;
 
   exit(0);
