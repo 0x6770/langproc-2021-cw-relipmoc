@@ -1,8 +1,9 @@
 %code requires{
-  #include "ast.hpp"
-  #include "string"
+  #include <string>
   #include <cassert>
   #include <map>
+
+  #include "ast.hpp"
 
   extern const Program *root;
   int yylex(void);
@@ -53,16 +54,17 @@ statement_list : statement                 { $$ = new StatementList($1); }
                | statement_list statement  { ((StatementList *)$1)->addStatement($2); $$ = $1; }
                ;
 
-statement : T_RETURN expr ';'         { $$ = new Statement('R', $2); }
-          | type T_NAME '=' expr ';'  { $$ = new Statement('D', $1, $2, $4); }
-          | type T_NAME ';'           { $$ = new Statement('D', $1, $2, 0); }
-          | T_NAME '=' expr ';'       { $$ = new Statement('A', $1, $3); }
-          | expr ';'                  { $$ = new Statement('E', $1); }
+statement : T_RETURN expr ';'         { $$ = new Return($2); }
+          | type T_NAME '=' expr ';'  { $$ = new VarDeclare(*$1, *$2, $4); }
+          | type T_NAME ';'           { $$ = new VarDeclare(*$1, *$2, 0); }
+          | T_NAME '=' expr ';'       { $$ = new VarAssign(*$1, $3); }
+          | expr ';'                  { $$ = $1; }
           | conditional_statement     { $$ = $1; }
           | loop                      { $$ = $1; }
+          | statement ';'             { $$ = $1; }
           | '{' statement_list '}'    { $$ = $2; }
-          | '{' '}'                   { $$ = new Statement(0, 0); }
-          | ';'                       { $$ = new Statement(0, 0); }
+          | '{' '}'                   { $$ = new Statement(0); }
+          | ';'                       { $$ = new Statement(0); }
           ;
 
 conditional_statement : T_IF '(' expr ')'                             { $$ = new IfStatement($3, 0,  0); }

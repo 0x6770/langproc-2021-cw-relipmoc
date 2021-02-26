@@ -4,54 +4,14 @@
 // Statement
 ////////////////////////////////////////
 
-Statement::Statement(int _node_type, ProgramPtr _expression)
-    : expression(_expression) {
+Statement::Statement(ProgramPtr _expression) : expression(_expression) {
   fprintf(stderr, "construct Statement\n");
-  node_type = _node_type;
-}
-
-// for declaration
-Statement::Statement(int _node_type, std::string *_type, std::string *_name,
-                     ProgramPtr _expression)
-    : type(*_type), name(*_name), expression(_expression) {
-  fprintf(stderr, "construct D Statement\n");
-  node_type = _node_type;
-}
-
-// for assignment
-Statement::Statement(int _node_type, std::string *_name, ProgramPtr _expression)
-    : name(*_name), expression(_expression) {
-  fprintf(stderr, "construct A Statement\n");
-  node_type = _node_type;
 }
 
 void Statement::print(std::ostream &dst, int indentation) const {
-  int matched = 1;
   print_indent(dst, indentation);
-  switch (getType()) {
-    case 'R':
-      dst << "return ";
-      expression->print(dst, indentation);
-      break;
-    case 'D':
-      dst << type << " " << name;
-      if (expression != 0) {
-        dst << " = ";
-        expression->print(dst, indentation);
-      }
-      break;
-    case 'A':
-      dst << name << " = ";
-      expression->print(dst, indentation);
-      break;
-    case 'E':
-      expression->print(dst, indentation);
-      break;
-    default:
-      matched = 0;
-      dst << "/* do nothing */\n";
-  }
-  if (matched) dst << ";" << std::endl;
+  if (expression) expression->print(dst, indentation);
+  dst << ";\n";
 }
 
 int Statement::evaluate(Binding *binding) const {
@@ -59,9 +19,79 @@ int Statement::evaluate(Binding *binding) const {
   return 0;
 }
 
-ProgramPtr Statement::getExpression() { return expression; }
+ProgramPtr Statement::getExpression() const { return expression; }
 
-std::string Statement::getName() { return name; }
+void Statement::bind(Binding *binding) const {}
+
+////////////////////////////////////////
+// Return
+////////////////////////////////////////
+
+Return::Return(ProgramPtr _expression) : Statement(_expression) {
+  node_type = -1;
+}
+
+void Return::print(std::ostream &dst, int indentation) const {
+  print_indent(dst, indentation);
+  dst << "return ";
+  expression->print(dst, indentation);
+  dst << ";\n";
+}
+
+////////////////////////////////////////
+// VarDeclare
+////////////////////////////////////////
+
+VarDeclare::VarDeclare(std::string _var_type, std::string _name,
+                       ProgramPtr _expression)
+    : Statement(_expression), var_type(_var_type), name(_name) {
+  node_type = 'v';
+}
+
+void VarDeclare::print(std::ostream &dst, int indentation) const {
+  print_indent(dst, indentation);
+  dst << var_type << " " << name;
+  if (expression) {
+    dst << " = ";
+    expression->print(dst, indentation);
+  }
+  dst << ";\n";
+}
+
+void VarDeclare::bind(Binding *binding) const {
+  if (binding->find(name) != binding->end()) {
+    fprintf(stdout, "Multiple declarations, variable %s has been declared\n",
+            name.c_str());
+    exit(1);
+  }
+  binding->insert(std::pair<std::string, ProgramPtr>(name, expression));
+}
+
+////////////////////////////////////////
+// VarAssign
+////////////////////////////////////////
+
+VarAssign::VarAssign(std::string _name, ProgramPtr _expression)
+    : Statement(_expression), name(_name) {
+  node_type = 'v';
+}
+
+void VarAssign::print(std::ostream &dst, int indentation) const {
+  print_indent(dst, indentation);
+  dst << name << " = ";
+  expression->print(dst, indentation);
+  dst << ";\n";
+}
+
+void VarAssign::bind(Binding *binding) const {
+  if (binding->find(name) == binding->end()) {
+    fprintf(stdout, "Variable \"%s\" has not been declared in current scope\n",
+            name.c_str());
+    // this->print(std::cout, 0);
+    exit(1);
+  }
+  binding->at(name) = expression;
+}
 
 ////////////////////////////////////////
 // StatementList
@@ -69,40 +99,12 @@ std::string Statement::getName() { return name; }
 
 StatementList::StatementList(ProgramPtr _statement) {
   addStatement(_statement);
-  node_type = 'L';
 }
 
 std::vector<ProgramPtr> StatementList::addStatement(ProgramPtr _statement) {
-  std::string name = ((Statement *)_statement)->getName();
-  ProgramPtr expr = ((Statement *)_statement)->getExpression();
-
-  switch (_statement->getType()) {
-    case 'D':
-      if (binding.find(name) != binding.end()) {
-        fprintf(stdout,
-                "Multiple declarations, variable %s has been declared\n",
-                name.c_str());
-        exit(1);
-      }
-      binding.insert(std::pair<std::string, ProgramPtr>(name, expr));
-      break;
-    case 'A':
-      if (binding.find(name) == binding.end()) {
-        fprintf(stdout, "No delcaration, variable %s has not been declared\n",
-                name.c_str());
-        _statement->print(std::cout, 0);
-        exit(1);
-      }
-      binding.at(name) = expr;
-      break;
-    case 'E':
-      break;
-    case 'R':
-      break;
-    default:
-      break;
+  if (((Statement *)_statement)->getType() == 'v') {
+    ((Statement *)_statement)->bind(&binding);
   }
-
   statements.push_back(_statement);
   return statements;
 }
@@ -110,7 +112,7 @@ std::vector<ProgramPtr> StatementList::addStatement(ProgramPtr _statement) {
 void StatementList::print(std::ostream &dst, int indentation) const {
   for (auto it : statements) {
     it->print(dst, indentation);
-    if (it->getType() == 'R') break;
+    if (((Statement *)it)->getType() < 0) break;
   }
 }
 
@@ -118,10 +120,14 @@ int StatementList::evaluate(Binding *_binding) const {
   int x;
   for (auto it : statements) {
     x = it->evaluate((Binding *)&binding);
-    if (it->getType() == 'R') break;
+    if (((Statement *)it)->getType() < 0) break;
   }
   return x;
 }
+
+////////////////////////////////////////
+// IfStatement
+////////////////////////////////////////
 
 IfStatement::IfStatement(ProgramPtr _condition, ProgramPtr _if_statement,
                          ProgramPtr _else_statement)
@@ -150,6 +156,10 @@ void IfStatement::print(std::ostream &dst, int indentation) const {
 }
 
 int IfStatement::evaluate(Binding *_binding) const { return 0; }
+
+////////////////////////////////////////
+// WhileLoop
+////////////////////////////////////////
 
 WhileLoop::WhileLoop(ProgramPtr _condition, ProgramPtr _statement)
     : condition(_condition), statement(_statement) {}
