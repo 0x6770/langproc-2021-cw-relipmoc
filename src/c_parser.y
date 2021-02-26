@@ -27,7 +27,7 @@
  
 %type <program> program function term unary factor expr add_sub shift_operator relational
 %type <program> relational_equal bitwise_and bitwise_or logical_and
-%type <program> statement statement_list conditional_statement
+%type <program> statement statement_list conditional_statement loop
 %type <integer> T_INT_VALUE 
 %type <string> type T_NAME T_INT
 
@@ -59,14 +59,20 @@ statement : T_RETURN expr ';'         { $$ = new Statement('R', $2); }
           | T_NAME '=' expr ';'       { $$ = new Statement('A', $1, $3); }
           | expr ';'                  { $$ = new Statement('E', $1); }
           | conditional_statement     { $$ = $1; }
+          | loop                      { $$ = $1; }
           | '{' statement_list '}'    { $$ = $2; }
           | '{' '}'                   { $$ = new Statement(0, 0); }
+          | ';'                       { $$ = new Statement(0, 0); }
           ;
 
-conditional_statement : T_IF expr                             { $$ = new IfStatement($2, 0,  0); }
-                      | T_IF expr statement                   { $$ = new IfStatement($2, $3, 0); }
-                      | T_IF expr statement T_ELSE statement  { $$ = new IfStatement($2, $3, $5); }
+conditional_statement : T_IF '(' expr ')'                             { $$ = new IfStatement($3, 0,  0); }
+                      | T_IF '(' expr ')' statement                   { $$ = new IfStatement($3, $5, 0); }
+                      | T_IF '(' expr ')' statement T_ELSE statement  { $$ = new IfStatement($3, $5, $7); }
                       ;
+
+loop : T_WHILE '(' expr ')' statement  { $$ = new WhileLoop($3, $5); }
+     | T_FOR '(' statement statement statement ')' statement  { $$ = new WhileLoop($3, $5); }
+     ;
 
 expr : logical_and              { $$ = $1;}
      | expr T_OR_L logical_and  { $$ = new LogicalOr($1, $3);}

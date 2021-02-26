@@ -150,3 +150,22 @@ void IfStatement::print(std::ostream &dst, int indentation) const {
 }
 
 int IfStatement::evaluate(Binding *_binding) const { return 0; }
+
+WhileLoop::WhileLoop(ProgramPtr _condition, ProgramPtr _statement)
+    : condition(_condition), statement(_statement) {}
+
+void WhileLoop::print(std::ostream &dst, int indentation) const {
+  print_indent(dst, indentation);
+  dst << "while (";
+  condition->print(dst, indentation);
+  dst << ")";
+  if (statement) {
+    dst << " {\n";
+    statement->print(dst, indentation);
+    print_indent(dst, --indentation);
+    dst << "}";
+  }
+  dst << "\n";
+}
+
+int WhileLoop::evaluate(Binding *_binding) const { return 0; }

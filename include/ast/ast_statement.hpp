@@ -49,4 +49,15 @@ class IfStatement : public Program {
   virtual int evaluate(Binding *_binding) const override;
 };
 
+class WhileLoop : public Program {
+ private:
+  ProgramPtr condition;
+  ProgramPtr statement;
+
+ public:
+  WhileLoop(ProgramPtr _condition, ProgramPtr _statement);
+  virtual void print(std::ostream &dst, int indentation) const override;
+  virtual int evaluate(Binding *_binding) const override;
+};
+
 #endif
