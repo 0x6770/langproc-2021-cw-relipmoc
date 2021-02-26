@@ -4,7 +4,7 @@
 a.out 
 bin/
 
-src/*.o
+*.o
 src/*.tab.cpp
 src/*.tab.hpp
 src/*.yy.cpp

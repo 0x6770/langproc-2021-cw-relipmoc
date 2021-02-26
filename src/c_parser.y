@@ -64,58 +64,59 @@ statement : T_RETURN expr ';'         { $$ = new Statement('R', $2); }
           ;
 
 
-expr :      logical_and                                   { $$ = $1;}
-           | expr T_OR_L logical_and                      { $$ = new Logical_OR($1,$3);}
-           ; 
+expr : logical_and              { $$ = $1;}
+     | expr T_OR_L logical_and  { $$ = new LogicalOr($1, $3);}
+     ; 
 
-logical_and : bitwise_or                                   { $$ = $1;}
-            | logical_and T_AND_L bitwise_or               { $$ = new Logical_AND($1,$3);}
+logical_and : bitwise_or                      { $$ = $1;}
+            | logical_and T_AND_L bitwise_or  { $$ = new LogicalAnd($1, $3);}
             ;
 
-bitwise_or : bitwise_and                                   { $$ = $1;}
-           | bitwise_or '|' bitwise_and                    { $$ = new Bitwise_OR($1,$3);}
+bitwise_or : bitwise_and                 { $$ = $1;}
+           | bitwise_or '|' bitwise_and  { $$ = new BitwiseOr($1, $3);}
            ;
 
-bitwise_and : relational_equal                             { $$ = $1;}
-            | bitwise_and '&' relational_equal             { $$ = new Bitwise_AND($1,$3);}
+bitwise_and : relational_equal                  { $$ = $1;}
+            | bitwise_and '&' relational_equal  { $$ = new BitwiseAnd($1, $3);}
             ;
-relational_equal : relational                               { $$ = $1;}
-                 | relational_equal T_EQUAL shift_operator              { $$ = new Equal($1, $3, 0); }
-                 | relational_equal T_NOT_EQUAL shift_operator          { $$ = new Equal($1,$3, 1); }
-                  ;
 
-relational : shift_operator                   { $$ = $1;}
-           | shift_operator T_LESS_E shift_operator         { $$ = new Smaller_equal($1, $3, 1); }
-           | shift_operator T_LESS shift_operator          { $$ = new Smaller_equal($1,$3, 0); }
-           | shift_operator T_GREATER_E shift_operator         { $$ = new Larger_equal($1, $3, 1); }
-           | shift_operator T_GREATER shift_operator          { $$ = new Larger_equal($1,$3, 0); }
-     ;
+relational_equal : relational                                   { $$ = $1;}
+                 | relational_equal T_EQUAL shift_operator      { $$ = new Equal($1, $3, 0); }
+                 | relational_equal T_NOT_EQUAL shift_operator  { $$ = new Equal($1, $3, 1); }
+                 ;
 
-shift_operator : add_sub          { $$ = $1;}   
-                  | shift_operator T_SHIFT_L add_sub  { $$ = new Shift_left($1, $3); }
-                  | shift_operator T_SHIFT_R add_sub  { $$ = new Shift_right($1,$3); }
-                  ;
-add_sub : term               { $$ = $1;}
+relational : shift_operator                             { $$ = $1;}
+           | shift_operator T_LESS_E shift_operator     { $$ = new LessEqual($1, $3, 1); }
+           | shift_operator T_LESS shift_operator       { $$ = new LessEqual($1, $3, 0); }
+           | shift_operator T_GREATER_E shift_operator  { $$ = new GreaterEqual($1, $3, 1); }
+           | shift_operator T_GREATER shift_operator    { $$ = new GreaterEqual($1, $3, 0); }
+           ;
+
+shift_operator : add_sub                           { $$ = $1;}   
+               | shift_operator T_SHIFT_L add_sub  { $$ = new ShiftLeft($1, $3); }
+               | shift_operator T_SHIFT_R add_sub  { $$ = new ShiftRight($1, $3); }
+               ;
+
+add_sub : term              { $$ = $1;}
         | add_sub '+' term  { $$ = new Addition($1, $3); }
-        | add_sub '-' term  { $$ = new SubOperator($1,$3); }
+        | add_sub '-' term  { $$ = new Subtraction($1, $3); }
+        ;
+
+term : unary                { $$ = $1;}
+     | term '*' unary       { $$ = new Multiplication($1, $3);}
+     | term '/' unary       { $$ = new Division($1, $3);}
+     | term '%' unary       { $$ = new Modulus($1, $3);}
      ;
 
-
-term : unary             { $$ = $1;}
-    | term '*' unary    { $$ = new MulOperator($1,$3);}
-    | term '/' unary    { $$ = new DivOperator($1,$3);}
-    | term '%' unary    { $$ = new Modulus($1,$3);}
-    ;
-
-unary : factor         { $$ = $1;}
-      | '-' factor     { $$ = $2;}    
+unary : factor              { $$ = $1;}
+      | '-' factor          { $$ = $2;}    
       ;   
 
-factor : T_INT_VALUE     { $$ = new Integer($1); }
-     | '(' expr ')'     { $$ = $2;}
-     | T_NAME           { $$ = new Variable(*$1);}
-     | factor '^' unary { $$ = new ExpOperator($1,$3);}
-     ;
+factor : T_INT_VALUE        { $$ = new Integer($1); }
+       | '(' expr ')'       { $$ = $2;}
+       | T_NAME             { $$ = new Variable(*$1);}
+       | factor '^' unary   { $$ = new Power($1, $3);}
+       ;
 
 %%
 
