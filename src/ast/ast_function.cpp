@@ -5,7 +5,7 @@
 ////////////////////////////////////////
 
 Function::Function(std::string *_type, std::string *_name,
-                   StatementList *_statements)
+                   ProgramPtr _statements)
     : type(_type), name(_name), statements(_statements) {
   fprintf(stderr, "construct Function\n");
   node_type = 'F';

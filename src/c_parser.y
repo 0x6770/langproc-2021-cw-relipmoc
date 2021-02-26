@@ -14,8 +14,6 @@
 %union{
   int integer;
   std::string *string;
-  Statement *statement;
-  StatementList *statements;
   ProgramPtr program;
 }
 
@@ -25,12 +23,11 @@
 %token T_CHAR T_STRING
 %token T_UNSIGNED T_STRUCT T_TYPEDEF T_SIZEOF T_ENUM
 %token T_INT_VALUE T_FLOAT_VALUE T_DOUBLE_VALUE T_CHAR_VALUE 
-%token T_WHILE T_FOR T_SWITCH T_IF T_ELSE T_ELSEIF T_BREAK T_CONTINUE
+%token T_WHILE T_FOR T_SWITCH T_IF T_ELSE T_BREAK T_CONTINUE
  
 %type <program> program function term unary factor expr add_sub shift_operator relational
 %type <program> relational_equal bitwise_and bitwise_or logical_and
-%type <statement> statement
-%type <statements> statement_list
+%type <program> statement statement_list conditional_statement
 %type <integer> T_INT_VALUE 
 %type <string> type T_NAME T_INT
 
@@ -53,7 +50,7 @@ function : type T_NAME '(' ')' '{' statement_list '}'  { $$ = new Function($1, $
          ;
 
 statement_list : statement                 { $$ = new StatementList($1); }
-               | statement_list statement  { $1->addStatement($2); $$ = $1; }
+               | statement_list statement  { ((StatementList *)$1)->addStatement($2); $$ = $1; }
                ;
 
 statement : T_RETURN expr ';'         { $$ = new Statement('R', $2); }
@@ -61,8 +58,15 @@ statement : T_RETURN expr ';'         { $$ = new Statement('R', $2); }
           | type T_NAME ';'           { $$ = new Statement('D', $1, $2, 0); }
           | T_NAME '=' expr ';'       { $$ = new Statement('A', $1, $3); }
           | expr ';'                  { $$ = new Statement('E', $1); }
+          | conditional_statement     { $$ = $1; }
+          | '{' statement_list '}'    { $$ = $2; }
+          | '{' '}'                   { $$ = new Statement(0, 0); }
           ;
 
+conditional_statement : T_IF expr                             { $$ = new IfStatement($2, 0,  0); }
+                      | T_IF expr statement                   { $$ = new IfStatement($2, $3, 0); }
+                      | T_IF expr statement T_ELSE statement  { $$ = new IfStatement($2, $3, $5); }
+                      ;
 
 expr : logical_and              { $$ = $1;}
      | expr T_OR_L logical_and  { $$ = new LogicalOr($1, $3);}

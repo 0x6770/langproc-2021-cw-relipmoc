@@ -44,8 +44,12 @@ void Statement::print(std::ostream &dst, int indentation) const {
       dst << name << " = ";
       expression->print(dst, indentation);
       break;
+    case 'E':
+      expression->print(dst, indentation);
+      break;
     default:
       matched = 0;
+      dst << "/* do nothing */\n";
   }
   if (matched) dst << ";" << std::endl;
 }
@@ -63,14 +67,14 @@ std::string Statement::getName() { return name; }
 // StatementList
 ////////////////////////////////////////
 
-StatementList::StatementList(Statement *_statement) {
+StatementList::StatementList(ProgramPtr _statement) {
   addStatement(_statement);
   node_type = 'L';
 }
 
-std::vector<Statement *> StatementList::addStatement(Statement *_statement) {
-  std::string name = _statement->getName();
-  ProgramPtr expr = _statement->getExpression();
+std::vector<ProgramPtr> StatementList::addStatement(ProgramPtr _statement) {
+  std::string name = ((Statement *)_statement)->getName();
+  ProgramPtr expr = ((Statement *)_statement)->getExpression();
 
   switch (_statement->getType()) {
     case 'D':
@@ -118,3 +122,31 @@ int StatementList::evaluate(Binding *_binding) const {
   }
   return x;
 }
+
+IfStatement::IfStatement(ProgramPtr _condition, ProgramPtr _if_statement,
+                         ProgramPtr _else_statement)
+    : condition(_condition),
+      if_statement(_if_statement),
+      else_statement(_else_statement) {}
+
+void IfStatement::print(std::ostream &dst, int indentation) const {
+  print_indent(dst, indentation);
+  dst << "if (";
+  condition->print(dst, indentation);
+  dst << ")";
+  if (if_statement) {
+    dst << " {\n";
+    if_statement->print(dst, indentation);
+    print_indent(dst, --indentation);
+    dst << "}";
+  }
+  if (else_statement) {
+    dst << " else {\n";
+    else_statement->print(dst, indentation);
+    print_indent(dst, --indentation);
+    dst << "}";
+  }
+  dst << "\n";
+}
+
+int IfStatement::evaluate(Binding *_binding) const { return 0; }

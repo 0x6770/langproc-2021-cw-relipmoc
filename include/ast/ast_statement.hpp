@@ -5,8 +5,6 @@
 
 #include "ast_program.hpp"
 
-class Statement;
-
 class Statement : public Program {
  private:
   std::string type;
@@ -28,12 +26,25 @@ class Statement : public Program {
 
 class StatementList : public Program {
  private:
-  std::vector<Statement *> statements;
+  std::vector<ProgramPtr> statements;
   Binding binding;
 
  public:
-  StatementList(Statement *_statement);
-  std::vector<Statement *> addStatement(Statement *_statement);
+  StatementList(ProgramPtr _statement);
+  std::vector<ProgramPtr> addStatement(ProgramPtr _statement);
+  virtual void print(std::ostream &dst, int indentation) const override;
+  virtual int evaluate(Binding *_binding) const override;
+};
+
+class IfStatement : public Program {
+ private:
+  ProgramPtr condition;
+  ProgramPtr if_statement;
+  ProgramPtr else_statement;
+
+ public:
+  IfStatement(ProgramPtr condition, ProgramPtr _if_statement,
+              ProgramPtr _else_statement);
   virtual void print(std::ostream &dst, int indentation) const override;
   virtual int evaluate(Binding *_binding) const override;
 };
