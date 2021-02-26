@@ -4,10 +4,13 @@ CPPFLAGS += -I include # search header files in `/include`
 CPPFLAGS += -Wno-unused-parameter
 
 #header_files := $(wildcard include/*.hpp) 
-#source_files := $(shell find src -name *.cpp)
-#object_files := $(source_files:.c=.o)
+ast_cpp := $(wildcard src/ast/*.cpp)
+ast_o   := $(ast_cpp:%.cpp=%.o)
 
 all: bin/c_compiler
+
+%.o: %.cpp
+	g++ $(CPPFLAGS) -o $@ -c $<
 
 src/c_parser.tab.cpp src/c_parser.tab.hpp: src/c_parser.y 
 	bison -v -d src/c_parser.y -o src/c_parser.tab.cpp 
@@ -15,13 +18,15 @@ src/c_parser.tab.cpp src/c_parser.tab.hpp: src/c_parser.y
 src/c_lexer.yy.cpp: src/c_lexer.flex src/c_parser.tab.hpp 
 	flex -o src/c_lexer.yy.cpp src/c_lexer.flex 
 
-bin/c_compiler : src/main.o src/c_lexer.yy.o src/c_parser.tab.o
+bin/c_compiler : src/main.o src/c_lexer.yy.o src/c_parser.tab.o $(ast_o)
+	echo $(ast_o)
 	mkdir -p bin 
-	g++ $(CPPFLAGS) -o bin/c_compiler $^
+	g++ $(CPPFLAGS) -o $@ $^
 
 clean: 
 	@echo Cleaning ... 
 	-rm -f src/*.o 
+	-rm -f src/ast/*.o 
 	-rm -f src/*.output
 	-rm -f src/*.tab.cpp 
 	-rm -f src/*.tab.hpp 

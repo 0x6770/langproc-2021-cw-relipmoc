@@ -5,121 +5,99 @@
 
 #include "ast_program.hpp"
 
-class Statement;
+////////////////////////////////////////
+// Statement
+////////////////////////////////////////
 
 class Statement : public Program {
- private:
-  std::string type;
-  std::string name;
+ protected:
   ProgramPtr expression;
 
  public:
-  Statement(int _node_type, ProgramPtr _expression) : expression(_expression) {
-    fprintf(stderr, "construct Statement\n");
-    node_type = _node_type;
-  }
-  // for declaration
-  Statement(int _node_type, std::string *_type, std::string *_name,
-            ProgramPtr _expression)
-      : type(*_type), name(*_name), expression(_expression) {
-    fprintf(stderr, "construct D Statement\n");
-    node_type = _node_type;
-  }
-  // for assignment
-  Statement(int _node_type, std::string *_name, ProgramPtr _expression)
-      : name(*_name), expression(_expression) {
-    fprintf(stderr, "construct A Statement\n");
-    node_type = _node_type;
-  }
-  virtual void print(std::ostream &dst) const override {
-    int matched = 1;
-    switch (getType()) {
-      case 'R':
-        dst << "return ";
-        expression->print(dst);
-        break;
-      case 'D':
-        dst << type << " " << name;
-        if (expression != 0) {
-          dst << " = ";
-          expression->print(dst);
-        }
-        break;
-      case 'A':
-        dst << name << " = ";
-        expression->print(dst);
-        break;
-      default:
-        matched = 0;
-    }
-    if (matched) dst << ";" << std::endl;
-  }
-  virtual int evaluate(Binding *binding) const override {
-    if (node_type == 'R') return expression->evaluate(binding);
-    return 0;
-  }
-  ProgramPtr getExpression() { return expression; }
-  std::string getName() { return name; }
+  Statement(ProgramPtr _expression);
+  virtual void print(std::ostream &dst, int indentation) const override;
+  virtual int evaluate(Binding *binding) const override;
+  virtual void bind(Binding *_binding) const;
+  ProgramPtr getExpression() const;
 };
+
+////////////////////////////////////////
+// Return
+////////////////////////////////////////
+
+class Return : public Statement {
+ public:
+  Return(ProgramPtr _expression);
+  void print(std::ostream &dst, int indentation) const override;
+};
+
+////////////////////////////////////////
+// VarDeclare
+////////////////////////////////////////
+
+class VarDeclare : public Statement {
+ private:
+  std::string var_type;
+  std::string name;
+
+ public:
+  VarDeclare(std::string _var_type, std::string _name, ProgramPtr _expression);
+  void print(std::ostream &dst, int indentation) const override;
+  void bind(Binding *_binding) const override;
+};
+
+////////////////////////////////////////
+// VarAssign
+////////////////////////////////////////
+
+class VarAssign : public Statement {
+ private:
+  std::string name;
+
+ public:
+  VarAssign(std::string _name, ProgramPtr _expression);
+  void print(std::ostream &dst, int indentation) const override;
+  void bind(Binding *_binding) const override;
+};
+
+////////////////////////////////////////
+// StatementList
+////////////////////////////////////////
 
 class StatementList : public Program {
  private:
-  std::vector<Statement *> statements;
+  std::vector<ProgramPtr> statements;
   Binding binding;
 
  public:
-  StatementList(Statement *_statement) {
-    addStatement(_statement);
-    node_type = 'L';
-  }
-  std::vector<Statement *> addStatement(Statement *_statement) {
-    std::string name = _statement->getName();
-    ProgramPtr expr = _statement->getExpression();
+  StatementList(ProgramPtr _statement);
+  std::vector<ProgramPtr> addStatement(ProgramPtr _statement);
+  void print(std::ostream &dst, int indentation) const override;
+  int evaluate(Binding *_binding) const override;
+};
 
-    switch (_statement->getType()) {
-      case 'D':
-        if (binding.find(name) != binding.end()) {
-          fprintf(stdout,
-                  "Multiple declarations, variable %s has been declared\n",
-                  name.c_str());
-          exit(1);
-        }
-        binding.insert(std::pair<std::string, ProgramPtr>(name, expr));
-        break;
-      case 'A':
-        if (binding.find(name) == binding.end()) {
-          fprintf(stdout, "No delcaration, variable %s has not been declared\n",
-                  name.c_str());
-          _statement->print(std::cout);
-          exit(1);
-        }
-        binding.at(name) = expr;
-        break;
-      case 'E':
-        break;
-      case 'R':
-        break;
-      default:
-        break;
-    }
+class IfStatement : public Program {
+ private:
+  ProgramPtr condition;
+  ProgramPtr if_statement;
+  ProgramPtr else_statement;
 
-    statements.push_back(_statement);
-    return statements;
-  }
-  virtual void print(std::ostream &dst) const override {
-    for (auto it : statements) {
-      it->print(dst);
-      if (it->getType() == 'R') break;
-    }
-  }
-  virtual int evaluate(Binding *_binding) const override {
-    int x;
-    for (auto it : statements) {
-      x = it->evaluate((Binding *)&binding);
-      if (it->getType() == 'R') break;
-    }
-    return x;
-  }
+ public:
+  IfStatement(ProgramPtr condition, ProgramPtr _if_statement,
+              ProgramPtr _else_statement);
+  void print(std::ostream &dst, int indentation) const override;
+  int evaluate(Binding *_binding) const override;
+};
+
+class WhileLoop : public Program {
+ private:
+  ProgramPtr condition;
+  ProgramPtr statement;
+
+ public:
+  WhileLoop(ProgramPtr _condition, ProgramPtr _statement);
+  void print(std::ostream &dst, int indentation) const override;
+  int evaluate(Binding *_binding) const override;
 };
 
 #endif
