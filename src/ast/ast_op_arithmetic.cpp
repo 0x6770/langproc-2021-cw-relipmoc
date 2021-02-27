@@ -107,21 +107,82 @@ int Modulus::evaluate(Binding *binding) const {
 }
 
 ////////////////////////////////////////
-// Power
+// Postfix increment
 ////////////////////////////////////////
 
-Power::Power(ProgramPtr _left, ProgramPtr _right) : left(_left), right(_right) {
-  fprintf(stderr, "construct ExpOperator\n");
+Increment_Post::Increment_Post(ProgramPtr _left) : left(_left) {
+  fprintf(stderr, "construct postfix increment\n");
 }
 
-void Power::print(std::ostream &dst, int indentation) const {
+void Increment_Post::print(std::ostream &dst, int indentation) const {
   dst << "(";
   left->print(dst, indentation);
-  dst << "^";
-  right->print(dst, indentation);
+  dst << "++";
   dst << ")";
 }
 
-int Power::evaluate(Binding *binding) const {
-  return (pow(left->evaluate(binding), right->evaluate(binding)));
+int Increment_Post::evaluate(Binding *binding) const {
+  //int result = left->evaluate(binding)+1;
+  return left->evaluate(binding);
 }
+
+////////////////////////////////////////
+// prefix increment
+////////////////////////////////////////
+
+Increment_Pre::Increment_Pre(ProgramPtr _left) : left(_left) {
+  fprintf(stderr, "construct prefix increment\n");
+}
+
+void Increment_Pre::print(std::ostream &dst, int indentation) const {
+  dst << "(";
+  dst << "++";
+  left->print(dst, indentation);
+  dst << ")";
+}
+
+int Increment_Pre::evaluate(Binding *binding) const {
+  return (left->evaluate(binding)+1);
+}
+
+////////////////////////////////////////
+// Postfix decrement
+////////////////////////////////////////
+
+Decrement_Post::Decrement_Post(ProgramPtr _left) : left(_left) {
+  fprintf(stderr, "construct postfix increment\n");
+}
+
+void Decrement_Post::print(std::ostream &dst, int indentation) const {
+  dst << "(";
+  left->print(dst, indentation);
+  dst << "--";
+  dst << ")";
+}
+
+int Decrement_Post::evaluate(Binding *binding) const {
+  //int result = left->evaluate(binding)-1;
+  return left->evaluate(binding);
+}
+
+////////////////////////////////////////
+// prefix increment
+////////////////////////////////////////
+
+Decrement_Pre::Decrement_Pre(ProgramPtr _left) : left(_left) {
+  fprintf(stderr, "construct prefix increment\n");
+}
+
+void Decrement_Pre::print(std::ostream &dst, int indentation) const {
+  dst << "(";
+  dst << "--";
+  left->print(dst, indentation);
+  dst << ")";
+}
+
+int Decrement_Pre::evaluate(Binding *binding) const {
+  return (left->evaluate(binding)-1);
+}
+
+
+

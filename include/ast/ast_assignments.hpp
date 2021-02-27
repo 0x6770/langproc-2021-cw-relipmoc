@@ -1,138 +1,158 @@
-#ifndef ast_op_arithmetic_hpp
-#define ast_op_arithmetic_hpp
+#ifndef ast_assignments_hpp
+#define ast_assignments_hpp
 
 #include "ast_program.hpp"
 
+
 ////////////////////////////////////////
-// Addition
+// Addition Equal
 ////////////////////////////////////////
 
-class Addition : public Program {
+class AddEqual : public Program {
  protected:
   ProgramPtr left;
   ProgramPtr right;
 
  public:
-  Addition(ProgramPtr _left, ProgramPtr _right);
+  AddEqual(ProgramPtr _left, ProgramPtr _right);
   virtual void print(std::ostream &dst, int indentation) const override;
   virtual int evaluate(Binding *binding) const override;
 };
 
+
 ////////////////////////////////////////
-// Subtraction
+// subtraction equal
 ////////////////////////////////////////
 
-class Subtraction : public Program {
+class SubEqual : public Program {
  protected:
   ProgramPtr left;
   ProgramPtr right;
 
  public:
-  Subtraction(ProgramPtr _left, ProgramPtr _right);
+  SubEqual(ProgramPtr _left, ProgramPtr _right);
   virtual void print(std::ostream &dst, int indentation) const override;
   virtual int evaluate(Binding *binding) const override;
 };
 
+
+
 ////////////////////////////////////////
-// Multiplication
+// product assignment
 ////////////////////////////////////////
 
-class Multiplication : public Program {
+class MulEqual : public Program {
  protected:
   ProgramPtr left;
   ProgramPtr right;
 
  public:
-  Multiplication(ProgramPtr _left, ProgramPtr _right);
+  MulEqual(ProgramPtr _left, ProgramPtr _right);
   virtual void print(std::ostream &dst, int indentation) const override;
   virtual int evaluate(Binding *binding) const override;
 };
 
 ////////////////////////////////////////
-// Division
+// Quotient assignment
 ////////////////////////////////////////
 
-class Division : public Program {
+class QuoEqual : public Program {
  protected:
   ProgramPtr left;
   ProgramPtr right;
 
  public:
-  Division(ProgramPtr _left, ProgramPtr _right);
+  QuoEqual(ProgramPtr _left, ProgramPtr _right);
   virtual void print(std::ostream &dst, int indentation) const override;
   virtual int evaluate(Binding *binding) const override;
 };
 
-
 ////////////////////////////////////////
-// Modulus
+// Modulus assignment
 ////////////////////////////////////////
 
-class Modulus : public Program {
+class ModEqual : public Program {
  protected:
   ProgramPtr left;
   ProgramPtr right;
 
  public:
-  Modulus(ProgramPtr _left, ProgramPtr _right);
+  ModEqual(ProgramPtr _left, ProgramPtr _right);
   virtual void print(std::ostream &dst, int indentation) const override;
   virtual int evaluate(Binding *binding) const override;
 };
 
 ////////////////////////////////////////
-// Suffix/postfix increment
+// shift left assignment
 ////////////////////////////////////////
 
-class Increment_Post : public Program {
+class ShiftEqual_L : public Program {
  protected:
   ProgramPtr left;
+  ProgramPtr right;
 
  public:
-  Increment_Post(ProgramPtr _left);
-  virtual void print(std::ostream &dst, int indentation) const override;
-  virtual int evaluate(Binding *binding) const override;
-};
-
-
-////////////////////////////////////////
-// Prefix increment
-////////////////////////////////////////
-
-class Increment_Pre : public Program {
- protected:
-  ProgramPtr left;
-
- public:
-  Increment_Pre(ProgramPtr _left);
+  ShiftEqual_L(ProgramPtr _left, ProgramPtr _right);
   virtual void print(std::ostream &dst, int indentation) const override;
   virtual int evaluate(Binding *binding) const override;
 };
 
 ////////////////////////////////////////
-// Suffix/postfix decrement
+// shift right assignment
 ////////////////////////////////////////
 
-class Decrement_Post : public Program {
+class ShiftEqual_R : public Program {
  protected:
   ProgramPtr left;
+  ProgramPtr right;
 
  public:
-  Decrement_Post(ProgramPtr _left);
+  ShiftEqual_R(ProgramPtr _left, ProgramPtr _right);
   virtual void print(std::ostream &dst, int indentation) const override;
   virtual int evaluate(Binding *binding) const override;
 };
 
-
 ////////////////////////////////////////
-// Prefix decrement
+// bitwise AND assignment
 ////////////////////////////////////////
 
-class Decrement_Pre : public Program {
+class BitwiseEqual_AND : public Program {
  protected:
   ProgramPtr left;
+  ProgramPtr right;
 
  public:
-  Decrement_Pre(ProgramPtr _left);
+  BitwiseEqual_AND(ProgramPtr _left, ProgramPtr _right);
+  virtual void print(std::ostream &dst, int indentation) const override;
+  virtual int evaluate(Binding *binding) const override;
+};
+
+////////////////////////////////////////
+// bitwise OR assignment
+////////////////////////////////////////
+
+class BitwiseEqual_OR : public Program {
+ protected:
+  ProgramPtr left;
+  ProgramPtr right;
+
+ public:
+  BitwiseEqual_OR(ProgramPtr _left, ProgramPtr _right);
+  virtual void print(std::ostream &dst, int indentation) const override;
+  virtual int evaluate(Binding *binding) const override;
+};
+
+////////////////////////////////////////
+// bitwise XOR assignment
+////////////////////////////////////////
+
+class BitwiseEqual_XOR : public Program {
+ protected:
+  ProgramPtr left;
+  ProgramPtr right;
+
+ public:
+  BitwiseEqual_XOR(ProgramPtr _left, ProgramPtr _right);
   virtual void print(std::ostream &dst, int indentation) const override;
   virtual int evaluate(Binding *binding) const override;
 };
