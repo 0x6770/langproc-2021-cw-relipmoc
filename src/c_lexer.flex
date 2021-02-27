@@ -19,7 +19,6 @@ int                               {fprintf(stderr, "T_INT\n"); yylval.string=new
 while                             {fprintf(stderr, "T_WHILE\n"); return T_WHILE;}
 if                                {fprintf(stderr, "T_IF\n"); return T_IF;}
 else                              {fprintf(stderr, "T_ELSE\n"); return T_ELSE;}
-else[ ]if                         {fprintf(stderr, "T_ELSEIF\n"); return T_ELSEIF;}
 
  /* more keywords for intermediate features */ 
 for                               {fprintf(stderr, "T_FOR\n");      return T_FOR;}

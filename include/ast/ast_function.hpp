@@ -2,30 +2,16 @@
 #define ast_function_hpp
 
 #include "ast_program.hpp"
-#include "ast_statement.hpp"
 
 class Function : public Program {
  private:
   std::string *type;
   std::string *name;
-  StatementList *statements;
+  ProgramPtr statements;
 
  public:
-  Function(std::string *_type, std::string *_name, StatementList *_statements)
-      : type(_type), name(_name), statements(_statements) {
-    fprintf(stderr, "construct Function\n");
-    node_type = 'F';
-  }
-  virtual void print(std::ostream &dst) const override {
-    dst << *type;
-    dst << " ";
-    dst << *name;
-    dst << "() {\n";
-    statements->print(dst);
-    dst << "}";
-  }
-  virtual int evaluate(Binding *binding) const override {
-    return statements->evaluate(binding);
-  }
+  Function(std::string *_type, std::string *_name, ProgramPtr _statements);
+  virtual void print(std::ostream &dst, int indentation) const override;
+  virtual int evaluate(Binding *binding) const override;
 };
 #endif
