@@ -142,12 +142,12 @@ logical_and : bitwise_or                      { $$ = $1; }
             ;
 
 
-bitwise_or : bitwise_and                 { $$ = $1; }
+bitwise_or : bitwise_xor                 { $$ = $1; }
            | bitwise_or '|' bitwise_and  { $$ = new BitwiseOr($1, $3, pos); pos+=4; }
            ;
 
 bitwise_xor : bitwise_and                 { $$ = $1; }
-            | bitwise_xor '^' bitwise_and { $$ = new BitwiseXor($1,$3);} 
+            | bitwise_xor '^' bitwise_and { $$ = new BitwiseXor($1,$3,pos); pos+=4;} 
 
 bitwise_and : relational_equal                  { $$ = $1;}
             | bitwise_and '&' relational_equal  { $$ = new BitwiseAnd($1, $3, pos); pos+=4;}
