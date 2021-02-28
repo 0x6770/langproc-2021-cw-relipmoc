@@ -11,7 +11,7 @@
 class Program;
 
 typedef const Program *ProgramPtr;
-typedef std::map<std::string, ProgramPtr> Binding;
+typedef std::map<std::string, int> Binding;  // map<string name, int pos>
 
 // node_type
 //
@@ -39,12 +39,22 @@ typedef std::map<std::string, ProgramPtr> Binding;
 class Program {
  protected:
   int node_type;
+  int size;
+  int pos;  // position of a variable or expression in stack frame
 
  public:
   virtual ~Program() {}
   virtual void print(std::ostream &dst, int indentation) const = 0;
   virtual int evaluate(Binding *binding) const = 0;
-  int getType() const;
-  void print_indent(std::ostream &dst, int &indentation) const;
+  // Print mips assembly code.
+  // Binding *binding contains information about every variable in current
+  // scope and above.
+  // int reg is the index of registor to store result.
+  // return its position in stack frame if it is a variable, else return 0.
+  virtual int codeGen(Binding *binding, int reg) const = 0;
+  const int &getType() const;
+  const int &getSize() const;
+  virtual const int &getPos(const Binding &binding) const;
+  void printIndent(std::ostream &dst, int &indentation) const;
 };
 #endif

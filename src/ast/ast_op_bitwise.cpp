@@ -4,8 +4,8 @@
 // BitwiseAnd
 ////////////////////////////////////////
 
-BitwiseAnd::BitwiseAnd(ProgramPtr _left, ProgramPtr _right)
-    : left(_left), right(_right) {
+BitwiseAnd::BitwiseAnd(ProgramPtr _left, ProgramPtr _right, int _pos)
+    : Operation(_left, _right, _pos) {
   fprintf(stderr, "construct ExpOperator\n");
 }
 
@@ -21,12 +21,18 @@ int BitwiseAnd::evaluate(Binding *binding) const {
   return (left->evaluate(binding) & right->evaluate(binding));
 }
 
+int BitwiseAnd::codeGen(Binding *binding, int reg) const {
+  left->codeGen(binding, 2);
+  right->codeGen(binding, 2);
+  return 0;
+}
+
 ////////////////////////////////////////
 // BitwiseOr
 ////////////////////////////////////////
 
-BitwiseOr::BitwiseOr(ProgramPtr _left, ProgramPtr _right)
-    : left(_left), right(_right) {
+BitwiseOr::BitwiseOr(ProgramPtr _left, ProgramPtr _right, int _pos)
+    : Operation(_left, _right, _pos) {
   fprintf(stderr, "construct ExpOperator\n");
 }
 
@@ -42,12 +48,18 @@ int BitwiseOr::evaluate(Binding *binding) const {
   return (left->evaluate(binding) | right->evaluate(binding));
 }
 
+int BitwiseOr::codeGen(Binding *binding, int reg) const {
+  left->codeGen(binding, 2);
+  right->codeGen(binding, 2);
+  return 0;
+}
+
 ////////////////////////////////////////
 // ShiftLeft
 ////////////////////////////////////////
 
-ShiftLeft::ShiftLeft(ProgramPtr _left, ProgramPtr _right)
-    : left(_left), right(_right) {
+ShiftLeft::ShiftLeft(ProgramPtr _left, ProgramPtr _right, int _pos)
+    : Operation(_left, _right, _pos) {
   fprintf(stderr, "construct ExpOperator\n");
 }
 
@@ -63,12 +75,18 @@ int ShiftLeft::evaluate(Binding *binding) const {
   return (left->evaluate(binding) << right->evaluate(binding));
 }
 
+int ShiftLeft::codeGen(Binding *binding, int reg) const {
+  left->codeGen(binding, 2);
+  right->codeGen(binding, 2);
+  return 0;
+}
+
 ////////////////////////////////////////
 // ShiftRight
 ////////////////////////////////////////
 
-ShiftRight::ShiftRight(ProgramPtr _left, ProgramPtr _right)
-    : left(_left), right(_right) {
+ShiftRight::ShiftRight(ProgramPtr _left, ProgramPtr _right, int _pos)
+    : Operation(_left, _right, _pos) {
   fprintf(stderr, "construct ExpOperator\n");
 }
 
@@ -82,4 +100,10 @@ void ShiftRight::print(std::ostream &dst, int indentation) const {
 
 int ShiftRight::evaluate(Binding *binding) const {
   return (left->evaluate(binding) >> right->evaluate(binding));
+}
+
+int ShiftRight::codeGen(Binding *binding, int reg) const {
+  left->codeGen(binding, 2);
+  right->codeGen(binding, 2);
+  return 0;
 }

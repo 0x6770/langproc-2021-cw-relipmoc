@@ -19,7 +19,6 @@ src/c_lexer.yy.cpp: src/c_lexer.flex src/c_parser.tab.hpp
 	flex -o src/c_lexer.yy.cpp src/c_lexer.flex 
 
 bin/c_compiler : src/main.o src/c_lexer.yy.o src/c_parser.tab.o $(ast_o)
-	echo $(ast_o)
 	mkdir -p bin 
 	g++ $(CPPFLAGS) -o $@ $^
 
