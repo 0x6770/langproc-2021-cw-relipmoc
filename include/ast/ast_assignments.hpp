@@ -17,6 +17,7 @@ class AddEqual : public Program {
   AddEqual(ProgramPtr _left, ProgramPtr _right);
   virtual void print(std::ostream &dst, int indentation) const override;
   virtual int evaluate(Binding *binding) const override;
+  virtual int codeGen(Binding *binding,int reg) const override;
 };
 
 
@@ -33,6 +34,7 @@ class SubEqual : public Program {
   SubEqual(ProgramPtr _left, ProgramPtr _right);
   virtual void print(std::ostream &dst, int indentation) const override;
   virtual int evaluate(Binding *binding) const override;
+  virtual int codeGen(Binding *binding,int reg) const override;
 };
 
 
@@ -50,6 +52,7 @@ class MulEqual : public Program {
   MulEqual(ProgramPtr _left, ProgramPtr _right);
   virtual void print(std::ostream &dst, int indentation) const override;
   virtual int evaluate(Binding *binding) const override;
+  virtual int codeGen(Binding *binding,int reg) const override;
 };
 
 ////////////////////////////////////////
@@ -65,6 +68,7 @@ class QuoEqual : public Program {
   QuoEqual(ProgramPtr _left, ProgramPtr _right);
   virtual void print(std::ostream &dst, int indentation) const override;
   virtual int evaluate(Binding *binding) const override;
+  virtual int codeGen(Binding *binding,int reg) const override;
 };
 
 ////////////////////////////////////////
@@ -80,6 +84,7 @@ class ModEqual : public Program {
   ModEqual(ProgramPtr _left, ProgramPtr _right);
   virtual void print(std::ostream &dst, int indentation) const override;
   virtual int evaluate(Binding *binding) const override;
+  virtual int codeGen(Binding *binding,int reg) const override;
 };
 
 ////////////////////////////////////////
@@ -95,6 +100,7 @@ class ShiftEqual_L : public Program {
   ShiftEqual_L(ProgramPtr _left, ProgramPtr _right);
   virtual void print(std::ostream &dst, int indentation) const override;
   virtual int evaluate(Binding *binding) const override;
+  virtual int codeGen(Binding *binding,int reg) const override;
 };
 
 ////////////////////////////////////////
@@ -110,6 +116,7 @@ class ShiftEqual_R : public Program {
   ShiftEqual_R(ProgramPtr _left, ProgramPtr _right);
   virtual void print(std::ostream &dst, int indentation) const override;
   virtual int evaluate(Binding *binding) const override;
+  virtual int codeGen(Binding *binding,int reg) const override;
 };
 
 ////////////////////////////////////////
@@ -125,6 +132,7 @@ class BitwiseEqual_AND : public Program {
   BitwiseEqual_AND(ProgramPtr _left, ProgramPtr _right);
   virtual void print(std::ostream &dst, int indentation) const override;
   virtual int evaluate(Binding *binding) const override;
+  virtual int codeGen(Binding *binding,int reg) const override;
 };
 
 ////////////////////////////////////////
@@ -140,6 +148,7 @@ class BitwiseEqual_OR : public Program {
   BitwiseEqual_OR(ProgramPtr _left, ProgramPtr _right);
   virtual void print(std::ostream &dst, int indentation) const override;
   virtual int evaluate(Binding *binding) const override;
+  virtual int codeGen(Binding *binding,int reg) const override;
 };
 
 ////////////////////////////////////////
@@ -155,6 +164,7 @@ class BitwiseEqual_XOR : public Program {
   BitwiseEqual_XOR(ProgramPtr _left, ProgramPtr _right);
   virtual void print(std::ostream &dst, int indentation) const override;
   virtual int evaluate(Binding *binding) const override;
+  virtual int codeGen(Binding *binding,int reg) const override;
 };
 
 #endif

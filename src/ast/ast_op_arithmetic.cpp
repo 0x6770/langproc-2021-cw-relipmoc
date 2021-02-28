@@ -191,7 +191,7 @@ int Division::codeGen(Binding *binding, int reg) const {
 
 Modulus::Modulus(ProgramPtr _left, ProgramPtr _right, int _pos)
     : Operation(_left, _right, _pos) {
-  fprintf(stderr, "construct ExpOperator\n");
+  fprintf(stderr, "construct ModOperator\n");
 }
 
 void Modulus::print(std::ostream &dst, int indentation) const {
@@ -211,13 +211,13 @@ int Modulus::codeGen(Binding *binding, int reg) const {
   left->codeGen(binding, 2);
   right->codeGen(binding, 2);
   return 0;
-
+}
 ////////////////////////////////////////
 // Postfix increment
 ////////////////////////////////////////
 
-Increment_Post::Increment_Post(ProgramPtr _left) : left(_left) {
-  fprintf(stderr, "construct postfix increment\n");
+Increment_Post::Increment_Post(ProgramPtr _left): left(_left) {
+  fprintf(stderr, "construct increment prefix\n");
 }
 
 void Increment_Post::print(std::ostream &dst, int indentation) const {
@@ -232,12 +232,14 @@ int Increment_Post::evaluate(Binding *binding) const {
   return left->evaluate(binding);
 }
 
+int Increment_Post::codeGen(Binding *binding, int reg) const { return 0; }
+
 ////////////////////////////////////////
 // prefix increment
 ////////////////////////////////////////
 
-Increment_Pre::Increment_Pre(ProgramPtr _left) : left(_left) {
-  fprintf(stderr, "construct prefix increment\n");
+Increment_Pre::Increment_Pre(ProgramPtr _left): left(_left) {
+  fprintf(stderr, "construct increment prefix\n");
 }
 
 void Increment_Pre::print(std::ostream &dst, int indentation) const {
@@ -251,12 +253,14 @@ int Increment_Pre::evaluate(Binding *binding) const {
   return (left->evaluate(binding)+1);
 }
 
+int Increment_Pre::codeGen(Binding *binding, int reg) const { return 0; }
+
 ////////////////////////////////////////
 // Postfix decrement
 ////////////////////////////////////////
 
-Decrement_Post::Decrement_Post(ProgramPtr _left) : left(_left) {
-  fprintf(stderr, "construct postfix increment\n");
+Decrement_Post::Decrement_Post(ProgramPtr _left):left(_left) {
+  fprintf(stderr, "construct decrement postfix\n");
 }
 
 void Decrement_Post::print(std::ostream &dst, int indentation) const {
@@ -271,12 +275,14 @@ int Decrement_Post::evaluate(Binding *binding) const {
   return left->evaluate(binding);
 }
 
+int Decrement_Post::codeGen(Binding *binding, int reg) const { return 0; }
+
 ////////////////////////////////////////
 // prefix increment
 ////////////////////////////////////////
 
-Decrement_Pre::Decrement_Pre(ProgramPtr _left) : left(_left) {
-  fprintf(stderr, "construct prefix increment\n");
+Decrement_Pre::Decrement_Pre(ProgramPtr _left) : left(_left){
+  fprintf(stderr, "construct decrement prefix\n");
 }
 
 void Decrement_Pre::print(std::ostream &dst, int indentation) const {
@@ -289,6 +295,8 @@ void Decrement_Pre::print(std::ostream &dst, int indentation) const {
 int Decrement_Pre::evaluate(Binding *binding) const {
   return (left->evaluate(binding)-1);
 }
+
+int Decrement_Pre::codeGen(Binding *binding, int reg) const { return 0; }
 
 
 

@@ -57,17 +57,6 @@ class Division : public Operation {
 ////////////////////////////////////////
 
 
-class Power : public Operation {
- public:
-  Power(ProgramPtr _left, ProgramPtr _right, int _pos);
-  int codeGen(Binding *binding, int reg) const override;
-  void print(std::ostream &dst, int indentation) const override;
-  int evaluate(Binding *binding) const override;
-};
-
-////////////////////////////////////////
-// Suffix/postfix increment
-////////////////////////////////////////
 
 class Modulus : public Operation {
  public:
@@ -77,8 +66,14 @@ class Modulus : public Operation {
   int evaluate(Binding *binding) const override;
  };
 
-class Increment_Post : public Operation {
-  Power(ProgramPtr _left, ProgramPtr _right, int _pos);
+////////////////////////////////////////
+// Suffix/postfix increment
+////////////////////////////////////////
+class Increment_Post : public Program {
+private: 
+  ProgramPtr left;
+public:
+  Increment_Post(ProgramPtr _left);
   int codeGen(Binding *binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(Binding *binding) const override;
@@ -89,8 +84,11 @@ class Increment_Post : public Operation {
 // Prefix increment
 ////////////////////////////////////////
 
-class Increment_Pre : public Operation {
-  Power(ProgramPtr _left, ProgramPtr _right, int _pos);
+class Increment_Pre : public Program {
+private:
+  ProgramPtr left;
+public:
+  Increment_Pre(ProgramPtr _left);
   int codeGen(Binding *binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(Binding *binding) const override;
@@ -100,8 +98,11 @@ class Increment_Pre : public Operation {
 // Suffix/postfix decrement
 ////////////////////////////////////////
 
-class Decrement_Post : public Operation {
-  Power(ProgramPtr _left, ProgramPtr _right, int _pos);
+class Decrement_Post : public Program {
+private:
+  ProgramPtr left;
+public:
+  Decrement_Post(ProgramPtr _left);
   int codeGen(Binding *binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(Binding *binding) const override;
@@ -112,8 +113,11 @@ class Decrement_Post : public Operation {
 // Prefix decrement
 ////////////////////////////////////////
 
-class Decrement_Pre : public Operation {
-  Power(ProgramPtr _left, ProgramPtr _right, int _pos);
+class Decrement_Pre : public Program {
+private: 
+  ProgramPtr left;
+public:
+  Decrement_Pre(ProgramPtr _left);
   int codeGen(Binding *binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(Binding *binding) const override;
