@@ -55,6 +55,27 @@ int BitwiseOr::codeGen(Binding *binding, int reg) const {
 }
 
 ////////////////////////////////////////
+// BitwiseXor
+////////////////////////////////////////
+
+BitwiseXor::BitwiseXor(ProgramPtr _left, ProgramPtr _right)
+    : left(_left), right(_right) {
+  fprintf(stderr, "construct ExpOperator\n");
+}
+
+void BitwiseXor::print(std::ostream &dst, int indentation) const {
+  dst << "(";
+  left->print(dst, indentation);
+  dst << "^";
+  right->print(dst, indentation);
+  dst << ")";
+}
+
+int BitwiseXor::evaluate(Binding *binding) const {
+  return (left->evaluate(binding) ^ right->evaluate(binding));
+}
+
+////////////////////////////////////////
 // ShiftLeft
 ////////////////////////////////////////
 

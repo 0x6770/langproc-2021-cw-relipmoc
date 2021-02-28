@@ -51,4 +51,19 @@ class ShiftRight : public Operation {
   int evaluate(Binding *binding) const override;
 };
 
+////////////////////////////////////////
+// BitwiseXor
+////////////////////////////////////////
+
+class BitwiseXor : public Program {
+ protected:
+  ProgramPtr left;
+  ProgramPtr right;
+
+ public:
+  BitwiseXor(ProgramPtr _left, ProgramPtr _right);
+  virtual void print(std::ostream &dst, int indentation) const override;
+  virtual int evaluate(Binding *binding) const override;
+};
+
 #endif

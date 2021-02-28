@@ -11,6 +11,7 @@
 #include "ast/ast_primitive.hpp"
 #include "ast/ast_program.hpp"
 #include "ast/ast_statement.hpp"
+#include "ast/ast_assignments.hpp"
 
 extern const Program *parseAST(FILE *source_file);
 

@@ -51,9 +51,11 @@ class Division : public Operation {
   int evaluate(Binding *binding) const override;
 };
 
+
 ////////////////////////////////////////
-// Power
+// Modulus
 ////////////////////////////////////////
+
 
 class Power : public Operation {
  public:
@@ -64,12 +66,54 @@ class Power : public Operation {
 };
 
 ////////////////////////////////////////
-// Modulus
+// Suffix/postfix increment
 ////////////////////////////////////////
 
 class Modulus : public Operation {
  public:
   Modulus(ProgramPtr _left, ProgramPtr _right, int _pos);
+  int codeGen(Binding *binding, int reg) const override;
+  void print(std::ostream &dst, int indentation) const override;
+  int evaluate(Binding *binding) const override;
+ };
+
+class Increment_Post : public Operation {
+  Power(ProgramPtr _left, ProgramPtr _right, int _pos);
+  int codeGen(Binding *binding, int reg) const override;
+  void print(std::ostream &dst, int indentation) const override;
+  int evaluate(Binding *binding) const override;
+};
+
+
+////////////////////////////////////////
+// Prefix increment
+////////////////////////////////////////
+
+class Increment_Pre : public Operation {
+  Power(ProgramPtr _left, ProgramPtr _right, int _pos);
+  int codeGen(Binding *binding, int reg) const override;
+  void print(std::ostream &dst, int indentation) const override;
+  int evaluate(Binding *binding) const override;
+};
+
+////////////////////////////////////////
+// Suffix/postfix decrement
+////////////////////////////////////////
+
+class Decrement_Post : public Operation {
+  Power(ProgramPtr _left, ProgramPtr _right, int _pos);
+  int codeGen(Binding *binding, int reg) const override;
+  void print(std::ostream &dst, int indentation) const override;
+  int evaluate(Binding *binding) const override;
+};
+
+
+////////////////////////////////////////
+// Prefix decrement
+////////////////////////////////////////
+
+class Decrement_Pre : public Operation {
+  Power(ProgramPtr _left, ProgramPtr _right, int _pos);
   int codeGen(Binding *binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(Binding *binding) const override;
