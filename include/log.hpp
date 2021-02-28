@@ -38,11 +38,11 @@ class Log {
   int level;
 
  public:
-  Log(levels level) { this->level = level; };
-  void debug(const char* msg, ...);
-  void info(const char* msg, ...);
-  void warn(const char* msg, ...);
-  void error(const char* msg, ...);
+  Log(levels _level) : level(_level){};
+  void debug(const char* msg, ...) const;
+  void info(const char* msg, ...) const;
+  void warn(const char* msg, ...) const;
+  void error(const char* msg, ...) const;
 };
 
 #endif

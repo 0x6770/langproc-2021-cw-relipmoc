@@ -1,36 +1,37 @@
 #include "arg.hpp"
 #include "ast.hpp"
 
-extern FILE *yyin;
+Log *logger;
 
 int main(int argc, char **argv) {
-  char OUTPUT_FILE[] = "a.out";
   struct arguments arguments;
 
   // Default values for arguments
   arguments.source_file = 0;
-  arguments.output_file = OUTPUT_FILE;
+  arguments.output_file = (char *)"a.out";
+  arguments.level = warn;
 
   argp_parse(&argp, argc, argv, 0, 0, &arguments);
 
-  printf("SOURCE_FILE = %s\n", arguments.source_file);
-  printf("OUTPUT_FILE = %s\n", arguments.output_file);
-  printf("\n");
+  logger = new Log(arguments.level);
+  logger->info("SOURCE_FILE = %s\n", arguments.source_file);
+  logger->info("OUTPUT_FILE = %s\n", arguments.output_file);
 
   FILE *source_file = fopen(arguments.source_file, "r");
   yyin = source_file;
   const Program *ast = parseAST(source_file);
   fclose(source_file);
 
-  std::cout << "====================\n";
-  std::cout << "formatted: \n";
-  ast->print(std::cout, 0);
-  std::cout << std::endl;
+  ast->codeGen(0, 0);
 
   // std::cout << "====================\n";
   // std::cout << "exit status: ";
   // std::cout << ast->evaluate(0);
   // std::cout << std::endl;
+
+  std::cerr << std::endl;
+  ast->print(std::cerr, 0);
+  std::cerr << std::endl;
 
   exit(0);
 }

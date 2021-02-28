@@ -10,13 +10,14 @@
 ////////////////////////////////////////
 
 class Integer : public Program {
- protected:
+ private:
   int value;
 
  public:
   Integer(int _value);
-  virtual void print(std::ostream &dst, int indentation) const override;
-  virtual int evaluate(Binding *binding) const override;
+  int codeGen(Binding *binding, int reg) const override;
+  void print(std::ostream &dst, int indentation) const override;
+  int evaluate(Binding *binding) const override;
 };
 
 ////////////////////////////////////////
@@ -26,12 +27,15 @@ class Integer : public Program {
 class Variable : public Program {
  private:
   std::string id;
+  unsigned int index;
 
  public:
   Variable(const std::string &_id);
   const std::string getId() const;
-  virtual void print(std::ostream &dst, int indentation) const override;
-  virtual int evaluate(Binding *binding) const override;
+  int codeGen(Binding *binding, int reg) const override;
+  void print(std::ostream &dst, int indentation) const override;
+  int evaluate(Binding *binding) const override;
+  const int &getPos(const Binding &binding) const override;
 };
 
 #endif

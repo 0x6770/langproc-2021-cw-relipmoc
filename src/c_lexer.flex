@@ -38,13 +38,27 @@ sizeof                            {fprintf(stderr, "T_SIZEOF\n");   return T_SIZ
 [\n\t\r ]                         {}
 
 
+ /* different types of assignment */
+ \+\=                             {fprintf(stderr, "+=\n");   return T_ADDEQUAL;}
+ \-\=                             {fprintf(stderr, "-=\n");   return T_SUBEQUAL;}
+ \*\=                             {fprintf(stderr, "*=\n");   return T_MULEQUAL;}
+ \/\=                             {fprintf(stderr, "/=\n");   return T_DIVEQUAL;}
+ \<\<\=                           {fprintf(stderr, "<<=\n");   return T_SHIFTEQUAL_L;}
+ \>\>\=                           {fprintf(stderr, ">>=\n");   return T_SHIFTEQUAL_R;}
+ \&\=                             {fprintf(stderr, "&=\n");   return T_BITWISEEQUAL_AND;}
+ \^\=                             {fprintf(stderr, "^=\n");   return T_BITWISEEQUAL_XOR;}
+ \|\=                             {fprintf(stderr, "|=\n");   return T_BITWISEEQUAL_OR;}
+ \%\=                             {return T_MODEQUAL;}
+
  /* calculation */
+\+\+                              {fprintf(stderr, "++\n");   return T_INCREMENT;}
+\-\-                              {fprintf(stderr, "--\n");   return T_DECREMENT;}
 \+                                {fprintf(stderr, "+\n");    return yytext[0];}
 \*                                {fprintf(stderr, "*\n");    return yytext[0];}
 \^                                {fprintf(stderr, "^\n");    return yytext[0];}
 \-                                {fprintf(stderr, "-\n");    return yytext[0];}
 \/                                {fprintf(stderr, "/\n");    return yytext[0];}
-\%                                {fprintf(stderr, "%%\n");   return yytext[0];}
+\%                                {fprintf(stderr, "%%\n");    return yytext[0];}
 \&                                {fprintf(stderr, "&\n");    return yytext[0];}
 \|                                {fprintf(stderr, "|\n");    return yytext[0];}
 \~                                {fprintf(stderr, "~\n");    return yytext[0];}

@@ -4,9 +4,13 @@
 // Program
 ////////////////////////////////////////
 
-int Program::getType() const { return node_type; };
+const int &Program::getType() const { return node_type; };
 
-void Program::print_indent(std::ostream &dst, int &indentation) const {
+const int &Program::getSize() const { return size; };
+
+const int &Program::getPos(const Binding &binding) const { return pos; };
+
+void Program::printIndent(std::ostream &dst, int &indentation) const {
   std::string indent_space(indentation++ * N_SPACE, ' ');
   dst << indent_space;
 }
