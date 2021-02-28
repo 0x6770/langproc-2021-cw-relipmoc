@@ -35,9 +35,9 @@ int Function::codeGen(Binding *binding, int reg) const {
   logger->info("size of stack frame: %d\n", getSize());
   printf(".globl\t%s\n", name.c_str());
   printf(".ent\t%s\n", name.c_str());
+  printf("\n");
   printf("%s:\n", name.c_str());
   printf(".frame\t$fp,%d,$31\n", size);
-  printf("\n");
 
   printf("addiu $sp,$sp,%d\n", -size);
   printf("sw $fp,%d($sp)\n", (size - 4));

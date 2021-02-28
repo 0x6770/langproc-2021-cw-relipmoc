@@ -34,7 +34,7 @@ int Addition::codeGen(Binding *binding, int reg) const {
   if (!((right_type == 'i') | (right_type == 'x')))
     printf("lw $3,%d($fp)\n", right->getPos(*binding));
 
-  printf("addu $2,$3,$2\n");
+  printf("add $2,$2,$3\n");
   printf("sw $2,%d($fp)\t# store result of addition\n", pos);
 
   return 0;
@@ -73,7 +73,7 @@ int Subtraction::codeGen(Binding *binding, int reg) const {
   if (!((right_type == 'i') | (right_type == 'x')))
     printf("lw $3,%d($fp)\n", right->getPos(*binding));
 
-  printf("addu $2,$3,$2\n");
+  printf("sub $2,$2,$3\n");
   printf("sw $2,%d($fp)\t# store result of addition\n", pos);
 
   return 0;

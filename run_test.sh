@@ -13,9 +13,12 @@ mips-linux-gnu-gcc -mfp32 -o test.o -c test.s
 mips-linux-gnu-gcc -mfp32 -static -o test test.o test_driver.c
 
 # run executable on qemu-mips
-if qemu-mips test 
+qemu-mips test 
+if [ $? -eq 0 ]
   then
-    echo ❌ fail
-  else
     echo ✅ pass
+    exit 0
+  else
+    echo ❌ fail
+    exit 1
 fi

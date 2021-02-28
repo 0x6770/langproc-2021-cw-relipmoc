@@ -29,9 +29,9 @@ int main(int argc, char **argv) {
   // std::cout << ast->evaluate(0);
   // std::cout << std::endl;
 
-  std::cout << std::endl;
-  ast->print(std::cout, 0);
-  std::cout << std::endl;
+  std::cerr << std::endl;
+  ast->print(std::cerr, 0);
+  std::cerr << std::endl;
 
   exit(0);
 }
