@@ -3,6 +3,7 @@
 
 #include <cassert>
 
+#include "ast/ast_assignments.hpp"
 #include "ast/ast_function.hpp"
 #include "ast/ast_op_arithmetic.hpp"
 #include "ast/ast_op_bitwise.hpp"
