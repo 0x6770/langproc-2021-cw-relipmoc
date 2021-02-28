@@ -11,9 +11,12 @@
 #include "ast/ast_primitive.hpp"
 #include "ast/ast_program.hpp"
 #include "ast/ast_statement.hpp"
+#include "log.hpp"
 
 extern const Program *parseAST(FILE *source_file);
 
+extern Log *logger;
+extern FILE *yyin;
 extern int pos;  // position of a variable or expression result in stack frame
 
 #endif
