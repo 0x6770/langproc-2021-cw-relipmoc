@@ -27,10 +27,14 @@ int main(int argc, char **argv) {
   ast->print(std::cout, 0);
   std::cout << std::endl;
 
-  //std::cout << "====================\n";
-  //std::cout << "exit status: ";
-  //std::cout << ast->evaluate(0);
-  //std::cout << std::endl;
+  std::cout << "====================\n";
+  std::cout << "size of stack frame: " << ast->getSize() << std::endl;
+  ast->codeGen(0, 0);
+
+  // std::cout << "====================\n";
+  // std::cout << "exit status: ";
+  // std::cout << ast->evaluate(0);
+  // std::cout << std::endl;
 
   exit(0);
 }

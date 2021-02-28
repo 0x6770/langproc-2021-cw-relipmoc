@@ -15,6 +15,7 @@ class Statement : public Program {
 
  public:
   Statement(ProgramPtr _expression);
+  virtual int codeGen(Binding *binding, int reg) const override;
   virtual void print(std::ostream &dst, int indentation) const override;
   virtual int evaluate(Binding *binding) const override;
   virtual void bind(Binding *_binding) const;
@@ -28,6 +29,7 @@ class Statement : public Program {
 class Return : public Statement {
  public:
   Return(ProgramPtr _expression);
+  int codeGen(Binding *binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
 };
 
@@ -41,7 +43,9 @@ class VarDeclare : public Statement {
   std::string name;
 
  public:
-  VarDeclare(std::string _var_type, std::string _name, ProgramPtr _expression);
+  VarDeclare(std::string _var_type, std::string _name, ProgramPtr _expression,
+             int &_pos);
+  int codeGen(Binding *binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   void bind(Binding *_binding) const override;
 };
@@ -56,6 +60,7 @@ class VarAssign : public Statement {
 
  public:
   VarAssign(std::string _name, ProgramPtr _expression);
+  int codeGen(Binding *binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   void bind(Binding *_binding) const override;
 };
@@ -71,9 +76,12 @@ class StatementList : public Program {
 
  public:
   StatementList(ProgramPtr _statement);
-  std::vector<ProgramPtr> addStatement(ProgramPtr _statement);
+  void addStatement(ProgramPtr _statement);
+  void mergeBinding(ProgramPtr _statement_list);
+  int codeGen(Binding *binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(Binding *_binding) const override;
+  const Binding &getBinding() const;
 };
 
 class IfStatement : public Program {
@@ -85,6 +93,7 @@ class IfStatement : public Program {
  public:
   IfStatement(ProgramPtr condition, ProgramPtr _if_statement,
               ProgramPtr _else_statement);
+  int codeGen(Binding *binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(Binding *_binding) const override;
 };
@@ -96,6 +105,7 @@ class WhileLoop : public Program {
 
  public:
   WhileLoop(ProgramPtr _condition, ProgramPtr _statement);
+  int codeGen(Binding *binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(Binding *_binding) const override;
 };
