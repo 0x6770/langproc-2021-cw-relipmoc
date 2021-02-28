@@ -13,6 +13,7 @@ mips-linux-gnu-gcc -mfp32 -o test.o -c test.s
 mips-linux-gnu-gcc -mfp32 -static -o test test.o test_driver.c
 
 # run executable on qemu-mips
+set +e 
 qemu-mips test 
 if [ $? -eq 0 ]
   then
