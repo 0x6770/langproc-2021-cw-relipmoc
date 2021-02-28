@@ -22,15 +22,16 @@ int main(int argc, char **argv) {
   const Program *ast = parseAST(source_file);
   fclose(source_file);
 
-  ast->print(std::cout, 0);
-  std::cout << std::endl;
-
   ast->codeGen(0, 0);
 
   // std::cout << "====================\n";
   // std::cout << "exit status: ";
   // std::cout << ast->evaluate(0);
   // std::cout << std::endl;
+
+  std::cout << std::endl;
+  ast->print(std::cout, 0);
+  std::cout << std::endl;
 
   exit(0);
 }

@@ -5,7 +5,7 @@
 ////////////////////////////////////////
 
 Statement::Statement(ProgramPtr _expression) : expression(_expression) {
-  fprintf(stderr, "construct Statement\n");
+  logger->info("construct Statement\n");
 }
 
 void Statement::print(std::ostream &dst, int indentation) const {
@@ -24,7 +24,7 @@ ProgramPtr Statement::getExpression() const { return expression; }
 void Statement::bind(Binding *binding) const {}
 
 int Statement::codeGen(Binding *binding, int reg) const {
-  fprintf(stderr, "generate code for statement\n");
+  logger->info("generate code for statement\n");
   expression->codeGen(binding, reg);
   return 0;
 }
@@ -34,6 +34,7 @@ int Statement::codeGen(Binding *binding, int reg) const {
 ////////////////////////////////////////
 
 Return::Return(ProgramPtr _expression) : Statement(_expression) {
+  logger->info("construct Return\n");
   node_type = -1;
 }
 
@@ -45,8 +46,8 @@ void Return::print(std::ostream &dst, int indentation) const {
 }
 
 int Return::codeGen(Binding *binding, int reg) const {
-  fprintf(stderr, "generate code for return\n");
-  expression->codeGen(binding, reg);
+  logger->info("generate code for Return\n");
+  expression->codeGen(binding, 2);
   return 0;
 }
 
@@ -77,15 +78,15 @@ void VarDeclare::print(std::ostream &dst, int indentation) const {
 
 void VarDeclare::bind(Binding *binding) const {
   if (binding->find(name) != binding->end()) {
-    fprintf(stdout, "Multiple declarations, variable %s has been declared\n",
-            name.c_str());
+    logger->error("Multiple declarations, \"%s\" has been declared\n",
+                  name.c_str());
     exit(1);
   }
   binding->insert(std::pair<std::string, int>(name, pos));
 }
 
 int VarDeclare::codeGen(Binding *binding, int reg) const {
-  fprintf(stderr, "generate code for variable declaration\n");
+  logger->info("generate code for VarDeclare\n");
   assert(binding->find(name) != binding->end());
 
   if (expression) {
@@ -122,8 +123,10 @@ void VarAssign::bind(Binding *binding) const {
 }
 
 int VarAssign::codeGen(Binding *binding, int reg) const {
-  fprintf(stderr, "generate code for variable assignment\n");
-  assert(binding->find(name) != binding->end());
+  logger->info("generate code for VarAssign\n");
+  if (binding->find(name) == binding->end()) {
+    logger->error("%s has not been declared\n", name.c_str());
+  };
   expression->codeGen(binding, reg);
   printf("sw $2,%d($fp)\t# assign %s\n", pos, name.c_str());
   return 0;
@@ -174,13 +177,13 @@ int StatementList::evaluate(Binding *_binding) const {
 }
 
 int StatementList::codeGen(Binding *_binding, int reg) const {
-  fprintf(stderr, "generate code for statement list\n");
-  printf("Mapping of variables\n");
-  printf("---------------------\n");
-  printf("%10s|%10s\n", "name", "position");
-  printf("---------------------\n");
+  logger->info("generate code for StatementList\n");
+  logger->info("Mapping of variables\n");
+  logger->info("---------------------\n");
+  logger->info("%10s|%10s\n", "name", "position");
+  logger->info("---------------------\n");
   for (auto it : binding) {
-    printf("%10s|%10d\n", it.first.c_str(), it.second);
+    logger->info("%10s|%10d\n", it.first.c_str(), it.second);
   }
   for (auto it : statements) {
     it->codeGen((Binding *)&binding,

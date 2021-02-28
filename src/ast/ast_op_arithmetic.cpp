@@ -23,84 +23,20 @@ int Addition::evaluate(Binding *binding) const {
 }
 
 int Addition::codeGen(Binding *binding, int reg) const {
-  // left can be int, var, expr;
-  // right also can be int, var, expr;
-  // so there are 9 possible combinations in total
   int left_type = left->getType();
   int right_type = right->getType();
 
-  switch (left_type) {
-    case 'i': {  // left is integer
-      switch (right_type) {
-        case 'i': {  // right is integer
-          int res = evaluate(binding);
-          printf("li $2,%d\n", res);
-          break;
-        }
-        case 'x': {  // right is variable
-          printf("lw $2,%d($fp)\n", right->getPos(*binding));
-          printf("addiu $2,$2,%d\n", left->evaluate(binding));
-          break;
-        }
-        default: {  // right is expression
-          right->codeGen(binding, reg);
-          printf("addiu $2,$2,%d\n", left->evaluate(binding));
-          break;
-        }
-      }
-      break;
-    }
-    case 'x': {  // left is variable
-      switch (right_type) {
-        case 'i': {  // right is integer
-          printf("lw $2,%d($fp)\t# from var\n", left->getPos(*binding));
-          printf("addiu $2,$2,%d\n", right->evaluate(binding));
-          break;
-        }
-        case 'x': {  // right is variable
-          printf("lw $2,%d($fp)\t# from var\n", left->getPos(*binding));
-          printf("lw $3,%d($fp)\t# from var\n", right->getPos(*binding));
-          printf("addu $2,$3,$2\n");
-          break;
-        }
-        default: {  // right is expression
-          right->codeGen(binding, reg);
-          printf("lw $2,%d($fp)\t# from var\n", left->getPos(*binding));
-          printf("lw $3,%d($fp)\t# from expr\n", right->getPos(*binding));
-          printf("addu $2,$3,$2\n");
-          break;
-        }
-      }
-      break;
-    }
-    default: {  // left is expression
-      switch (right_type) {
-        case 'i': {  // right is integer
-          left->codeGen(binding, reg);
-          printf("lw $2,%d($fp)\t# from expr\n", left->getPos(*binding));
-          printf("addiu $2,$2,%d\n", right->evaluate(binding));
-          break;
-        }
-        case 'x': {  // right is variable
-          left->codeGen(binding, reg);
-          printf("lw $2,%d($fp)\t# from expr\n", left->getPos(*binding));
-          printf("lw $3,%d($fp)\t# from var\n", right->getPos(*binding));
-          printf("addu $2,$3,$2\n");
-          break;
-        }
-        default: {  // right is expression
-          left->codeGen(binding, reg);
-          right->codeGen(binding, reg);
-          printf("lw $2,%d($fp)\t# from expr\n", left->getPos(*binding));
-          printf("lw $3,%d($fp)\t# from expr\n", right->getPos(*binding));
-          printf("addu $2,$3,$2\n");
-          break;
-        }
-      }
-      break;
-    }
-  }
+  left->codeGen(binding, 2);
+  right->codeGen(binding, 3);
+
+  if (!((left_type == 'i') | (left_type == 'x')))
+    printf("lw $2,%d($fp)\n", left->getPos(*binding));
+  if (!((right_type == 'i') | (right_type == 'x')))
+    printf("lw $3,%d($fp)\n", right->getPos(*binding));
+
+  printf("addu $2,$3,$2\n");
   printf("sw $2,%d($fp)\t# store result of addition\n", pos);
+
   return 0;
 }
 
@@ -126,8 +62,20 @@ int Subtraction::evaluate(Binding *binding) const {
 }
 
 int Subtraction::codeGen(Binding *binding, int reg) const {
+  int left_type = left->getType();
+  int right_type = right->getType();
+
   left->codeGen(binding, 2);
-  right->codeGen(binding, 2);
+  right->codeGen(binding, 3);
+
+  if (!((left_type == 'i') | (left_type == 'x')))
+    printf("lw $2,%d($fp)\n", left->getPos(*binding));
+  if (!((right_type == 'i') | (right_type == 'x')))
+    printf("lw $3,%d($fp)\n", right->getPos(*binding));
+
+  printf("addu $2,$3,$2\n");
+  printf("sw $2,%d($fp)\t# store result of addition\n", pos);
+
   return 0;
 }
 
