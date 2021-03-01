@@ -175,19 +175,27 @@ int LogicalAnd::evaluate(Binding *binding) const {
 }
 
 int LogicalAnd::codeGen(Binding *binding, int reg) const {
-  int left_type = left->getType();
-  int right_type = right->getType();
 
   left->codeGen(binding, 2);
-  right->codeGen(binding, 3);
+  printf("nop\n");
+  // TODO： add counter to create unique label:
+  std::cout << "beq $0,$2," << "L2" << std::endl;
+  printf("nop\n");  // Add empty delay slot
 
-  if (!((left_type == 'i') | (left_type == 'x')))
-    printf("lw $2,%d($fp)\n", left->getPos(*binding));
-  if (!((right_type == 'i') | (right_type == 'x')))
-    printf("lw $3,%d($fp)\n", right->getPos(*binding));
-  // TODO: ADD how it response to logical expression
-
+  right->codeGen(binding,2);
+  printf("nop\n");
+    // TODO： add counter to create unique label:
+  std::cout << "beq $0,$2," << "L2" << std::endl;
+  printf("nop\n");
+  
+  printf("li $2,1\n");
+  printf("b L3\n");   // TODO： add counter to create unique label:
+  printf("nop\n");// Add empty delay slot
+  printf("L2:\n");
+  printf("move $2,$0\n");
+  printf("L3:\n");
   printf("sw $2,%d($fp)\t# store result of logical and\n", pos);
+  printf("lw $2,%d($fp)\n",pos);
   return 0;
 }
 
@@ -213,8 +221,29 @@ int LogicalOr::evaluate(Binding *binding) const {
 }
 
 int LogicalOr::codeGen(Binding *binding, int reg) const {
+
   left->codeGen(binding, 2);
-  right->codeGen(binding, 2);
-  printf("sw $2,%d($fp)\t# store result of logical or\n", pos);
+  printf("nop\n");
+  // TODO： add counter to create unique label:
+  std::cout << "bne $2,$0," << "L2" << std::endl;
+  printf("nop\n");  // Add empty delay slot
+
+  right->codeGen(binding,2);
+  printf("nop\n");
+    // TODO： add counter to create unique label:
+  std::cout << "bne $2,$0," << "L3" << std::endl;
+  printf("nop\n");
+  
+  printf("L2:\n");
+  printf("li $2,1\n");
+  printf("b L4\n");   // TODO： add counter to create unique label:
+  printf("nop\n");
+  printf("L3:\n");
+  printf("move $2,$0\n");
+  printf("L4:\n");
+  printf("sw $2,%d($fp)\t #store the value of logical or", pos);
+  printf("lw $2,%d($fp)\n",pos);
+
+
   return 0;
 }
