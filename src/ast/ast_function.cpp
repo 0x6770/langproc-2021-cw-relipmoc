@@ -14,6 +14,8 @@ Function::Function(std::string _type, std::string _name, ProgramPtr _statements,
 }
 
 void Function::print(std::ostream &dst, int indentation) const {
+  logger->info("====================\n");
+  logger->info("formatted: \n");
   printIndent(dst, indentation);
   dst << type;
   dst << " ";
@@ -28,15 +30,26 @@ int Function::evaluate(Binding *binding) const {
 }
 
 int Function::codeGen(Binding *binding, int reg) const {
-  fprintf(stderr, "generate code for function\n");
+  logger->info("====================\n");
+  logger->info("generate code for Function\n");
+  logger->info("size of stack frame: %d\n", getSize());
+  printf(".globl\t%s\n", name.c_str());
+  printf(".ent\t%s\n", name.c_str());
+  printf("\n");
+  printf("%s:\n", name.c_str());
+  printf(".frame\t$fp,%d,$31\n", size);
+
   printf("addiu $sp,$sp,%d\n", -size);
-  printf("sw $fp,(%d)$sp\n", (size - 4));
+  printf("sw $fp,%d($sp)\n", (size - 4));
   printf("move $fp,$sp\n");
   statements->codeGen(binding, 2);  // store  result result of to $2
   printf("move $sp,$fp\n");
-  printf("lw $fp,(%d)$sp\n", (size - 4));
+  printf("lw $fp,%d($sp)\n", (size - 4));
   printf("addiu $sp,$sp,%d\n", size);
   printf("jr $31\n");
   printf("nop\n");
+  printf("\n");
+
+  printf(".end\t%s\n", name.c_str());
   return 0;
 }

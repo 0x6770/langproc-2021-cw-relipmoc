@@ -3,6 +3,7 @@
 
 #include <cassert>
 
+#include "ast/ast_assignments.hpp"
 #include "ast/ast_function.hpp"
 #include "ast/ast_op_arithmetic.hpp"
 #include "ast/ast_op_bitwise.hpp"
@@ -11,10 +12,12 @@
 #include "ast/ast_primitive.hpp"
 #include "ast/ast_program.hpp"
 #include "ast/ast_statement.hpp"
-#include "ast/ast_assignments.hpp"
+#include "log.hpp"
 
 extern const Program *parseAST(FILE *source_file);
 
+extern Log *logger;
+extern FILE *yyin;
 extern int pos;  // position of a variable or expression result in stack frame
 
 #endif

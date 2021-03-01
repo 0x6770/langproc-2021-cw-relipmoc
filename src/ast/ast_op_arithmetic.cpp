@@ -11,11 +11,16 @@ Addition::Addition(ProgramPtr _left, ProgramPtr _right, int _pos)
 }
 
 void Addition::print(std::ostream &dst, int indentation) const {
+  int indent = indentation;
+  printIndent(dst, indentation);
   dst << "(";
-  left->print(dst, indentation);
+  left->print(dst, 0);
   dst << "+";
-  right->print(dst, indentation);
+  right->print(dst, 0);
   dst << ")";
+  if (indent) {
+    dst << "\n";
+  }
 }
 
 int Addition::evaluate(Binding *binding) const {
@@ -23,84 +28,20 @@ int Addition::evaluate(Binding *binding) const {
 }
 
 int Addition::codeGen(Binding *binding, int reg) const {
-  // left can be int, var, expr;
-  // right also can be int, var, expr;
-  // so there are 9 possible combinations in total
   int left_type = left->getType();
   int right_type = right->getType();
 
-  switch (left_type) {
-    case 'i': {  // left is integer
-      switch (right_type) {
-        case 'i': {  // right is integer
-          int res = evaluate(binding);
-          printf("li $2,%d\n", res);
-          break;
-        }
-        case 'x': {  // right is variable
-          printf("lw $2,%d($fp)\n", right->getPos(*binding));
-          printf("addiu $2,$2,%d\n", left->evaluate(binding));
-          break;
-        }
-        default: {  // right is expression
-          right->codeGen(binding, reg);
-          printf("addiu $2,$2,%d\n", left->evaluate(binding));
-          break;
-        }
-      }
-      break;
-    }
-    case 'x': {  // left is variable
-      switch (right_type) {
-        case 'i': {  // right is integer
-          printf("lw $2,%d($fp)\t# from var\n", left->getPos(*binding));
-          printf("addiu $2,$2,%d\n", right->evaluate(binding));
-          break;
-        }
-        case 'x': {  // right is variable
-          printf("lw $2,%d($fp)\t# from var\n", left->getPos(*binding));
-          printf("lw $3,%d($fp)\t# from var\n", right->getPos(*binding));
-          printf("addu $2,$3,$2\n");
-          break;
-        }
-        default: {  // right is expression
-          right->codeGen(binding, reg);
-          printf("lw $2,%d($fp)\t# from var\n", left->getPos(*binding));
-          printf("lw $3,%d($fp)\t# from expr\n", right->getPos(*binding));
-          printf("addu $2,$3,$2\n");
-          break;
-        }
-      }
-      break;
-    }
-    default: {  // left is expression
-      switch (right_type) {
-        case 'i': {  // right is integer
-          left->codeGen(binding, reg);
-          printf("lw $2,%d($fp)\t# from expr\n", left->getPos(*binding));
-          printf("addiu $2,$2,%d\n", right->evaluate(binding));
-          break;
-        }
-        case 'x': {  // right is variable
-          left->codeGen(binding, reg);
-          printf("lw $2,%d($fp)\t# from expr\n", left->getPos(*binding));
-          printf("lw $3,%d($fp)\t# from var\n", right->getPos(*binding));
-          printf("addu $2,$3,$2\n");
-          break;
-        }
-        default: {  // right is expression
-          left->codeGen(binding, reg);
-          right->codeGen(binding, reg);
-          printf("lw $2,%d($fp)\t# from expr\n", left->getPos(*binding));
-          printf("lw $3,%d($fp)\t# from expr\n", right->getPos(*binding));
-          printf("addu $2,$3,$2\n");
-          break;
-        }
-      }
-      break;
-    }
-  }
+  left->codeGen(binding, 2);
+  right->codeGen(binding, 3);
+
+  if (!((left_type == 'i') | (left_type == 'x')))
+    printf("lw $2,%d($fp)\n", left->getPos(*binding));
+  if (!((right_type == 'i') | (right_type == 'x')))
+    printf("lw $3,%d($fp)\n", right->getPos(*binding));
+
+  printf("add $2,$2,$3\n");
   printf("sw $2,%d($fp)\t# store result of addition\n", pos);
+
   return 0;
 }
 
@@ -114,11 +55,16 @@ Subtraction::Subtraction(ProgramPtr _left, ProgramPtr _right, int _pos)
 }
 
 void Subtraction::print(std::ostream &dst, int indentation) const {
+  int indent = indentation;
+  printIndent(dst, indentation);
   dst << "(";
-  left->print(dst, indentation);
+  left->print(dst, 0);
   dst << "-";
-  right->print(dst, indentation);
+  right->print(dst, 0);
   dst << ")";
+  if (indent) {
+    dst << "\n";
+  }
 }
 
 int Subtraction::evaluate(Binding *binding) const {
@@ -126,8 +72,20 @@ int Subtraction::evaluate(Binding *binding) const {
 }
 
 int Subtraction::codeGen(Binding *binding, int reg) const {
+  int left_type = left->getType();
+  int right_type = right->getType();
+
   left->codeGen(binding, 2);
-  right->codeGen(binding, 2);
+  right->codeGen(binding, 3);
+
+  if (!((left_type == 'i') | (left_type == 'x')))
+    printf("lw $2,%d($fp)\n", left->getPos(*binding));
+  if (!((right_type == 'i') | (right_type == 'x')))
+    printf("lw $3,%d($fp)\n", right->getPos(*binding));
+
+  printf("sub $2,$2,$3\n");
+  printf("sw $2,%d($fp)\t# store result of addition\n", pos);
+
   return 0;
 }
 
@@ -206,7 +164,6 @@ int Modulus::evaluate(Binding *binding) const {
   return (left->evaluate(binding) % right->evaluate(binding));
 }
 
-
 int Modulus::codeGen(Binding *binding, int reg) const {
   left->codeGen(binding, 2);
   right->codeGen(binding, 2);
@@ -216,7 +173,7 @@ int Modulus::codeGen(Binding *binding, int reg) const {
 // Postfix increment
 ////////////////////////////////////////
 
-Increment_Post::Increment_Post(ProgramPtr _left): left(_left) {
+Increment_Post::Increment_Post(ProgramPtr _left) : left(_left) {
   fprintf(stderr, "construct increment prefix\n");
 }
 
@@ -228,7 +185,7 @@ void Increment_Post::print(std::ostream &dst, int indentation) const {
 }
 
 int Increment_Post::evaluate(Binding *binding) const {
-  //int result = left->evaluate(binding)+1;
+  // int result = left->evaluate(binding)+1;
   return left->evaluate(binding);
 }
 
@@ -238,7 +195,7 @@ int Increment_Post::codeGen(Binding *binding, int reg) const { return 0; }
 // prefix increment
 ////////////////////////////////////////
 
-Increment_Pre::Increment_Pre(ProgramPtr _left): left(_left) {
+Increment_Pre::Increment_Pre(ProgramPtr _left) : left(_left) {
   fprintf(stderr, "construct increment prefix\n");
 }
 
@@ -250,7 +207,7 @@ void Increment_Pre::print(std::ostream &dst, int indentation) const {
 }
 
 int Increment_Pre::evaluate(Binding *binding) const {
-  return (left->evaluate(binding)+1);
+  return (left->evaluate(binding) + 1);
 }
 
 int Increment_Pre::codeGen(Binding *binding, int reg) const { return 0; }
@@ -259,7 +216,7 @@ int Increment_Pre::codeGen(Binding *binding, int reg) const { return 0; }
 // Postfix decrement
 ////////////////////////////////////////
 
-Decrement_Post::Decrement_Post(ProgramPtr _left):left(_left) {
+Decrement_Post::Decrement_Post(ProgramPtr _left) : left(_left) {
   fprintf(stderr, "construct decrement postfix\n");
 }
 
@@ -271,7 +228,7 @@ void Decrement_Post::print(std::ostream &dst, int indentation) const {
 }
 
 int Decrement_Post::evaluate(Binding *binding) const {
-  //int result = left->evaluate(binding)-1;
+  // int result = left->evaluate(binding)-1;
   return left->evaluate(binding);
 }
 
@@ -281,7 +238,7 @@ int Decrement_Post::codeGen(Binding *binding, int reg) const { return 0; }
 // prefix increment
 ////////////////////////////////////////
 
-Decrement_Pre::Decrement_Pre(ProgramPtr _left) : left(_left){
+Decrement_Pre::Decrement_Pre(ProgramPtr _left) : left(_left) {
   fprintf(stderr, "construct decrement prefix\n");
 }
 
@@ -293,10 +250,7 @@ void Decrement_Pre::print(std::ostream &dst, int indentation) const {
 }
 
 int Decrement_Pre::evaluate(Binding *binding) const {
-  return (left->evaluate(binding)-1);
+  return (left->evaluate(binding) - 1);
 }
 
 int Decrement_Pre::codeGen(Binding *binding, int reg) const { return 0; }
-
-
-
