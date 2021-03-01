@@ -9,6 +9,8 @@ Function::Function(std::string _type, std::string _name, ProgramPtr _statements,
     : type(_type), name(_name), statements(_statements) {
   int tmp_size = _pos + 8;
   size = (tmp_size % 8) ? tmp_size + 4 : tmp_size;
+    // ADD spaces for four parameters: 
+  size = size+16;
   fprintf(stderr, "construct Function\n");
   node_type = 'F';
 }
@@ -38,6 +40,7 @@ int Function::codeGen(Binding *binding, int reg) const {
   printf("\n");
   printf("%s:\n", name.c_str());
   printf(".frame\t$fp,%d,$31\n", size);
+
 
   printf("addiu $sp,$sp,%d\n", -size);
   printf("sw $fp,%d($sp)\n", (size - 4));

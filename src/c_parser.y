@@ -32,7 +32,7 @@
  
 %type <program> program function term unary factor expr add_sub shift_operator relational 
 %type <program> relational_equal bitwise_and bitwise_xor bitwise_or logical_and
-%type <program> stmt stmt_list stmt_closed stmt_open loop complex_assignment scope
+%type <program> stmt stmt_list stmt_closed stmt_open loop complex_assignment scope param_list param
 %type <program> unary_postfix unary_prefix
 %type <integer> T_INT_VALUE 
 %type <string> type T_NAME T_INT
@@ -53,15 +53,16 @@ program : function  { root = $1; }
         ;
 
 function : type T_NAME '(' ')' scope  { $$ = new Function(*$1, *$2, $5, pos); } 
+         | type T_NAME '(' param_list ')' scope  { $$ = new Function(*$1, *$2, $6, pos); } 
          ;
 
  /* TODO: Implicit param e.g. int f(a, b); */
-/*param_list : param                 { $$ = $1; }*/
-           /*| param_list ',' param  { $$ = }*/
-           /*;*/
+param_list : param                 { }
+           | param_list ',' param  {  }
+           ;
 
-/*param : type T_NAME  { $$ = new Param($1, $2); }*/
-      /*;*/
+param : type T_NAME  { }
+        ;
 scope : '{' stmt_list '}'  { $$ = $2; }
       ;
 
