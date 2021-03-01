@@ -93,16 +93,16 @@ loop : T_WHILE '(' complex_assignment ')' scope          { $$ = new WhileLoop($3
 complex_assignment : expr                                          { $$ = $1; }
                    | type T_NAME '=' complex_assignment            { $$ = new VarDeclare(*$1, *$2, $4, pos); }
                    | T_NAME '=' complex_assignment                 { $$ = new VarAssign(*$1, $3); }
-                   | factor T_ADDEQUAL complex_assignment          { $$ = new AddEqual($1, $3); }
-                   | factor T_SUBEQUAL complex_assignment          { $$ = new SubEqual($1, $3); }
-                   | factor T_MULEQUAL complex_assignment          { $$ = new MulEqual($1, $3); }
-                   | factor T_DIVEQUAL complex_assignment          { $$ = new QuoEqual($1, $3); }
-                   | factor T_MODEQUAL complex_assignment          { $$ = new ModEqual($1, $3); }
-                   | factor T_SHIFTEQUAL_L complex_assignment      { $$ = new ShiftEqual_L($1, $3); }
-                   | factor T_SHIFTEQUAL_R complex_assignment      { $$ = new ShiftEqual_R($1, $3); }
-                   | factor T_BITWISEEQUAL_AND complex_assignment  { $$ = new BitwiseEqual_AND($1, $3); }
-                   | factor T_BITWISEEQUAL_OR complex_assignment   { $$ = new BitwiseEqual_OR($1, $3); }
-                   | factor T_BITWISEEQUAL_XOR complex_assignment  { $$ = new BitwiseEqual_XOR($1, $3); }
+                   | factor T_ADDEQUAL complex_assignment          { $$ = new AddEqual($1, $3, pos); }
+                   | factor T_SUBEQUAL complex_assignment          { $$ = new SubEqual($1, $3,pos); }
+                   | factor T_MULEQUAL complex_assignment          { $$ = new MulEqual($1, $3,pos); }
+                   | factor T_DIVEQUAL complex_assignment          { $$ = new QuoEqual($1, $3,pos); }
+                   | factor T_MODEQUAL complex_assignment          { $$ = new ModEqual($1, $3,pos); }
+                   | factor T_SHIFTEQUAL_L complex_assignment      { $$ = new ShiftEqual_L($1, $3,pos); }
+                   | factor T_SHIFTEQUAL_R complex_assignment      { $$ = new ShiftEqual_R($1, $3,pos); }
+                   | factor T_BITWISEEQUAL_AND complex_assignment  { $$ = new BitwiseEqual_AND($1, $3,pos); }
+                   | factor T_BITWISEEQUAL_OR complex_assignment   { $$ = new BitwiseEqual_OR($1, $3,pos); }
+                   | factor T_BITWISEEQUAL_XOR complex_assignment  { $$ = new BitwiseEqual_XOR($1,$3,pos); }
                    ;
 
 expr : logical_and              { $$ = $1; }

@@ -22,8 +22,18 @@ int BitwiseAnd::evaluate(Binding *binding) const {
 }
 
 int BitwiseAnd::codeGen(Binding *binding, int reg) const {
+  int left_type = left->getType();
+  int right_type = right->getType();
+
   left->codeGen(binding, 2);
-  right->codeGen(binding, 2);
+  right->codeGen(binding, 3);
+
+  if (!((left_type == 'i') | (left_type == 'x')))
+    printf("lw $2,%d($fp)\n", left->getPos(*binding));
+  if (!((right_type == 'i') | (right_type == 'x')))
+    printf("lw $3,%d($fp)\n", right->getPos(*binding));
+  printf("and $2,$2,$3\n");
+  printf("sw $2,%d($fp)\t# store result of and bitwise operation\n", pos);
   return 0;
 }
 
@@ -49,8 +59,18 @@ int BitwiseOr::evaluate(Binding *binding) const {
 }
 
 int BitwiseOr::codeGen(Binding *binding, int reg) const {
+  int left_type = left->getType();
+  int right_type = right->getType();
+
   left->codeGen(binding, 2);
-  right->codeGen(binding, 2);
+  right->codeGen(binding, 3);
+
+  if (!((left_type == 'i') | (left_type == 'x')))
+    printf("lw $2,%d($fp)\n", left->getPos(*binding));
+  if (!((right_type == 'i') | (right_type == 'x')))
+    printf("lw $3,%d($fp)\n", right->getPos(*binding));
+  printf("or $2,$2,$3\n");
+  printf("sw $2,%d($fp)\t# store result of or bitwise operation\n", pos);
   return 0;
 }
 
@@ -75,7 +95,20 @@ int BitwiseXor::evaluate(Binding *binding) const {
   return (left->evaluate(binding) ^ right->evaluate(binding));
 }
 
-int BitwiseXor::codeGen(Binding *binding, int reg) const { return 0; }
+int BitwiseXor::codeGen(Binding *binding, int reg) const { 
+  int left_type = left->getType();
+  int right_type = right->getType();
+
+  left->codeGen(binding, 2);
+  right->codeGen(binding, 3);
+
+  if (!((left_type == 'i') | (left_type == 'x')))
+    printf("lw $2,%d($fp)\n", left->getPos(*binding));
+  if (!((right_type == 'i') | (right_type == 'x')))
+    printf("lw $3,%d($fp)\n", right->getPos(*binding));
+  printf("xor $2,$2,$3\n");
+  printf("sw $2,%d($fp)\t# store result of xor bitwise operation\n", pos);
+  return 0; }
 
 ////////////////////////////////////////
 // ShiftLeft
@@ -99,8 +132,18 @@ int ShiftLeft::evaluate(Binding *binding) const {
 }
 
 int ShiftLeft::codeGen(Binding *binding, int reg) const {
+  int left_type = left->getType();
+  int right_type = right->getType();
+
   left->codeGen(binding, 2);
-  right->codeGen(binding, 2);
+  right->codeGen(binding, 3);
+
+  if (!((left_type == 'i') | (left_type == 'x')))
+    printf("lw $2,%d($fp)\n", left->getPos(*binding));
+  if (!((right_type == 'i') | (right_type == 'x')))
+    printf("lw $3,%d($fp)\n", right->getPos(*binding));
+  printf("sll $2,$2,$3\n");
+  printf("sw $2,%d($fp)\t# store result of left shift operation\n", pos);
   return 0;
 }
 
@@ -126,7 +169,19 @@ int ShiftRight::evaluate(Binding *binding) const {
 }
 
 int ShiftRight::codeGen(Binding *binding, int reg) const {
+  int left_type = left->getType();
+  int right_type = right->getType();
+
   left->codeGen(binding, 2);
-  right->codeGen(binding, 2);
+  right->codeGen(binding, 3);
+
+  if (!((left_type == 'i') | (left_type == 'x')))
+    printf("lw $2,%d($fp)\n", left->getPos(*binding));
+  if (!((right_type == 'i') | (right_type == 'x')))
+    printf("lw $3,%d($fp)\n", right->getPos(*binding));
+
+  printf("slr $2,$2,$3\n");
+  printf("sw $2,%d($fp)\t# store result of right shift operation\n", pos);
+
   return 0;
 }

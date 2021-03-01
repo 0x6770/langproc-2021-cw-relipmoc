@@ -12,9 +12,10 @@ class AddEqual : public Program {
  protected:
   ProgramPtr left;
   ProgramPtr right;
+  int pos;
 
  public:
-  AddEqual(ProgramPtr _left, ProgramPtr _right);
+  AddEqual(ProgramPtr _left, ProgramPtr _right,int _pos);
   virtual void print(std::ostream &dst, int indentation) const override;
   virtual int evaluate(Binding *binding) const override;
   virtual int codeGen(Binding *binding,int reg) const override;
@@ -29,9 +30,10 @@ class SubEqual : public Program {
  protected:
   ProgramPtr left;
   ProgramPtr right;
+  int pos;
 
  public:
-  SubEqual(ProgramPtr _left, ProgramPtr _right);
+  SubEqual(ProgramPtr _left, ProgramPtr _right,int _pos);
   virtual void print(std::ostream &dst, int indentation) const override;
   virtual int evaluate(Binding *binding) const override;
   virtual int codeGen(Binding *binding,int reg) const override;
@@ -47,9 +49,10 @@ class MulEqual : public Program {
  protected:
   ProgramPtr left;
   ProgramPtr right;
+  int pos;
 
  public:
-  MulEqual(ProgramPtr _left, ProgramPtr _right);
+  MulEqual(ProgramPtr _left, ProgramPtr _right,int _pos);
   virtual void print(std::ostream &dst, int indentation) const override;
   virtual int evaluate(Binding *binding) const override;
   virtual int codeGen(Binding *binding,int reg) const override;
@@ -63,9 +66,10 @@ class QuoEqual : public Program {
  protected:
   ProgramPtr left;
   ProgramPtr right;
+  int pos;
 
  public:
-  QuoEqual(ProgramPtr _left, ProgramPtr _right);
+  QuoEqual(ProgramPtr _left, ProgramPtr _right,int _pos);
   virtual void print(std::ostream &dst, int indentation) const override;
   virtual int evaluate(Binding *binding) const override;
   virtual int codeGen(Binding *binding,int reg) const override;
@@ -79,9 +83,10 @@ class ModEqual : public Program {
  protected:
   ProgramPtr left;
   ProgramPtr right;
+  int pos;
 
  public:
-  ModEqual(ProgramPtr _left, ProgramPtr _right);
+  ModEqual(ProgramPtr _left, ProgramPtr _right,int _pos);
   virtual void print(std::ostream &dst, int indentation) const override;
   virtual int evaluate(Binding *binding) const override;
   virtual int codeGen(Binding *binding,int reg) const override;
@@ -95,9 +100,10 @@ class ShiftEqual_L : public Program {
  protected:
   ProgramPtr left;
   ProgramPtr right;
+  int pos;
 
  public:
-  ShiftEqual_L(ProgramPtr _left, ProgramPtr _right);
+  ShiftEqual_L(ProgramPtr _left, ProgramPtr _right,int _pos);
   virtual void print(std::ostream &dst, int indentation) const override;
   virtual int evaluate(Binding *binding) const override;
   virtual int codeGen(Binding *binding,int reg) const override;
@@ -111,9 +117,10 @@ class ShiftEqual_R : public Program {
  protected:
   ProgramPtr left;
   ProgramPtr right;
+  int pos;
 
  public:
-  ShiftEqual_R(ProgramPtr _left, ProgramPtr _right);
+  ShiftEqual_R(ProgramPtr _left, ProgramPtr _right,int _pos);
   virtual void print(std::ostream &dst, int indentation) const override;
   virtual int evaluate(Binding *binding) const override;
   virtual int codeGen(Binding *binding,int reg) const override;
@@ -127,9 +134,10 @@ class BitwiseEqual_AND : public Program {
  protected:
   ProgramPtr left;
   ProgramPtr right;
+  int pos;
 
  public:
-  BitwiseEqual_AND(ProgramPtr _left, ProgramPtr _right);
+  BitwiseEqual_AND(ProgramPtr _left, ProgramPtr _right,int _pos);
   virtual void print(std::ostream &dst, int indentation) const override;
   virtual int evaluate(Binding *binding) const override;
   virtual int codeGen(Binding *binding,int reg) const override;
@@ -143,9 +151,10 @@ class BitwiseEqual_OR : public Program {
  protected:
   ProgramPtr left;
   ProgramPtr right;
+  int pos;
 
  public:
-  BitwiseEqual_OR(ProgramPtr _left, ProgramPtr _right);
+  BitwiseEqual_OR(ProgramPtr _left, ProgramPtr _right,int _pos);
   virtual void print(std::ostream &dst, int indentation) const override;
   virtual int evaluate(Binding *binding) const override;
   virtual int codeGen(Binding *binding,int reg) const override;
@@ -159,9 +168,10 @@ class BitwiseEqual_XOR : public Program {
  protected:
   ProgramPtr left;
   ProgramPtr right;
+  int pos;
 
  public:
-  BitwiseEqual_XOR(ProgramPtr _left, ProgramPtr _right);
+  BitwiseEqual_XOR(ProgramPtr _left, ProgramPtr _right,int _pos);
   virtual void print(std::ostream &dst, int indentation) const override;
   virtual int evaluate(Binding *binding) const override;
   virtual int codeGen(Binding *binding,int reg) const override;

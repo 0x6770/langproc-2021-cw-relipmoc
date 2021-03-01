@@ -84,7 +84,7 @@ int Subtraction::codeGen(Binding *binding, int reg) const {
     printf("lw $3,%d($fp)\n", right->getPos(*binding));
 
   printf("sub $2,$2,$3\n");
-  printf("sw $2,%d($fp)\t# store result of addition\n", pos);
+  printf("sw $2,%d($fp)\t# store result of substrction\n", pos);
 
   return 0;
 }
@@ -111,8 +111,20 @@ int Multiplication::evaluate(Binding *binding) const {
 }
 
 int Multiplication::codeGen(Binding *binding, int reg) const {
+  int left_type = left->getType();
+  int right_type = right->getType();
+
   left->codeGen(binding, 2);
-  right->codeGen(binding, 2);
+  right->codeGen(binding, 3);
+
+  if (!((left_type == 'i') | (left_type == 'x')))
+    printf("lw $2,%d($fp)\n", left->getPos(*binding));
+  if (!((right_type == 'i') | (right_type == 'x')))
+    printf("lw $3,%d($fp)\n", right->getPos(*binding));
+
+  printf("mult $2,$3\n");
+  printf("mflo $2\n");
+  printf("sw $2,%d($fp)\t# store result of multiplication\n", pos);
   return 0;
 }
 
@@ -138,8 +150,20 @@ int Division::evaluate(Binding *binding) const {
 }
 
 int Division::codeGen(Binding *binding, int reg) const {
+  int left_type = left->getType();
+  int right_type = right->getType();
+
   left->codeGen(binding, 2);
-  right->codeGen(binding, 2);
+  right->codeGen(binding, 3);
+
+  if (!((left_type == 'i') | (left_type == 'x')))
+    printf("lw $2,%d($fp)\n", left->getPos(*binding));
+  if (!((right_type == 'i') | (right_type == 'x')))
+    printf("lw $3,%d($fp)\n", right->getPos(*binding));
+
+  printf("div $2,$3\n");
+  printf("mflo $2");
+  printf("sw $2,%d($fp)\t# store result of division\n", pos);
   return 0;
 }
 
@@ -165,8 +189,20 @@ int Modulus::evaluate(Binding *binding) const {
 }
 
 int Modulus::codeGen(Binding *binding, int reg) const {
+  int left_type = left->getType();
+  int right_type = right->getType();
+
   left->codeGen(binding, 2);
-  right->codeGen(binding, 2);
+  right->codeGen(binding, 3);
+
+  if (!((left_type == 'i') | (left_type == 'x')))
+    printf("lw $2,%d($fp)\n", left->getPos(*binding));
+  if (!((right_type == 'i') | (right_type == 'x')))
+    printf("lw $3,%d($fp)\n", right->getPos(*binding));
+
+  printf("div $2,$3\n");
+  printf("mfhi $2");
+  printf("sw $2,%d($fp)\t# store result of modulus\n", pos);
   return 0;
 }
 ////////////////////////////////////////
@@ -189,7 +225,17 @@ int Increment_Post::evaluate(Binding *binding) const {
   return left->evaluate(binding);
 }
 
-int Increment_Post::codeGen(Binding *binding, int reg) const { return 0; }
+int Increment_Post::codeGen(Binding *binding, int reg) const { 
+  int left_type = left->getType();
+  left->codeGen(binding, 2);
+
+  if (!((left_type == 'i') | (left_type == 'x')))
+    printf("lw $2,%d($fp)\n", left->getPos(*binding));
+
+  printf("addiu $3,$2,1\n");
+  printf("sw $3,%d($fp)\t# store result of post_increment\n", pos);
+  return 0;
+ }
 
 ////////////////////////////////////////
 // prefix increment
@@ -210,7 +256,17 @@ int Increment_Pre::evaluate(Binding *binding) const {
   return (left->evaluate(binding) + 1);
 }
 
-int Increment_Pre::codeGen(Binding *binding, int reg) const { return 0; }
+int Increment_Pre::codeGen(Binding *binding, int reg) const { 
+  int left_type = left->getType();
+  left->codeGen(binding, 2);
+
+  if (!((left_type == 'i') | (left_type == 'x')))
+    printf("lw $2,%d($fp)\n", left->getPos(*binding));
+
+  printf("addiu $3,$2,1\n");
+  printf("sw $3,%d($fp)\t# store result of pre_increment\n", pos);
+  return 0;
+}
 
 ////////////////////////////////////////
 // Postfix decrement
@@ -232,7 +288,17 @@ int Decrement_Post::evaluate(Binding *binding) const {
   return left->evaluate(binding);
 }
 
-int Decrement_Post::codeGen(Binding *binding, int reg) const { return 0; }
+int Decrement_Post::codeGen(Binding *binding, int reg) const {
+  int left_type = left->getType();
+  left->codeGen(binding, 2);
+
+  if (!((left_type == 'i') | (left_type == 'x')))
+    printf("lw $2,%d($fp)\n", left->getPos(*binding));
+
+  printf("addiu $3,$2,-1\n");
+  printf("sw $3,%d($fp)\t# store result of post_decrement\n", pos);
+  return 0;
+}
 
 ////////////////////////////////////////
 // prefix increment
@@ -253,4 +319,14 @@ int Decrement_Pre::evaluate(Binding *binding) const {
   return (left->evaluate(binding) - 1);
 }
 
-int Decrement_Pre::codeGen(Binding *binding, int reg) const { return 0; }
+int Decrement_Pre::codeGen(Binding *binding, int reg) const { 
+  int left_type = left->getType();
+  left->codeGen(binding, 2);
+
+  if (!((left_type == 'i') | (left_type == 'x')))
+    printf("lw $2,%d($fp)\n", left->getPos(*binding));
+
+  printf("addiu $3,$2,-1\n");
+  printf("sw $3,%d($fp)\t# store result of pre_decrement\n", pos);
+  return 0;
+  }

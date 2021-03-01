@@ -31,8 +31,24 @@ int LessEqual::evaluate(Binding *binding) const {
 }
 
 int LessEqual::codeGen(Binding *binding, int reg) const {
+  int left_type = left->getType();
+  int right_type = right->getType();
+
   left->codeGen(binding, 2);
-  right->codeGen(binding, 2);
+  right->codeGen(binding, 3);
+
+  if (!((left_type == 'i') | (left_type == 'x')))
+    printf("lw $2,%d($fp)\n", left->getPos(*binding));
+  if (!((right_type == 'i') | (right_type == 'x')))
+    printf("lw $3,%d($fp)\n", right->getPos(*binding));
+
+  printf("slt $2,$2,$3\n");
+  if(is_equal==1){
+    printf("xori $2,$2,0x1\n");
+  }
+  // TODO: there is also a line " andi $2,$2,0x00ff" in the online converter.
+  printf("sw $2,%d($fp)\t# store result of logical less or less equal\n", pos);
+
   return 0;
 }
 
@@ -67,8 +83,22 @@ int GreaterEqual::evaluate(Binding *binding) const {
 }
 
 int GreaterEqual::codeGen(Binding *binding, int reg) const {
+  int left_type = left->getType();
+  int right_type = right->getType();
+
   left->codeGen(binding, 2);
-  right->codeGen(binding, 2);
+  right->codeGen(binding, 3);
+
+  if (!((left_type == 'i') | (left_type == 'x')))
+    printf("lw $2,%d($fp)\n", left->getPos(*binding));
+  if (!((right_type == 'i') | (right_type == 'x')))
+    printf("lw $3,%d($fp)\n", right->getPos(*binding));
+
+  printf("slt $2,$3,$2\n");
+  if(is_equal==1){
+    printf("xori $2,$2,0x1\n");
+  }
+  printf("sw $2,%d($fp)\t# store result of logical greater or greater than\n", pos);
   return 0;
 }
 
@@ -102,8 +132,24 @@ int Equal::evaluate(Binding *binding) const {
 }
 
 int Equal::codeGen(Binding *binding, int reg) const {
+  int left_type = left->getType();
+  int right_type = right->getType();
+
   left->codeGen(binding, 2);
-  right->codeGen(binding, 2);
+  right->codeGen(binding, 3);
+
+  if (!((left_type == 'i') | (left_type == 'x')))
+    printf("lw $2,%d($fp)\n", left->getPos(*binding));
+  if (!((right_type == 'i') | (right_type == 'x')))
+    printf("lw $3,%d($fp)\n", right->getPos(*binding));
+
+  printf("xor $2,$2,$3\n");
+  if(is_equal==1){
+    printf("sltu $2,$0,$2\n");
+  }else{
+    printf("sltiu $2,$2,1\n");
+  }
+  printf("sw $2,%d($fp)\t# store result of logical equal or logical not equal\n", pos);
   return 0;
 }
 
@@ -129,8 +175,19 @@ int LogicalAnd::evaluate(Binding *binding) const {
 }
 
 int LogicalAnd::codeGen(Binding *binding, int reg) const {
+  int left_type = left->getType();
+  int right_type = right->getType();
+
   left->codeGen(binding, 2);
-  right->codeGen(binding, 2);
+  right->codeGen(binding, 3);
+
+  if (!((left_type == 'i') | (left_type == 'x')))
+    printf("lw $2,%d($fp)\n", left->getPos(*binding));
+  if (!((right_type == 'i') | (right_type == 'x')))
+    printf("lw $3,%d($fp)\n", right->getPos(*binding));
+  // TODO: ADD how it response to logical expression
+
+  printf("sw $2,%d($fp)\t# store result of logical and\n", pos);
   return 0;
 }
 
@@ -158,5 +215,6 @@ int LogicalOr::evaluate(Binding *binding) const {
 int LogicalOr::codeGen(Binding *binding, int reg) const {
   left->codeGen(binding, 2);
   right->codeGen(binding, 2);
+  printf("sw $2,%d($fp)\t# store result of logical or\n", pos);
   return 0;
 }
