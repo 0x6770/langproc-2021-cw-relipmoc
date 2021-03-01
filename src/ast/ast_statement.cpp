@@ -25,7 +25,7 @@ void Statement::bind(Binding *binding) const {}
 
 int Statement::codeGen(Binding *binding, int reg) const {
   logger->info("generate code for statement\n");
-  expression->codeGen(binding, reg);
+  if (expression) expression->codeGen(binding, reg);
   return 0;
 }
 
@@ -41,7 +41,7 @@ Return::Return(ProgramPtr _expression) : Statement(_expression) {
 void Return::print(std::ostream &dst, int indentation) const {
   printIndent(dst, indentation);
   dst << "return ";
-  expression->print(dst, indentation);
+  expression->print(dst, 0);
   dst << ";\n";
 }
 
@@ -136,9 +136,7 @@ int VarAssign::codeGen(Binding *binding, int reg) const {
 // StatementList
 ////////////////////////////////////////
 
-StatementList::StatementList(ProgramPtr _statement) {
-  addStatement(_statement);
-}
+StatementList::StatementList() {}
 
 void StatementList::addStatement(ProgramPtr _statement) {
   if (((Statement *)_statement)->getType() == 'v') {
@@ -224,7 +222,7 @@ void IfStatement::print(std::ostream &dst, int indentation) const {
   dst << "\n";
 }
 
-int IfStatement::evaluate(Binding *_binding) const { return 0; }
+int IfStatement::evaluate(Binding *binding) const { return 0; }
 
 int IfStatement::codeGen(Binding *binding, int reg) const { return 0; }
 
@@ -249,6 +247,13 @@ void WhileLoop::print(std::ostream &dst, int indentation) const {
   dst << "\n";
 }
 
-int WhileLoop::evaluate(Binding *_binding) const { return 0; }
+int WhileLoop::evaluate(Binding *binding) const { return 0; }
 
-int WhileLoop::codeGen(Binding *binding, int reg) const { return 0; }
+// two labels: $L(2n) and $L(2n+1) if
+int WhileLoop::codeGen(Binding *binding, int reg) const {
+  logger->info("generate code for WhileLoop\n");
+  condition->codeGen(binding, reg);
+  printf("$L%d", condition->getPos(*binding) * 2);
+  printf("$L%d", condition->getPos(*binding) * 2 + 1);
+  return 0;
+}

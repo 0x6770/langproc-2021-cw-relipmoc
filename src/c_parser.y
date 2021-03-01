@@ -30,9 +30,9 @@
 %token T_INT_VALUE T_FLOAT_VALUE T_DOUBLE_VALUE T_CHAR_VALUE 
 %token T_WHILE T_FOR T_SWITCH T_IF T_ELSE T_BREAK T_CONTINUE
  
-%type <program> program function term unary factor expr add_sub shift_operator relational if_condition
+%type <program> program function term unary factor expr add_sub shift_operator relational 
 %type <program> relational_equal bitwise_and bitwise_xor bitwise_or logical_and
-%type <program> statement_let statement statement_list conditional_statement loop complex_assignment
+%type <program> stmt stmt_list stmt_closed stmt_open loop complex_assignment scope
 %type <program> unary_postfix unary_prefix
 %type <integer> T_INT_VALUE 
 %type <string> type T_NAME T_INT
@@ -52,7 +52,7 @@ type : T_INT  { $$ = $1; }
 program : function  { root = $1; }
         ;
 
-function : type T_NAME '(' ')' '{' statement_list '}'  { $$ = new Function(*$1, *$2, $6, pos); } 
+function : type T_NAME '(' ')' scope  { $$ = new Function(*$1, *$2, $5, pos); } 
          ;
 
  /* TODO: Implicit param e.g. int f(a, b); */
@@ -62,36 +62,36 @@ function : type T_NAME '(' ')' '{' statement_list '}'  { $$ = new Function(*$1, 
 
 /*param : type T_NAME  { $$ = new Param($1, $2); }*/
       /*;*/
+scope : '{' stmt_list '}'  { $$ = $2; }
+      ;
 
-statement_list : statement                              { $$ = new StatementList($1); }
-               | statement_list statement               { ((StatementList *)$1)->addStatement($2); $$ = $1; }
-               | statement_list '{' statement_list '}'  { ((StatementList *)$1)->addStatement($3); ((StatementList *)$3)->mergeBinding($1); $$ = $1; }
-               ;
-
-statement : T_RETURN expr ';'          { $$ = new Return($2); }
-          | statement_let ';'          { $$ = $1; }
-          | conditional_statement ';'  { $$ = $1; }
-          | loop ';'                   { $$ = $1; }
+stmt_list : %empty                    { $$ = new StatementList(); }
+          | stmt_list stmt   { ((StatementList *)$1)->addStatement($2); $$ = $1; }
+          | stmt_list scope  { ((StatementList *)$1)->addStatement($2); ((StatementList *)$2)->mergeBinding($1); $$ = $1; }
           ;
 
-statement_let : complex_assignment     { $$ = $1; }
-              | type T_NAME            { $$ = new VarDeclare(*$1, *$2, 0, pos); }
-              | '{' '}'                { $$ = new Statement(0); }
-              ;
-
-if_condition :  T_IF '(' expr ')'  { $$ = $3; }
-             ;
-
-conditional_statement : if_condition statement                   { $$ = new IfStatement($1, $2, 0); }
-                      | if_condition statement T_ELSE statement  { $$ = new IfStatement($1, $2, $4); }
-                      ;
-
-loop : T_WHILE '(' expr ')' statement                         { $$ = new WhileLoop($3, $5); }
-     | T_FOR '(' statement statement statement ')' statement  { $$ = new WhileLoop($7, $5); }
+stmt : stmt_open    { $$ = $1; }
+     | stmt_closed  { $$ = $1; }
      ;
 
-complex_assignment : expr ';'                                      { $$ = $1; }
-                   | type T_NAME '=' expr ';'                      { $$ = new VarDeclare(*$1, *$2, $4, pos); }
+stmt_open : T_IF '(' expr ')' stmt                          { $$ = new IfStatement($3, $5, 0); }
+          | T_IF '(' expr ')' stmt_closed T_ELSE stmt_open  { $$ = new IfStatement($3, $5, $7); }
+          ;
+
+stmt_closed : T_IF '(' expr ')' stmt_closed T_ELSE stmt_closed  { $$ = new IfStatement($3, $5, $7); }
+            | complex_assignment ';'                            { $$ = $1; }
+            | type T_NAME                                       { $$ = new VarDeclare(*$1, *$2, 0, pos); }
+            | T_RETURN expr ';'                                 { $$ = new Return($2); }
+            | loop                                              { $$ = $1; }
+            /*| ';'                                               { $$ = new Statement(0); }*/
+            ; 
+
+loop : T_WHILE '(' complex_assignment ')' scope          { $$ = new WhileLoop($3, $5); }
+     | T_FOR '(' stmt stmt stmt ')' scope  { $$ = new WhileLoop($7, $5); }
+     ;
+
+complex_assignment : expr                                          { $$ = $1; }
+                   | type T_NAME '=' complex_assignment            { $$ = new VarDeclare(*$1, *$2, $4, pos); }
                    | T_NAME '=' complex_assignment                 { $$ = new VarAssign(*$1, $3); }
                    | factor T_ADDEQUAL complex_assignment          { $$ = new AddEqual($1, $3); }
                    | factor T_SUBEQUAL complex_assignment          { $$ = new SubEqual($1, $3); }

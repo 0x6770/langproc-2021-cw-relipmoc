@@ -11,11 +11,16 @@ Addition::Addition(ProgramPtr _left, ProgramPtr _right, int _pos)
 }
 
 void Addition::print(std::ostream &dst, int indentation) const {
+  int indent = indentation;
+  printIndent(dst, indentation);
   dst << "(";
-  left->print(dst, indentation);
+  left->print(dst, 0);
   dst << "+";
-  right->print(dst, indentation);
+  right->print(dst, 0);
   dst << ")";
+  if (indent) {
+    dst << "\n";
+  }
 }
 
 int Addition::evaluate(Binding *binding) const {
@@ -50,11 +55,16 @@ Subtraction::Subtraction(ProgramPtr _left, ProgramPtr _right, int _pos)
 }
 
 void Subtraction::print(std::ostream &dst, int indentation) const {
+  int indent = indentation;
+  printIndent(dst, indentation);
   dst << "(";
-  left->print(dst, indentation);
+  left->print(dst, 0);
   dst << "-";
-  right->print(dst, indentation);
+  right->print(dst, 0);
   dst << ")";
+  if (indent) {
+    dst << "\n";
+  }
 }
 
 int Subtraction::evaluate(Binding *binding) const {
@@ -154,7 +164,6 @@ int Modulus::evaluate(Binding *binding) const {
   return (left->evaluate(binding) % right->evaluate(binding));
 }
 
-
 int Modulus::codeGen(Binding *binding, int reg) const {
   left->codeGen(binding, 2);
   right->codeGen(binding, 2);
@@ -164,7 +173,7 @@ int Modulus::codeGen(Binding *binding, int reg) const {
 // Postfix increment
 ////////////////////////////////////////
 
-Increment_Post::Increment_Post(ProgramPtr _left): left(_left) {
+Increment_Post::Increment_Post(ProgramPtr _left) : left(_left) {
   fprintf(stderr, "construct increment prefix\n");
 }
 
@@ -176,7 +185,7 @@ void Increment_Post::print(std::ostream &dst, int indentation) const {
 }
 
 int Increment_Post::evaluate(Binding *binding) const {
-  //int result = left->evaluate(binding)+1;
+  // int result = left->evaluate(binding)+1;
   return left->evaluate(binding);
 }
 
@@ -186,7 +195,7 @@ int Increment_Post::codeGen(Binding *binding, int reg) const { return 0; }
 // prefix increment
 ////////////////////////////////////////
 
-Increment_Pre::Increment_Pre(ProgramPtr _left): left(_left) {
+Increment_Pre::Increment_Pre(ProgramPtr _left) : left(_left) {
   fprintf(stderr, "construct increment prefix\n");
 }
 
@@ -198,7 +207,7 @@ void Increment_Pre::print(std::ostream &dst, int indentation) const {
 }
 
 int Increment_Pre::evaluate(Binding *binding) const {
-  return (left->evaluate(binding)+1);
+  return (left->evaluate(binding) + 1);
 }
 
 int Increment_Pre::codeGen(Binding *binding, int reg) const { return 0; }
@@ -207,7 +216,7 @@ int Increment_Pre::codeGen(Binding *binding, int reg) const { return 0; }
 // Postfix decrement
 ////////////////////////////////////////
 
-Decrement_Post::Decrement_Post(ProgramPtr _left):left(_left) {
+Decrement_Post::Decrement_Post(ProgramPtr _left) : left(_left) {
   fprintf(stderr, "construct decrement postfix\n");
 }
 
@@ -219,7 +228,7 @@ void Decrement_Post::print(std::ostream &dst, int indentation) const {
 }
 
 int Decrement_Post::evaluate(Binding *binding) const {
-  //int result = left->evaluate(binding)-1;
+  // int result = left->evaluate(binding)-1;
   return left->evaluate(binding);
 }
 
@@ -229,7 +238,7 @@ int Decrement_Post::codeGen(Binding *binding, int reg) const { return 0; }
 // prefix increment
 ////////////////////////////////////////
 
-Decrement_Pre::Decrement_Pre(ProgramPtr _left) : left(_left){
+Decrement_Pre::Decrement_Pre(ProgramPtr _left) : left(_left) {
   fprintf(stderr, "construct decrement prefix\n");
 }
 
@@ -241,10 +250,7 @@ void Decrement_Pre::print(std::ostream &dst, int indentation) const {
 }
 
 int Decrement_Pre::evaluate(Binding *binding) const {
-  return (left->evaluate(binding)-1);
+  return (left->evaluate(binding) - 1);
 }
 
 int Decrement_Pre::codeGen(Binding *binding, int reg) const { return 0; }
-
-
-

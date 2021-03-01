@@ -75,7 +75,7 @@ class StatementList : public Program {
   Binding binding;
 
  public:
-  StatementList(ProgramPtr _statement);
+  StatementList();
   void addStatement(ProgramPtr _statement);
   void mergeBinding(ProgramPtr _statement_list);
   int codeGen(Binding *binding, int reg) const override;
@@ -91,7 +91,7 @@ class IfStatement : public Program {
   ProgramPtr else_statement;
 
  public:
-  IfStatement(ProgramPtr condition, ProgramPtr _if_statement,
+  IfStatement(ProgramPtr _condition, ProgramPtr _if_statement,
               ProgramPtr _else_statement);
   int codeGen(Binding *binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
