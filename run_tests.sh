@@ -24,16 +24,20 @@ set +e
 echo 
 echo "=============================="
 echo "Checking test cases"
-echo -e "testcase\t|result\t|exit status"
+echo "------------------------------"
+echo -e "result\t|exit status\t|test case"
 echo "------------------------------"
 
+for test_driver in "${TEST_DIR}"/*_driver.c; do
+  test=$(basename "${test_driver}")
+  test=${test%_driver.c}
 
-for test in "${TEST_DIR}"/*.c; do
-  ./run_test.sh "${test}" 2 >"${test}.output"
+  ./run_test.sh "${TEST_DIR}/${test}.c" 2 >"${TEST_DIR}/${test}.output"
   exit_status=$?
+
   if (( ${exit_status} != 0 )); then
-    printf "%s\t|%s\t|%d\n" "${test}" "fail" "${exit_status}"
+    printf "\033[0;31mfail\033[0m\t|%d\t\t|%s\n" "${exit_status}" "${test}"
   else
-    printf "%s\t|%s\t|%d\n" "${test}" "pass" "${exit_status}"
+    printf "\033[0;32mpass\033[0m\t|%d\t\t|%s\n" "${exit_status}" "${test}"
   fi
 done
