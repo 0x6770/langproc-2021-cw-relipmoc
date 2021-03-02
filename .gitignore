@@ -4,6 +4,7 @@
 a.out 
 bin/
 
+*.bin
 *.o
 *.s
 *.output

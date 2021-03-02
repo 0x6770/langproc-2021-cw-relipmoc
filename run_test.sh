@@ -26,7 +26,7 @@ bin/c_compiler -S "${TEST_FILE}" -o "${TEST}".s 2>/dev/null >"${TEST}".s
 # Assemble generated assembly code via gcc
 mips-linux-gnu-gcc -mfp32 -o "${TEST}".o -c "${TEST}".s
 # Link to main function and generate executable via gcc
-mips-linux-gnu-gcc -mfp32 -static -o "${TEST}".bin "${TEST}".o test_driver.c
+mips-linux-gnu-gcc -mfp32 -static -o "${TEST}".bin "${TEST}".o "${TEST}"_driver.c
 
 # run executable on qemu-mips
 set +e 
