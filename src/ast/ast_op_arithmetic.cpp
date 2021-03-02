@@ -162,7 +162,7 @@ int Division::codeGen(Binding *binding, int reg) const {
     printf("lw $3,%d($fp)\n", right->getPos(*binding));
 
   printf("div $2,$3\n");
-  printf("mflo $2");
+  printf("mflo $2\n");
   printf("sw $2,%d($fp)\t# store result of division\n", pos);
   return 0;
 }
@@ -201,7 +201,7 @@ int Modulus::codeGen(Binding *binding, int reg) const {
     printf("lw $3,%d($fp)\n", right->getPos(*binding));
 
   printf("div $2,$3\n");
-  printf("mfhi $2");
+  printf("mfhi $2\n");
   printf("sw $2,%d($fp)\t# store result of modulus\n", pos);
   return 0;
 }

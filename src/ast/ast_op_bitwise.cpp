@@ -180,7 +180,7 @@ int ShiftRight::codeGen(Binding *binding, int reg) const {
   if (!((right_type == 'i') | (right_type == 'x')))
     printf("lw $3,%d($fp)\n", right->getPos(*binding));
 
-  printf("slr $2,$2,$3\n");
+  printf("sra $2,$2,$3\n");
   printf("sw $2,%d($fp)\t# store result of right shift operation\n", pos);
 
   return 0;

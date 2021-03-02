@@ -1,4 +1,4 @@
 int f();
 int main(){
-    return !(f()==1024);
+    return !(f()==14);
 }

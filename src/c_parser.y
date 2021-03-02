@@ -127,15 +127,15 @@ bitwise_and : relational_equal                  { $$ = $1;}
             ;
 
 relational_equal : relational                                   { $$ = $1;}
-                 | relational_equal T_EQUAL shift_operator      { $$ = new Equal($1, $3, 0, pos); pos+=4; }
-                 | relational_equal T_NOT_EQUAL shift_operator  { $$ = new Equal($1, $3, 1, pos); pos+=4; }
+                 | relational_equal T_EQUAL shift_operator      { $$ = new Equal($1, $3, pos, 0); pos+=4; }
+                 | relational_equal T_NOT_EQUAL shift_operator  { $$ = new Equal($1, $3, pos, 1); pos+=4; }
                  ;
 
 relational : shift_operator                             { $$ = $1;}
-           | shift_operator T_LESS_E shift_operator     { $$ = new LessEqual($1, $3, 1, pos); pos+=4; }
-           | shift_operator T_LESS shift_operator       { $$ = new LessEqual($1, $3, 0, pos); pos+=4; }
-           | shift_operator T_GREATER_E shift_operator  { $$ = new GreaterEqual($1, $3, 1, pos); pos+=4; }
-           | shift_operator T_GREATER shift_operator    { $$ = new GreaterEqual($1, $3, 0, pos); pos+=4; }
+           | shift_operator T_LESS_E shift_operator     { $$ = new LessEqual($1, $3, pos, 1); pos+=4; }
+           | shift_operator T_LESS shift_operator       { $$ = new LessEqual($1, $3, pos, 0); pos+=4; }
+           | shift_operator T_GREATER_E shift_operator  { $$ = new GreaterEqual($1, $3, pos, 1); pos+=4; }
+           | shift_operator T_GREATER shift_operator    { $$ = new GreaterEqual($1, $3, pos, 0); pos+=4; }
            ;
 
 shift_operator : add_sub                           { $$ = $1;}   

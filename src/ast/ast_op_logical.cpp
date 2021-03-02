@@ -46,6 +46,7 @@ int LessEqual::codeGen(Binding *binding, int reg) const {
   if(is_equal==1){
     printf("xori $2,$2,0x1\n");
   }
+  printf("andi $2,$2,0x00ff\n");
   // TODO: there is also a line " andi $2,$2,0x00ff" in the online converter.
   printf("sw $2,%d($fp)\t# store result of logical less or less equal\n", pos);
 

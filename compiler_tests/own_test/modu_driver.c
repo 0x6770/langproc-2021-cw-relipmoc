@@ -1,4 +1,4 @@
 int f();
 int main(){
-    return !(f()==2);
+    return !(f()==1);
 }
