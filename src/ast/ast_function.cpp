@@ -10,7 +10,7 @@ Function::Function(std::string _type, std::string _name, ProgramPtr _statements,
   int tmp_size = _pos + 8;
   size = (tmp_size % 8) ? tmp_size + 4 : tmp_size;
   // ADD spaces for four parameters:
-  size = size + 16;
+  //size = size + 16;
   logger->info("construct Function\n");
   node_type = 'F';
 }

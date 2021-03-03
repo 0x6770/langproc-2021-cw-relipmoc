@@ -34,8 +34,14 @@ int LessEqual::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
-  left->codeGen(binding, 2);
-  right->codeGen(binding, 3);
+  if(left_type == 'i' && right_type != 'i'){
+        right->codeGen(binding, 3);
+        left->codeGen(binding, 2);
+  }
+  else{
+    left->codeGen(binding, 2);
+    right->codeGen(binding, 3);
+  }
 
   if (!((left_type == 'i') | (left_type == 'x')))
     printf("lw $2,%d($fp)\n", left->getPos(binding));
@@ -87,8 +93,14 @@ int GreaterEqual::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
-  left->codeGen(binding, 2);
-  right->codeGen(binding, 3);
+  if(left_type == 'i' && right_type != 'i'){
+        right->codeGen(binding, 3);
+        left->codeGen(binding, 2);
+  }
+  else{
+    left->codeGen(binding, 2);
+    right->codeGen(binding, 3);
+  }
 
   if (!((left_type == 'i') | (left_type == 'x')))
     printf("lw $2,%d($fp)\n", left->getPos(binding));
@@ -138,8 +150,14 @@ int Equal::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
-  left->codeGen(binding, 2);
-  right->codeGen(binding, 3);
+  if(left_type == 'i' && right_type != 'i'){
+        right->codeGen(binding, 3);
+        left->codeGen(binding, 2);
+  }
+  else{
+    left->codeGen(binding, 2);
+    right->codeGen(binding, 3);
+  }
 
   if (!((left_type == 'i') | (left_type == 'x')))
     printf("lw $2,%d($fp)\n", left->getPos(binding));

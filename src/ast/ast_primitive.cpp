@@ -1,4 +1,5 @@
 #include "ast.hpp"
+#include <iterator>
 
 ////////////////////////////////////////
 // Integer
@@ -51,7 +52,7 @@ int Variable::codeGen(const Binding &_binding, int reg) const {
   return 0;
 }
 
-int Variable::getPos(const Binding &binding) const {
+int Variable::getPos(const Binding &_binding) const {
   if (binding.find(id) == binding.end()) {
     logger->error("\"%s\" has not been declared\n", id.c_str());
     exit(1);
