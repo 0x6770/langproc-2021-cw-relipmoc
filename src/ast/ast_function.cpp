@@ -9,9 +9,9 @@ Function::Function(std::string _type, std::string _name, ProgramPtr _statements,
     : type(_type), name(_name), statements(_statements) {
   int tmp_size = _pos + 8;
   size = (tmp_size % 8) ? tmp_size + 4 : tmp_size;
-    // ADD spaces for four parameters: 
-  size = size+16;
-  fprintf(stderr, "construct Function\n");
+  // ADD spaces for four parameters:
+  size = size + 16;
+  logger->info("construct Function\n");
   node_type = 'F';
 }
 
@@ -27,20 +27,23 @@ void Function::print(std::ostream &dst, int indentation) const {
   dst << "}";
 }
 
-int Function::evaluate(Binding *binding) const {
+int Function::evaluate(const Binding &_binding) const {
   return statements->evaluate(binding);
 }
 
-int Function::codeGen(Binding *binding, int reg) const {
+int Function::codeGen(const Binding &_binding, int reg) const {
+  logger->info("====================\n");
+  logger->info("Build variable mapping in Function\n");
+  ((StatementList *)statements)->bind(_binding);
+
   logger->info("====================\n");
   logger->info("generate code for Function\n");
   logger->info("size of stack frame: %d\n", getSize());
   printf(".globl\t%s\n", name.c_str());
-  printf(".ent\t%s\n", name.c_str());
+  // printf(".ent\t%s\n", name.c_str());
   printf("\n");
   printf("%s:\n", name.c_str());
-  printf(".frame\t$fp,%d,$31\n", size);
-
+  // printf(".frame\t$fp,%d,$31\n", size);
 
   printf("addiu $sp,$sp,%d\n", -size);
   printf("sw $fp,%d($sp)\n", (size - 4));
@@ -53,6 +56,8 @@ int Function::codeGen(Binding *binding, int reg) const {
   printf("nop\n");
   printf("\n");
 
-  printf(".end\t%s\n", name.c_str());
+  // printf(".end\t%s\n", name.c_str());
   return 0;
 }
+
+void Function::bind(const Binding &_binding) {}

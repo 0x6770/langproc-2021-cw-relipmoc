@@ -17,8 +17,8 @@ fi
 
 # Build bin/c_compiler 
 if [[ ${STANDALONE} == 1 ]]; then
-  make
   make clean
+  make
 fi
 
 # Compile test program using bin/c_compiler

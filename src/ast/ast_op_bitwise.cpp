@@ -6,7 +6,7 @@
 
 BitwiseAnd::BitwiseAnd(ProgramPtr _left, ProgramPtr _right, int _pos)
     : Operation(_left, _right, _pos) {
-  fprintf(stderr, "construct ExpOperator\n");
+  logger->info("construct BitwiseAnd\n");
 }
 
 void BitwiseAnd::print(std::ostream &dst, int indentation) const {
@@ -17,11 +17,11 @@ void BitwiseAnd::print(std::ostream &dst, int indentation) const {
   dst << ")";
 }
 
-int BitwiseAnd::evaluate(Binding *binding) const {
+int BitwiseAnd::evaluate(const Binding &_binding) const {
   return (left->evaluate(binding) & right->evaluate(binding));
 }
 
-int BitwiseAnd::codeGen(Binding *binding, int reg) const {
+int BitwiseAnd::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
@@ -29,11 +29,12 @@ int BitwiseAnd::codeGen(Binding *binding, int reg) const {
   right->codeGen(binding, 3);
 
   if (!((left_type == 'i') | (left_type == 'x')))
-    printf("lw $2,%d($fp)\n", left->getPos(*binding));
+    printf("lw $2,%d($fp)\n", left->getPos(binding));
   if (!((right_type == 'i') | (right_type == 'x')))
-    printf("lw $3,%d($fp)\n", right->getPos(*binding));
+    printf("lw $3,%d($fp)\n", right->getPos(binding));
   printf("and $2,$2,$3\n");
   printf("sw $2,%d($fp)\t# store result of and bitwise operation\n", pos);
+
   return 0;
 }
 
@@ -43,7 +44,7 @@ int BitwiseAnd::codeGen(Binding *binding, int reg) const {
 
 BitwiseOr::BitwiseOr(ProgramPtr _left, ProgramPtr _right, int _pos)
     : Operation(_left, _right, _pos) {
-  fprintf(stderr, "construct ExpOperator\n");
+  logger->info("construct BitwiseOr\n");
 }
 
 void BitwiseOr::print(std::ostream &dst, int indentation) const {
@@ -54,11 +55,11 @@ void BitwiseOr::print(std::ostream &dst, int indentation) const {
   dst << ")";
 }
 
-int BitwiseOr::evaluate(Binding *binding) const {
+int BitwiseOr::evaluate(const Binding &_binding) const {
   return (left->evaluate(binding) | right->evaluate(binding));
 }
 
-int BitwiseOr::codeGen(Binding *binding, int reg) const {
+int BitwiseOr::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
@@ -66,11 +67,12 @@ int BitwiseOr::codeGen(Binding *binding, int reg) const {
   right->codeGen(binding, 3);
 
   if (!((left_type == 'i') | (left_type == 'x')))
-    printf("lw $2,%d($fp)\n", left->getPos(*binding));
+    printf("lw $2,%d($fp)\n", left->getPos(binding));
   if (!((right_type == 'i') | (right_type == 'x')))
-    printf("lw $3,%d($fp)\n", right->getPos(*binding));
+    printf("lw $3,%d($fp)\n", right->getPos(binding));
   printf("or $2,$2,$3\n");
   printf("sw $2,%d($fp)\t# store result of or bitwise operation\n", pos);
+
   return 0;
 }
 
@@ -80,7 +82,7 @@ int BitwiseOr::codeGen(Binding *binding, int reg) const {
 
 BitwiseXor::BitwiseXor(ProgramPtr _left, ProgramPtr _right, int _pos)
     : Operation(_left, _right, _pos) {
-  fprintf(stderr, "construct ExpOperator\n");
+  logger->info("construct BitwiseXor\n");
 }
 
 void BitwiseXor::print(std::ostream &dst, int indentation) const {
@@ -91,11 +93,11 @@ void BitwiseXor::print(std::ostream &dst, int indentation) const {
   dst << ")";
 }
 
-int BitwiseXor::evaluate(Binding *binding) const {
+int BitwiseXor::evaluate(const Binding &_binding) const {
   return (left->evaluate(binding) ^ right->evaluate(binding));
 }
 
-int BitwiseXor::codeGen(Binding *binding, int reg) const { 
+int BitwiseXor::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
@@ -103,12 +105,13 @@ int BitwiseXor::codeGen(Binding *binding, int reg) const {
   right->codeGen(binding, 3);
 
   if (!((left_type == 'i') | (left_type == 'x')))
-    printf("lw $2,%d($fp)\n", left->getPos(*binding));
+    printf("lw $2,%d($fp)\n", left->getPos(binding));
   if (!((right_type == 'i') | (right_type == 'x')))
-    printf("lw $3,%d($fp)\n", right->getPos(*binding));
+    printf("lw $3,%d($fp)\n", right->getPos(binding));
   printf("xor $2,$2,$3\n");
   printf("sw $2,%d($fp)\t# store result of xor bitwise operation\n", pos);
-  return 0; }
+  return 0;
+}
 
 ////////////////////////////////////////
 // ShiftLeft
@@ -116,7 +119,7 @@ int BitwiseXor::codeGen(Binding *binding, int reg) const {
 
 ShiftLeft::ShiftLeft(ProgramPtr _left, ProgramPtr _right, int _pos)
     : Operation(_left, _right, _pos) {
-  fprintf(stderr, "construct ExpOperator\n");
+  logger->info("construct ShiftLeft\n");
 }
 
 void ShiftLeft::print(std::ostream &dst, int indentation) const {
@@ -127,11 +130,11 @@ void ShiftLeft::print(std::ostream &dst, int indentation) const {
   dst << ")";
 }
 
-int ShiftLeft::evaluate(Binding *binding) const {
+int ShiftLeft::evaluate(const Binding &_binding) const {
   return (left->evaluate(binding) << right->evaluate(binding));
 }
 
-int ShiftLeft::codeGen(Binding *binding, int reg) const {
+int ShiftLeft::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
@@ -139,11 +142,12 @@ int ShiftLeft::codeGen(Binding *binding, int reg) const {
   right->codeGen(binding, 3);
 
   if (!((left_type == 'i') | (left_type == 'x')))
-    printf("lw $2,%d($fp)\n", left->getPos(*binding));
+    printf("lw $2,%d($fp)\n", left->getPos(binding));
   if (!((right_type == 'i') | (right_type == 'x')))
-    printf("lw $3,%d($fp)\n", right->getPos(*binding));
+    printf("lw $3,%d($fp)\n", right->getPos(binding));
   printf("sll $2,$2,$3\n");
   printf("sw $2,%d($fp)\t# store result of left shift operation\n", pos);
+
   return 0;
 }
 
@@ -153,7 +157,7 @@ int ShiftLeft::codeGen(Binding *binding, int reg) const {
 
 ShiftRight::ShiftRight(ProgramPtr _left, ProgramPtr _right, int _pos)
     : Operation(_left, _right, _pos) {
-  fprintf(stderr, "construct ExpOperator\n");
+  logger->info("construct ShiftRight\n");
 }
 
 void ShiftRight::print(std::ostream &dst, int indentation) const {
@@ -164,11 +168,11 @@ void ShiftRight::print(std::ostream &dst, int indentation) const {
   dst << ")";
 }
 
-int ShiftRight::evaluate(Binding *binding) const {
+int ShiftRight::evaluate(const Binding &_binding) const {
   return (left->evaluate(binding) >> right->evaluate(binding));
 }
 
-int ShiftRight::codeGen(Binding *binding, int reg) const {
+int ShiftRight::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
@@ -176,9 +180,9 @@ int ShiftRight::codeGen(Binding *binding, int reg) const {
   right->codeGen(binding, 3);
 
   if (!((left_type == 'i') | (left_type == 'x')))
-    printf("lw $2,%d($fp)\n", left->getPos(*binding));
+    printf("lw $2,%d($fp)\n", left->getPos(binding));
   if (!((right_type == 'i') | (right_type == 'x')))
-    printf("lw $3,%d($fp)\n", right->getPos(*binding));
+    printf("lw $3,%d($fp)\n", right->getPos(binding));
 
   printf("sra $2,$2,$3\n");
   printf("sw $2,%d($fp)\t# store result of right shift operation\n", pos);

@@ -5,6 +5,7 @@ Log *logger;
 
 int main(int argc, char **argv) {
   struct arguments arguments;
+  Binding binding;
 
   // Default values for arguments
   arguments.source_file = 0;
@@ -22,7 +23,7 @@ int main(int argc, char **argv) {
   const Program *ast = parseAST(source_file);
   fclose(source_file);
 
-  ast->codeGen(0, 0);
+  ast->codeGen(binding, 2);
 
   // std::cout << "====================\n";
   // std::cout << "exit status: ";
