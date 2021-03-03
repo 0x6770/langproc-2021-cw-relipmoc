@@ -23,21 +23,21 @@ void Addition::print(std::ostream &dst, int indentation) const {
   }
 }
 
-int Addition::evaluate(Binding *binding) const {
-  return left->evaluate(binding) + right->evaluate(binding);
+int Addition::evaluate(const Binding &_binding) const {
+  return left->evaluate(_binding) + right->evaluate(_binding);
 }
 
-int Addition::codeGen(Binding *binding, int reg) const {
+int Addition::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
-  left->codeGen(binding, 2);
-  right->codeGen(binding, 3);
+  left->codeGen(_binding, 2);
+  right->codeGen(_binding, 3);
 
   if (!((left_type == 'i') | (left_type == 'x')))
-    printf("lw $2,%d($fp)\n", left->getPos(*binding));
+    printf("lw $2,%d($fp)\n", left->getPos(_binding));
   if (!((right_type == 'i') | (right_type == 'x')))
-    printf("lw $3,%d($fp)\n", right->getPos(*binding));
+    printf("lw $3,%d($fp)\n", right->getPos(_binding));
 
   printf("add $2,$2,$3\n");
   printf("sw $2,%d($fp)\t# store result of addition\n", pos);
@@ -67,21 +67,21 @@ void Subtraction::print(std::ostream &dst, int indentation) const {
   }
 }
 
-int Subtraction::evaluate(Binding *binding) const {
-  return left->evaluate(binding) - right->evaluate(binding);
+int Subtraction::evaluate(const Binding &_binding) const {
+  return left->evaluate(_binding) - right->evaluate(_binding);
 }
 
-int Subtraction::codeGen(Binding *binding, int reg) const {
+int Subtraction::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
-  left->codeGen(binding, 2);
-  right->codeGen(binding, 3);
+  left->codeGen(_binding, 2);
+  right->codeGen(_binding, 3);
 
   if (!((left_type == 'i') | (left_type == 'x')))
-    printf("lw $2,%d($fp)\n", left->getPos(*binding));
+    printf("lw $2,%d($fp)\n", left->getPos(_binding));
   if (!((right_type == 'i') | (right_type == 'x')))
-    printf("lw $3,%d($fp)\n", right->getPos(*binding));
+    printf("lw $3,%d($fp)\n", right->getPos(_binding));
 
   printf("sub $2,$2,$3\n");
   printf("sw $2,%d($fp)\t# store result of addition\n", pos);
@@ -106,13 +106,13 @@ void Multiplication::print(std::ostream &dst, int indentation) const {
   dst << ")";
 }
 
-int Multiplication::evaluate(Binding *binding) const {
-  return left->evaluate(binding) * right->evaluate(binding);
+int Multiplication::evaluate(const Binding &_binding) const {
+  return left->evaluate(_binding) * right->evaluate(_binding);
 }
 
-int Multiplication::codeGen(Binding *binding, int reg) const {
-  left->codeGen(binding, 2);
-  right->codeGen(binding, 2);
+int Multiplication::codeGen(const Binding &_binding, int reg) const {
+  left->codeGen(_binding, 2);
+  right->codeGen(_binding, 2);
   return 0;
 }
 
@@ -133,13 +133,13 @@ void Division::print(std::ostream &dst, int indentation) const {
   dst << ")";
 }
 
-int Division::evaluate(Binding *binding) const {
-  return left->evaluate(binding) / right->evaluate(binding);
+int Division::evaluate(const Binding &_binding) const {
+  return left->evaluate(_binding) / right->evaluate(_binding);
 }
 
-int Division::codeGen(Binding *binding, int reg) const {
-  left->codeGen(binding, 2);
-  right->codeGen(binding, 2);
+int Division::codeGen(const Binding &_binding, int reg) const {
+  left->codeGen(_binding, 2);
+  right->codeGen(_binding, 2);
   return 0;
 }
 
@@ -160,97 +160,12 @@ void Modulus::print(std::ostream &dst, int indentation) const {
   dst << ")";
 }
 
-int Modulus::evaluate(Binding *binding) const {
-  return (left->evaluate(binding) % right->evaluate(binding));
+int Modulus::evaluate(const Binding &_binding) const {
+  return (left->evaluate(_binding) % right->evaluate(_binding));
 }
 
-int Modulus::codeGen(Binding *binding, int reg) const {
-  left->codeGen(binding, 2);
-  right->codeGen(binding, 2);
+int Modulus::codeGen(const Binding &_binding, int reg) const {
+  left->codeGen(_binding, 2);
+  right->codeGen(_binding, 2);
   return 0;
 }
-////////////////////////////////////////
-// Postfix increment
-////////////////////////////////////////
-
-Increment_Post::Increment_Post(ProgramPtr _left) : left(_left) {
-  fprintf(stderr, "construct increment prefix\n");
-}
-
-void Increment_Post::print(std::ostream &dst, int indentation) const {
-  dst << "(";
-  left->print(dst, indentation);
-  dst << "++";
-  dst << ")";
-}
-
-int Increment_Post::evaluate(Binding *binding) const {
-  // int result = left->evaluate(binding)+1;
-  return left->evaluate(binding);
-}
-
-int Increment_Post::codeGen(Binding *binding, int reg) const { return 0; }
-
-////////////////////////////////////////
-// prefix increment
-////////////////////////////////////////
-
-Increment_Pre::Increment_Pre(ProgramPtr _left) : left(_left) {
-  fprintf(stderr, "construct increment prefix\n");
-}
-
-void Increment_Pre::print(std::ostream &dst, int indentation) const {
-  dst << "(";
-  dst << "++";
-  left->print(dst, indentation);
-  dst << ")";
-}
-
-int Increment_Pre::evaluate(Binding *binding) const {
-  return (left->evaluate(binding) + 1);
-}
-
-int Increment_Pre::codeGen(Binding *binding, int reg) const { return 0; }
-
-////////////////////////////////////////
-// Postfix decrement
-////////////////////////////////////////
-
-Decrement_Post::Decrement_Post(ProgramPtr _left) : left(_left) {
-  fprintf(stderr, "construct decrement postfix\n");
-}
-
-void Decrement_Post::print(std::ostream &dst, int indentation) const {
-  dst << "(";
-  left->print(dst, indentation);
-  dst << "--";
-  dst << ")";
-}
-
-int Decrement_Post::evaluate(Binding *binding) const {
-  // int result = left->evaluate(binding)-1;
-  return left->evaluate(binding);
-}
-
-int Decrement_Post::codeGen(Binding *binding, int reg) const { return 0; }
-
-////////////////////////////////////////
-// prefix increment
-////////////////////////////////////////
-
-Decrement_Pre::Decrement_Pre(ProgramPtr _left) : left(_left) {
-  fprintf(stderr, "construct decrement prefix\n");
-}
-
-void Decrement_Pre::print(std::ostream &dst, int indentation) const {
-  dst << "(";
-  dst << "--";
-  left->print(dst, indentation);
-  dst << ")";
-}
-
-int Decrement_Pre::evaluate(Binding *binding) const {
-  return (left->evaluate(binding) - 1);
-}
-
-int Decrement_Pre::codeGen(Binding *binding, int reg) const { return 0; }

@@ -8,6 +8,7 @@
   extern const Program *root;
   int yylex(void);
   void yyerror(FILE *source_file, const char *msg);
+  int getPos(int size);
 }
 
 %parse-param {FILE *source_file}
@@ -32,15 +33,10 @@
  
 %type <program> program function term unary factor expr add_sub shift_operator relational 
 %type <program> relational_equal bitwise_and bitwise_xor bitwise_or logical_and
-%type <program> stmt stmt_list stmt_closed stmt_open loop complex_assignment scope
+%type <program> stmt stmt_list loop assignment
 %type <program> unary_postfix unary_prefix
 %type <integer> T_INT_VALUE 
 %type <string> type T_NAME T_INT
-
-%left '<' '>' "<=" ">=" "!="
-%left '+' '-'
-%left '*' '/' '%'
-%right '^'
 
 %start program  
 
@@ -52,7 +48,7 @@ type : T_INT  { $$ = $1; }
 program : function  { root = $1; }
         ;
 
-function : type T_NAME '(' ')' scope  { $$ = new Function(*$1, *$2, $5, pos); } 
+function : type T_NAME '(' ')' stmt { $$ = new Function(*$1, *$2, $5, pos); } 
          ;
 
  /* TODO: Implicit param e.g. int f(a, b); */
@@ -62,48 +58,41 @@ function : type T_NAME '(' ')' scope  { $$ = new Function(*$1, *$2, $5, pos); }
 
 /*param : type T_NAME  { $$ = new Param($1, $2); }*/
       /*;*/
-scope : '{' stmt_list '}'  { $$ = $2; }
-      ;
 
-stmt_list : %empty                    { $$ = new StatementList(); }
-          | stmt_list stmt   { ((StatementList *)$1)->addStatement($2); $$ = $1; }
-          | stmt_list scope  { ((StatementList *)$1)->addStatement($2); ((StatementList *)$2)->mergeBinding($1); $$ = $1; }
+/*scope : '{' stmt_list '}'  { $$ = $2; }*/
+      /*;*/
+
+stmt_list : %empty              { $$ = new StatementList(); }
+          | stmt_list stmt      { ((StatementList *)$1)->addStatement($2); $$ = $1; }
           ;
 
-stmt : stmt_open    { $$ = $1; }
-     | stmt_closed  { $$ = $1; }
+stmt : T_IF '(' expr ')' stmt              { $$ = new IfStatement($3, $5, 0); }
+     | T_IF '(' expr ')' stmt T_ELSE stmt  { $$ = new IfStatement($3, $5, $7); }
+     | assignment ';'                      { $$ = $1; }
+     | type T_NAME ';'                     { $$ = new VarDeclare(*$1, *$2, 0, pos); pos+=4; }
+     | type T_NAME '=' assignment ';'      { $$ = new VarDeclare(*$1, *$2, $4, pos); pos+=4; }
+     | T_RETURN expr ';'                   { $$ = new Return($2); }
+     | loop                                { $$ = $1; }
+     | '{' stmt_list '}'                   { $$ = $2; }
+     ; 
+
+loop : T_WHILE '(' assignment ')' stmt { $$ = new WhileLoop($3, $5); }
+     /*| T_FOR '(' stmt stmt stmt ')' scope        { $$ = new WhileLoop($7, $5); }*/
      ;
 
-stmt_open : T_IF '(' expr ')' stmt                          { $$ = new IfStatement($3, $5, 0); }
-          | T_IF '(' expr ')' stmt_closed T_ELSE stmt_open  { $$ = new IfStatement($3, $5, $7); }
-          ;
-
-stmt_closed : T_IF '(' expr ')' stmt_closed T_ELSE stmt_closed  { $$ = new IfStatement($3, $5, $7); }
-            | complex_assignment ';'                            { $$ = $1; }
-            | type T_NAME                                       { $$ = new VarDeclare(*$1, *$2, 0, pos); }
-            | T_RETURN expr ';'                                 { $$ = new Return($2); }
-            | loop                                              { $$ = $1; }
-            /*| ';'                                               { $$ = new Statement(0); }*/
-            ; 
-
-loop : T_WHILE '(' complex_assignment ')' scope          { $$ = new WhileLoop($3, $5); }
-     | T_FOR '(' stmt stmt stmt ')' scope  { $$ = new WhileLoop($7, $5); }
-     ;
-
-complex_assignment : expr                                          { $$ = $1; }
-                   | type T_NAME '=' complex_assignment            { $$ = new VarDeclare(*$1, *$2, $4, pos); }
-                   | T_NAME '=' complex_assignment                 { $$ = new VarAssign(*$1, $3); }
-                   | factor T_ADDEQUAL complex_assignment          { $$ = new AddEqual($1, $3); }
-                   | factor T_SUBEQUAL complex_assignment          { $$ = new SubEqual($1, $3); }
-                   | factor T_MULEQUAL complex_assignment          { $$ = new MulEqual($1, $3); }
-                   | factor T_DIVEQUAL complex_assignment          { $$ = new QuoEqual($1, $3); }
-                   | factor T_MODEQUAL complex_assignment          { $$ = new ModEqual($1, $3); }
-                   | factor T_SHIFTEQUAL_L complex_assignment      { $$ = new ShiftEqual_L($1, $3); }
-                   | factor T_SHIFTEQUAL_R complex_assignment      { $$ = new ShiftEqual_R($1, $3); }
-                   | factor T_BITWISEEQUAL_AND complex_assignment  { $$ = new BitwiseEqual_AND($1, $3); }
-                   | factor T_BITWISEEQUAL_OR complex_assignment   { $$ = new BitwiseEqual_OR($1, $3); }
-                   | factor T_BITWISEEQUAL_XOR complex_assignment  { $$ = new BitwiseEqual_XOR($1, $3); }
-                   ;
+assignment : expr                                  { $$ = $1; }
+           | T_NAME '=' assignment                 { $$ = new VarAssign(*$1, $3); }
+           | factor T_ADDEQUAL assignment          { $$ = new AddEqual($1, $3, getPos(4)); }
+           | factor T_SUBEQUAL assignment          { $$ = new SubEqual($1, $3, getPos(4)); }
+           | factor T_MULEQUAL assignment          { $$ = new MulEqual($1, $3, getPos(4)); }
+           | factor T_DIVEQUAL assignment          { $$ = new QuoEqual($1, $3, getPos(4)); }
+           | factor T_MODEQUAL assignment          { $$ = new ModEqual($1, $3, getPos(4)); }
+           | factor T_SHIFTEQUAL_L assignment      { $$ = new ShiftEqual_L($1, $3, getPos(4)); }
+           | factor T_SHIFTEQUAL_R assignment      { $$ = new ShiftEqual_R($1, $3, getPos(4)); }
+           | factor T_BITWISEEQUAL_AND assignment  { $$ = new BitwiseEqual_AND($1, $3, getPos(4)); }
+           | factor T_BITWISEEQUAL_OR assignment   { $$ = new BitwiseEqual_OR($1, $3, getPos(4)); }
+           | factor T_BITWISEEQUAL_XOR assignment  { $$ = new BitwiseEqual_XOR($1, $3, getPos(4)); }
+           ;
 
 expr : logical_and              { $$ = $1; }
      | expr T_OR_L logical_and  { $$ = new LogicalOr($1, $3, pos); pos+=4; }
@@ -158,12 +147,12 @@ unary : unary_prefix              { $$ = $1;}
       ;   
 
 unary_prefix : unary_postfix                   { $$ = $1;}
-             | T_INCREMENT unary_prefix        { $$ = new Increment_Pre($2); }
-             | T_DECREMENT unary_prefix        { $$ = new Decrement_Pre($2); }
+             | T_INCREMENT unary_prefix        { $$ = new Increment_Pre($2, getPos(4)); }
+             | T_DECREMENT unary_prefix        { $$ = new Decrement_Pre($2, getPos(4)); }
 
 unary_postfix : factor                         { $$ = $1;}
-              | unary_postfix T_INCREMENT      { $$ = new Increment_Post($1);}
-              | unary_postfix T_DECREMENT      { $$ = new Decrement_Post($1);}
+              | unary_postfix T_INCREMENT      { $$ = new Increment_Post($1, getPos(4)); }
+              | unary_postfix T_DECREMENT      { $$ = new Decrement_Post($1, getPos(4)); }
 
 factor : T_INT_VALUE        { $$ = new Integer($1); }
        | '(' expr ')'       { $$ = $2;}

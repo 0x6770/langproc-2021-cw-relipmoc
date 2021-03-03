@@ -16,8 +16,9 @@ class Function : public Program {
   Function(std::string _type, std::string _name, ProgramPtr _statements,
            int _pos);
   void print(std::ostream &dst, int indentation) const override;
-  int codeGen(Binding *binding, int reg) const override;
-  int evaluate(Binding *binding) const override;
+  int codeGen(const Binding &_binding, int reg) const override;
+  int evaluate(const Binding &_binding) const override;
+  virtual void bind(const Binding &_binding) override;
 };
 
 class Param : public Program {
@@ -28,9 +29,9 @@ class Param : public Program {
  public:
   Param(std::string _type, std::string _name);
   void print(std::ostream &dst, int indentation) const override;
-  int codeGen(Binding *binding, int reg) const override;
-  int evaluate(Binding *binding) const override;
-  void bind(Binding *binding) const;
+  int codeGen(const Binding &_binding, int reg) const override;
+  int evaluate(const Binding &_binding) const override;
+  virtual void bind(const Binding &_binding) override;
 };
 
 #endif

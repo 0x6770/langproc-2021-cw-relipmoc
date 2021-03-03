@@ -7,7 +7,7 @@
 LessEqual::LessEqual(ProgramPtr _left, ProgramPtr _right, int _pos,
                      int _is_equal)
     : Operation(_left, _right, _pos), is_equal(_is_equal) {
-  fprintf(stderr, "construct ExpOperator\n");
+  logger->info("construct LessEqual\n");
 }
 
 void LessEqual::print(std::ostream &dst, int indentation) const {
@@ -22,17 +22,17 @@ void LessEqual::print(std::ostream &dst, int indentation) const {
   dst << ")";
 }
 
-int LessEqual::evaluate(Binding *binding) const {
+int LessEqual::evaluate(const Binding &_binding) const {
   if (is_equal == 1) {
-    return (left->evaluate(binding) <= right->evaluate(binding));
+    return (left->evaluate(_binding) <= right->evaluate(_binding));
   } else {
-    return (left->evaluate(binding) < right->evaluate(binding));
+    return (left->evaluate(_binding) < right->evaluate(_binding));
   }
 }
 
-int LessEqual::codeGen(Binding *binding, int reg) const {
-  left->codeGen(binding, 2);
-  right->codeGen(binding, 2);
+int LessEqual::codeGen(const Binding &_binding, int reg) const {
+  left->codeGen(_binding, 2);
+  right->codeGen(_binding, 2);
   return 0;
 }
 
@@ -43,7 +43,7 @@ int LessEqual::codeGen(Binding *binding, int reg) const {
 GreaterEqual::GreaterEqual(ProgramPtr _left, ProgramPtr _right, int _pos,
                            int _is_equal)
     : Operation(_left, _right, _pos), is_equal(_is_equal) {
-  fprintf(stderr, "construct ExpOperator\n");
+  logger->info("construct GreaterEqual\n");
 }
 
 void GreaterEqual::print(std::ostream &dst, int indentation) const {
@@ -58,17 +58,17 @@ void GreaterEqual::print(std::ostream &dst, int indentation) const {
   dst << ")";
 }
 
-int GreaterEqual::evaluate(Binding *binding) const {
+int GreaterEqual::evaluate(const Binding &_binding) const {
   if (is_equal == 1) {
-    return (left->evaluate(binding) >= right->evaluate(binding));
+    return (left->evaluate(_binding) >= right->evaluate(_binding));
   } else {
-    return (left->evaluate(binding) > right->evaluate(binding));
+    return (left->evaluate(_binding) > right->evaluate(_binding));
   }
 }
 
-int GreaterEqual::codeGen(Binding *binding, int reg) const {
-  left->codeGen(binding, 2);
-  right->codeGen(binding, 2);
+int GreaterEqual::codeGen(const Binding &_binding, int reg) const {
+  left->codeGen(_binding, 2);
+  right->codeGen(_binding, 2);
   return 0;
 }
 
@@ -78,7 +78,7 @@ int GreaterEqual::codeGen(Binding *binding, int reg) const {
 
 Equal::Equal(ProgramPtr _left, ProgramPtr _right, int _pos, int _is_equal)
     : Operation(_left, _right, _pos), is_equal(_is_equal) {
-  fprintf(stderr, "construct ExpOperator\n");
+  logger->info("construct Equal\n");
 }
 
 void Equal::print(std::ostream &dst, int indentation) const {
@@ -93,17 +93,17 @@ void Equal::print(std::ostream &dst, int indentation) const {
   dst << ")";
 }
 
-int Equal::evaluate(Binding *binding) const {
+int Equal::evaluate(const Binding &_binding) const {
   if (is_equal == 1) {
-    return (left->evaluate(binding) != right->evaluate(binding));
+    return (left->evaluate(_binding) != right->evaluate(_binding));
   } else {
-    return (left->evaluate(binding) == right->evaluate(binding));
+    return (left->evaluate(_binding) == right->evaluate(_binding));
   }
 }
 
-int Equal::codeGen(Binding *binding, int reg) const {
-  left->codeGen(binding, 2);
-  right->codeGen(binding, 2);
+int Equal::codeGen(const Binding &_binding, int reg) const {
+  left->codeGen(_binding, 2);
+  right->codeGen(_binding, 2);
   return 0;
 }
 
@@ -113,7 +113,7 @@ int Equal::codeGen(Binding *binding, int reg) const {
 
 LogicalAnd::LogicalAnd(ProgramPtr _left, ProgramPtr _right, int _pos)
     : Operation(_left, _right, _pos) {
-  fprintf(stderr, "construct ExpOperator\n");
+  logger->info("construct LogicalAnd\n");
 }
 
 void LogicalAnd::print(std::ostream &dst, int indentation) const {
@@ -124,13 +124,13 @@ void LogicalAnd::print(std::ostream &dst, int indentation) const {
   dst << ")";
 }
 
-int LogicalAnd::evaluate(Binding *binding) const {
-  return (left->evaluate(binding) && right->evaluate(binding));
+int LogicalAnd::evaluate(const Binding &_binding) const {
+  return (left->evaluate(_binding) && right->evaluate(_binding));
 }
 
-int LogicalAnd::codeGen(Binding *binding, int reg) const {
-  left->codeGen(binding, 2);
-  right->codeGen(binding, 2);
+int LogicalAnd::codeGen(const Binding &_binding, int reg) const {
+  left->codeGen(_binding, 2);
+  right->codeGen(_binding, 2);
   return 0;
 }
 
@@ -140,7 +140,7 @@ int LogicalAnd::codeGen(Binding *binding, int reg) const {
 
 LogicalOr::LogicalOr(ProgramPtr _left, ProgramPtr _right, int _pos)
     : Operation(_left, _right, _pos) {
-  fprintf(stderr, "construct ExpOperator\n");
+  logger->info("construct LogicalOr\n");
 }
 
 void LogicalOr::print(std::ostream &dst, int indentation) const {
@@ -151,12 +151,12 @@ void LogicalOr::print(std::ostream &dst, int indentation) const {
   dst << ")";
 }
 
-int LogicalOr::evaluate(Binding *binding) const {
-  return (left->evaluate(binding) || right->evaluate(binding));
+int LogicalOr::evaluate(const Binding &_binding) const {
+  return (left->evaluate(_binding) || right->evaluate(_binding));
 }
 
-int LogicalOr::codeGen(Binding *binding, int reg) const {
-  left->codeGen(binding, 2);
-  right->codeGen(binding, 2);
+int LogicalOr::codeGen(const Binding &_binding, int reg) const {
+  left->codeGen(_binding, 2);
+  right->codeGen(_binding, 2);
   return 0;
 }

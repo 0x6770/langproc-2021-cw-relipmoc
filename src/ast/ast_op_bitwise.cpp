@@ -6,7 +6,7 @@
 
 BitwiseAnd::BitwiseAnd(ProgramPtr _left, ProgramPtr _right, int _pos)
     : Operation(_left, _right, _pos) {
-  fprintf(stderr, "construct ExpOperator\n");
+  logger->info("construct BitwiseAnd\n");
 }
 
 void BitwiseAnd::print(std::ostream &dst, int indentation) const {
@@ -17,13 +17,13 @@ void BitwiseAnd::print(std::ostream &dst, int indentation) const {
   dst << ")";
 }
 
-int BitwiseAnd::evaluate(Binding *binding) const {
-  return (left->evaluate(binding) & right->evaluate(binding));
+int BitwiseAnd::evaluate(const Binding &_binding) const {
+  return (left->evaluate(_binding) & right->evaluate(_binding));
 }
 
-int BitwiseAnd::codeGen(Binding *binding, int reg) const {
-  left->codeGen(binding, 2);
-  right->codeGen(binding, 2);
+int BitwiseAnd::codeGen(const Binding &_binding, int reg) const {
+  left->codeGen(_binding, 2);
+  right->codeGen(_binding, 2);
   return 0;
 }
 
@@ -33,7 +33,7 @@ int BitwiseAnd::codeGen(Binding *binding, int reg) const {
 
 BitwiseOr::BitwiseOr(ProgramPtr _left, ProgramPtr _right, int _pos)
     : Operation(_left, _right, _pos) {
-  fprintf(stderr, "construct ExpOperator\n");
+  logger->info("construct BitwiseOr\n");
 }
 
 void BitwiseOr::print(std::ostream &dst, int indentation) const {
@@ -44,13 +44,13 @@ void BitwiseOr::print(std::ostream &dst, int indentation) const {
   dst << ")";
 }
 
-int BitwiseOr::evaluate(Binding *binding) const {
-  return (left->evaluate(binding) | right->evaluate(binding));
+int BitwiseOr::evaluate(const Binding &_binding) const {
+  return (left->evaluate(_binding) | right->evaluate(_binding));
 }
 
-int BitwiseOr::codeGen(Binding *binding, int reg) const {
-  left->codeGen(binding, 2);
-  right->codeGen(binding, 2);
+int BitwiseOr::codeGen(const Binding &_binding, int reg) const {
+  left->codeGen(_binding, 2);
+  right->codeGen(_binding, 2);
   return 0;
 }
 
@@ -60,7 +60,7 @@ int BitwiseOr::codeGen(Binding *binding, int reg) const {
 
 BitwiseXor::BitwiseXor(ProgramPtr _left, ProgramPtr _right, int _pos)
     : Operation(_left, _right, _pos) {
-  fprintf(stderr, "construct ExpOperator\n");
+  logger->info("construct BitwiseXor\n");
 }
 
 void BitwiseXor::print(std::ostream &dst, int indentation) const {
@@ -71,11 +71,11 @@ void BitwiseXor::print(std::ostream &dst, int indentation) const {
   dst << ")";
 }
 
-int BitwiseXor::evaluate(Binding *binding) const {
-  return (left->evaluate(binding) ^ right->evaluate(binding));
+int BitwiseXor::evaluate(const Binding &_binding) const {
+  return (left->evaluate(_binding) ^ right->evaluate(_binding));
 }
 
-int BitwiseXor::codeGen(Binding *binding, int reg) const { return 0; }
+int BitwiseXor::codeGen(const Binding &_binding, int reg) const { return 0; }
 
 ////////////////////////////////////////
 // ShiftLeft
@@ -83,7 +83,7 @@ int BitwiseXor::codeGen(Binding *binding, int reg) const { return 0; }
 
 ShiftLeft::ShiftLeft(ProgramPtr _left, ProgramPtr _right, int _pos)
     : Operation(_left, _right, _pos) {
-  fprintf(stderr, "construct ExpOperator\n");
+  logger->info("construct ShiftLeft\n");
 }
 
 void ShiftLeft::print(std::ostream &dst, int indentation) const {
@@ -94,13 +94,13 @@ void ShiftLeft::print(std::ostream &dst, int indentation) const {
   dst << ")";
 }
 
-int ShiftLeft::evaluate(Binding *binding) const {
-  return (left->evaluate(binding) << right->evaluate(binding));
+int ShiftLeft::evaluate(const Binding &_binding) const {
+  return (left->evaluate(_binding) << right->evaluate(_binding));
 }
 
-int ShiftLeft::codeGen(Binding *binding, int reg) const {
-  left->codeGen(binding, 2);
-  right->codeGen(binding, 2);
+int ShiftLeft::codeGen(const Binding &_binding, int reg) const {
+  left->codeGen(_binding, 2);
+  right->codeGen(_binding, 2);
   return 0;
 }
 
@@ -110,7 +110,7 @@ int ShiftLeft::codeGen(Binding *binding, int reg) const {
 
 ShiftRight::ShiftRight(ProgramPtr _left, ProgramPtr _right, int _pos)
     : Operation(_left, _right, _pos) {
-  fprintf(stderr, "construct ExpOperator\n");
+  logger->info("construct ShiftRight\n");
 }
 
 void ShiftRight::print(std::ostream &dst, int indentation) const {
@@ -121,12 +121,12 @@ void ShiftRight::print(std::ostream &dst, int indentation) const {
   dst << ")";
 }
 
-int ShiftRight::evaluate(Binding *binding) const {
-  return (left->evaluate(binding) >> right->evaluate(binding));
+int ShiftRight::evaluate(const Binding &_binding) const {
+  return (left->evaluate(_binding) >> right->evaluate(_binding));
 }
 
-int ShiftRight::codeGen(Binding *binding, int reg) const {
-  left->codeGen(binding, 2);
-  right->codeGen(binding, 2);
+int ShiftRight::codeGen(const Binding &_binding, int reg) const {
+  left->codeGen(_binding, 2);
+  right->codeGen(_binding, 2);
   return 0;
 }
