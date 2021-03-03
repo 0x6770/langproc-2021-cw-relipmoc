@@ -4,7 +4,12 @@
 a.out 
 bin/
 
+*.bin
 *.o
+*.s
+*.output
+*.bin
+
 src/*.tab.cpp
 src/*.tab.hpp
 src/*.yy.cpp

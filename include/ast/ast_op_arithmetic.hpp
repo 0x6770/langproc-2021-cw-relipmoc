@@ -10,9 +10,9 @@
 class Addition : public Operation {
  public:
   Addition(ProgramPtr _left, ProgramPtr _right, int _pos);
-  int codeGen(Binding *binding, int reg) const override;
+  int codeGen(const Binding &_binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
-  int evaluate(Binding *binding) const override;
+  int evaluate(const Binding &_binding) const override;
 };
 
 ////////////////////////////////////////
@@ -22,9 +22,9 @@ class Addition : public Operation {
 class Subtraction : public Operation {
  public:
   Subtraction(ProgramPtr _left, ProgramPtr _right, int _pos);
-  int codeGen(Binding *binding, int reg) const override;
+  int codeGen(const Binding &_binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
-  int evaluate(Binding *binding) const override;
+  int evaluate(const Binding &_binding) const override;
 };
 
 ////////////////////////////////////////
@@ -34,9 +34,9 @@ class Subtraction : public Operation {
 class Multiplication : public Operation {
  public:
   Multiplication(ProgramPtr _left, ProgramPtr _right, int _pos);
-  int codeGen(Binding *binding, int reg) const override;
+  int codeGen(const Binding &_binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
-  int evaluate(Binding *binding) const override;
+  int evaluate(const Binding &_binding) const override;
 };
 
 ////////////////////////////////////////
@@ -46,81 +46,21 @@ class Multiplication : public Operation {
 class Division : public Operation {
  public:
   Division(ProgramPtr _left, ProgramPtr _right, int _pos);
-  int codeGen(Binding *binding, int reg) const override;
+  int codeGen(const Binding &_binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
-  int evaluate(Binding *binding) const override;
+  int evaluate(const Binding &_binding) const override;
 };
-
 
 ////////////////////////////////////////
 // Modulus
 ////////////////////////////////////////
 
-
-
 class Modulus : public Operation {
  public:
   Modulus(ProgramPtr _left, ProgramPtr _right, int _pos);
-  int codeGen(Binding *binding, int reg) const override;
+  int codeGen(const Binding &_binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
-  int evaluate(Binding *binding) const override;
- };
-
-////////////////////////////////////////
-// Suffix/postfix increment
-////////////////////////////////////////
-class Increment_Post : public Program {
-private: 
-  ProgramPtr left;
-public:
-  Increment_Post(ProgramPtr _left);
-  int codeGen(Binding *binding, int reg) const override;
-  void print(std::ostream &dst, int indentation) const override;
-  int evaluate(Binding *binding) const override;
-};
-
-
-////////////////////////////////////////
-// Prefix increment
-////////////////////////////////////////
-
-class Increment_Pre : public Program {
-private:
-  ProgramPtr left;
-public:
-  Increment_Pre(ProgramPtr _left);
-  int codeGen(Binding *binding, int reg) const override;
-  void print(std::ostream &dst, int indentation) const override;
-  int evaluate(Binding *binding) const override;
-};
-
-////////////////////////////////////////
-// Suffix/postfix decrement
-////////////////////////////////////////
-
-class Decrement_Post : public Program {
-private:
-  ProgramPtr left;
-public:
-  Decrement_Post(ProgramPtr _left);
-  int codeGen(Binding *binding, int reg) const override;
-  void print(std::ostream &dst, int indentation) const override;
-  int evaluate(Binding *binding) const override;
-};
-
-
-////////////////////////////////////////
-// Prefix decrement
-////////////////////////////////////////
-
-class Decrement_Pre : public Program {
-private: 
-  ProgramPtr left;
-public:
-  Decrement_Pre(ProgramPtr _left);
-  int codeGen(Binding *binding, int reg) const override;
-  void print(std::ostream &dst, int indentation) const override;
-  int evaluate(Binding *binding) const override;
+  int evaluate(const Binding &_binding) const override;
 };
 
 #endif

@@ -40,21 +40,23 @@ class Program {
  protected:
   int node_type;
   int size;
-  int pos;  // position of a variable or expression in stack frame
+  int pos;          // position of a variable or expression in stack frame
+  Binding binding;  // variables binding
 
  public:
   virtual ~Program() {}
   virtual void print(std::ostream &dst, int indentation) const = 0;
-  virtual int evaluate(Binding *binding) const = 0;
+  virtual int evaluate(const Binding &_binding) const = 0;
   // Print mips assembly code.
   // Binding *binding contains information about every variable in current
   // scope and above.
   // int reg is the index of registor to store result.
   // return its position in stack frame if it is a variable, else return 0.
-  virtual int codeGen(Binding *binding, int reg) const = 0;
-  const int &getType() const;
-  const int &getSize() const;
-  virtual const int &getPos(const Binding &binding) const;
+  virtual int codeGen(const Binding &_binding, int reg) const = 0;
+  int getType() const;
+  int getSize() const;
+  virtual int getPos(const Binding &_binding) const;
   void printIndent(std::ostream &dst, int &indentation) const;
+  virtual void bind(const Binding &_binding) = 0;
 };
 #endif

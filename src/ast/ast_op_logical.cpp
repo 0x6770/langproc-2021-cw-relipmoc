@@ -7,7 +7,7 @@
 LessEqual::LessEqual(ProgramPtr _left, ProgramPtr _right, int _pos,
                      int _is_equal)
     : Operation(_left, _right, _pos), is_equal(_is_equal) {
-  fprintf(stderr, "construct ExpOperator\n");
+  logger->info("construct LessEqual\n");
 }
 
 void LessEqual::print(std::ostream &dst, int indentation) const {
@@ -22,7 +22,7 @@ void LessEqual::print(std::ostream &dst, int indentation) const {
   dst << ")";
 }
 
-int LessEqual::evaluate(Binding *binding) const {
+int LessEqual::evaluate(const Binding &_binding) const {
   if (is_equal == 1) {
     return (left->evaluate(binding) <= right->evaluate(binding));
   } else {
@@ -30,9 +30,32 @@ int LessEqual::evaluate(Binding *binding) const {
   }
 }
 
-int LessEqual::codeGen(Binding *binding, int reg) const {
-  left->codeGen(binding, 2);
-  right->codeGen(binding, 2);
+int LessEqual::codeGen(const Binding &_binding, int reg) const {
+  int left_type = left->getType();
+  int right_type = right->getType();
+
+  if(left_type == 'i' && right_type != 'i'){
+        right->codeGen(binding, 3);
+        left->codeGen(binding, 2);
+  }
+  else{
+    left->codeGen(binding, 2);
+    right->codeGen(binding, 3);
+  }
+
+  if (!((left_type == 'i') | (left_type == 'x')))
+    printf("lw $2,%d($fp)\n", left->getPos(binding));
+  if (!((right_type == 'i') | (right_type == 'x')))
+    printf("lw $3,%d($fp)\n", right->getPos(binding));
+
+  printf("slt $2,$2,$3\n");
+  if (is_equal == 1) {
+    printf("xori $2,$2,0x1\n");
+  }
+  printf("andi $2,$2,0x00ff\n");
+  // TODO: there is also a line " andi $2,$2,0x00ff" in the online converter.
+  printf("sw $2,%d($fp)\t# store result of logical less or less equal\n", pos);
+
   return 0;
 }
 
@@ -43,7 +66,7 @@ int LessEqual::codeGen(Binding *binding, int reg) const {
 GreaterEqual::GreaterEqual(ProgramPtr _left, ProgramPtr _right, int _pos,
                            int _is_equal)
     : Operation(_left, _right, _pos), is_equal(_is_equal) {
-  fprintf(stderr, "construct ExpOperator\n");
+  logger->info("construct GreaterEqual\n");
 }
 
 void GreaterEqual::print(std::ostream &dst, int indentation) const {
@@ -58,7 +81,7 @@ void GreaterEqual::print(std::ostream &dst, int indentation) const {
   dst << ")";
 }
 
-int GreaterEqual::evaluate(Binding *binding) const {
+int GreaterEqual::evaluate(const Binding &_binding) const {
   if (is_equal == 1) {
     return (left->evaluate(binding) >= right->evaluate(binding));
   } else {
@@ -66,9 +89,31 @@ int GreaterEqual::evaluate(Binding *binding) const {
   }
 }
 
-int GreaterEqual::codeGen(Binding *binding, int reg) const {
-  left->codeGen(binding, 2);
-  right->codeGen(binding, 2);
+int GreaterEqual::codeGen(const Binding &_binding, int reg) const {
+  int left_type = left->getType();
+  int right_type = right->getType();
+
+  if(left_type == 'i' && right_type != 'i'){
+        right->codeGen(binding, 3);
+        left->codeGen(binding, 2);
+  }
+  else{
+    left->codeGen(binding, 2);
+    right->codeGen(binding, 3);
+  }
+
+  if (!((left_type == 'i') | (left_type == 'x')))
+    printf("lw $2,%d($fp)\n", left->getPos(binding));
+  if (!((right_type == 'i') | (right_type == 'x')))
+    printf("lw $3,%d($fp)\n", right->getPos(binding));
+
+  printf("slt $2,$3,$2\n");
+  if (is_equal == 1) {
+    printf("xori $2,$2,0x1\n");
+  }
+  printf("sw $2,%d($fp)\t# store result of logical greater or greater than\n",
+         pos);
+
   return 0;
 }
 
@@ -78,7 +123,7 @@ int GreaterEqual::codeGen(Binding *binding, int reg) const {
 
 Equal::Equal(ProgramPtr _left, ProgramPtr _right, int _pos, int _is_equal)
     : Operation(_left, _right, _pos), is_equal(_is_equal) {
-  fprintf(stderr, "construct ExpOperator\n");
+  logger->info("construct Equal\n");
 }
 
 void Equal::print(std::ostream &dst, int indentation) const {
@@ -93,7 +138,7 @@ void Equal::print(std::ostream &dst, int indentation) const {
   dst << ")";
 }
 
-int Equal::evaluate(Binding *binding) const {
+int Equal::evaluate(const Binding &_binding) const {
   if (is_equal == 1) {
     return (left->evaluate(binding) != right->evaluate(binding));
   } else {
@@ -101,9 +146,34 @@ int Equal::evaluate(Binding *binding) const {
   }
 }
 
-int Equal::codeGen(Binding *binding, int reg) const {
-  left->codeGen(binding, 2);
-  right->codeGen(binding, 2);
+int Equal::codeGen(const Binding &_binding, int reg) const {
+  int left_type = left->getType();
+  int right_type = right->getType();
+
+  if(left_type == 'i' && right_type != 'i'){
+        right->codeGen(binding, 3);
+        left->codeGen(binding, 2);
+  }
+  else{
+    left->codeGen(binding, 2);
+    right->codeGen(binding, 3);
+  }
+
+  if (!((left_type == 'i') | (left_type == 'x')))
+    printf("lw $2,%d($fp)\n", left->getPos(binding));
+  if (!((right_type == 'i') | (right_type == 'x')))
+    printf("lw $3,%d($fp)\n", right->getPos(binding));
+
+  printf("xor $2,$2,$3\n");
+  if (is_equal == 1) {
+    printf("sltu $2,$0,$2\n");
+  } else {
+    printf("sltiu $2,$2,1\n");
+  }
+  printf(
+      "sw $2,%d($fp)\t# store result of logical equal or logical not equal\n",
+      pos);
+
   return 0;
 }
 
@@ -113,7 +183,7 @@ int Equal::codeGen(Binding *binding, int reg) const {
 
 LogicalAnd::LogicalAnd(ProgramPtr _left, ProgramPtr _right, int _pos)
     : Operation(_left, _right, _pos) {
-  fprintf(stderr, "construct ExpOperator\n");
+  logger->info("construct LogicalAnd\n");
 }
 
 void LogicalAnd::print(std::ostream &dst, int indentation) const {
@@ -124,13 +194,34 @@ void LogicalAnd::print(std::ostream &dst, int indentation) const {
   dst << ")";
 }
 
-int LogicalAnd::evaluate(Binding *binding) const {
+int LogicalAnd::evaluate(const Binding &_binding) const {
   return (left->evaluate(binding) && right->evaluate(binding));
 }
 
-int LogicalAnd::codeGen(Binding *binding, int reg) const {
+int LogicalAnd::codeGen(const Binding &_binding, int reg) const {
   left->codeGen(binding, 2);
+  printf("nop\n");
+  // TODO： add counter to create unique label:
+  std::cout << "beq $0,$2,"
+            << "L2" << std::endl;
+  printf("nop\n");  // Add empty delay slot
+
   right->codeGen(binding, 2);
+  printf("nop\n");
+  // TODO： add counter to create unique label:
+  std::cout << "beq $0,$2,"
+            << "L2" << std::endl;
+  printf("nop\n");
+
+  printf("li $2,1\n");
+  printf("b L3\n");  // TODO： add counter to create unique label:
+  printf("nop\n");   // Add empty delay slot
+  printf("L2:\n");
+  printf("move $2,$0\n");
+  printf("L3:\n");
+  printf("sw $2,%d($fp)\t# store result of logical and\n", pos);
+  printf("lw $2,%d($fp)\n", pos);
+
   return 0;
 }
 
@@ -140,7 +231,7 @@ int LogicalAnd::codeGen(Binding *binding, int reg) const {
 
 LogicalOr::LogicalOr(ProgramPtr _left, ProgramPtr _right, int _pos)
     : Operation(_left, _right, _pos) {
-  fprintf(stderr, "construct ExpOperator\n");
+  logger->info("construct LogicalOr\n");
 }
 
 void LogicalOr::print(std::ostream &dst, int indentation) const {
@@ -151,12 +242,34 @@ void LogicalOr::print(std::ostream &dst, int indentation) const {
   dst << ")";
 }
 
-int LogicalOr::evaluate(Binding *binding) const {
+int LogicalOr::evaluate(const Binding &_binding) const {
   return (left->evaluate(binding) || right->evaluate(binding));
 }
 
-int LogicalOr::codeGen(Binding *binding, int reg) const {
+int LogicalOr::codeGen(const Binding &_binding, int reg) const {
   left->codeGen(binding, 2);
+  printf("nop\n");
+  // TODO： add counter to create unique label:
+  std::cout << "bne $2,$0,"
+            << "L2" << std::endl;
+  printf("nop\n");  // Add empty delay slot
+
   right->codeGen(binding, 2);
+  printf("nop\n");
+  // TODO： add counter to create unique label:
+  std::cout << "bne $2,$0,"
+            << "L3" << std::endl;
+  printf("nop\n");
+
+  printf("L2:\n");
+  printf("li $2,1\n");
+  printf("b L4\n");  // TODO： add counter to create unique label:
+  printf("nop\n");
+  printf("L3:\n");
+  printf("move $2,$0\n");
+  printf("L4:\n");
+  printf("sw $2,%d($fp)\t #store the value of logical or", pos);
+  printf("lw $2,%d($fp)\n", pos);
+
   return 0;
 }

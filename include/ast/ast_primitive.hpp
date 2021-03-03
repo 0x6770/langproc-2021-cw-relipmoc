@@ -15,9 +15,10 @@ class Integer : public Program {
 
  public:
   Integer(int _value);
-  int codeGen(Binding *binding, int reg) const override;
+  int codeGen(const Binding &_binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
-  int evaluate(Binding *binding) const override;
+  int evaluate(const Binding &_binding) const override;
+  void bind(const Binding &_binding) override;
 };
 
 ////////////////////////////////////////
@@ -32,10 +33,11 @@ class Variable : public Program {
  public:
   Variable(const std::string &_id);
   const std::string getId() const;
-  int codeGen(Binding *binding, int reg) const override;
+  int codeGen(const Binding &_binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
-  int evaluate(Binding *binding) const override;
-  const int &getPos(const Binding &binding) const override;
+  int evaluate(const Binding &_binding) const override;
+  int getPos(const Binding &_binding) const override;
+  void bind(const Binding &_binding) override;
 };
 
 #endif
