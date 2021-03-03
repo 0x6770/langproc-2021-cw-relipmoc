@@ -1,15 +1,5 @@
 #include "ast.hpp"
 
-void print_map(const Binding &_binding, std::string _name) {
-  logger->info("Print mapping of variables for %s\n", _name.c_str());
-  logger->info("---------------------\n");
-  logger->info("%10s|%10s\n", "name", "position");
-  logger->info("---------------------\n");
-  for (auto it : _binding) {
-    logger->info("%10s|%10d\n", it.first.c_str(), it.second);
-  }
-}
-
 ////////////////////////////////////////
 // Statement
 ////////////////////////////////////////
@@ -105,6 +95,13 @@ int VarDeclare::codeGen(const Binding &_binding, int reg) const {
 
 std::string VarDeclare::getId() const { return id; }
 
+void VarDeclare::bind(const Binding &_binding) {
+  logger->info("binding...VarAssign\n");
+  binding = _binding;
+  print_map(binding, "VarDeclare");
+  ((Program *)expression)->bind(binding);
+}
+
 ////////////////////////////////////////
 // VarAssign
 ////////////////////////////////////////
@@ -138,6 +135,7 @@ void VarAssign::bind(const Binding &_binding) {
   print_map(binding, "VarAssign");
   ((Program *)expression)->bind(binding);
 }
+
 ////////////////////////////////////////
 // StatementList
 ////////////////////////////////////////

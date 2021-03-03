@@ -49,6 +49,7 @@ class VarDeclare : public Statement {
              int &_pos);
   int codeGen(const Binding &_binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
+  void bind(const Binding &_binding) override;
   std::string getId() const;
 };
 
@@ -64,7 +65,7 @@ class VarAssign : public Statement {
   VarAssign(std::string _name, ProgramPtr _expression);
   int codeGen(const Binding &_binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
-  void bind(const Binding &binding) override;
+  void bind(const Binding &_binding) override;
 };
 
 ////////////////////////////////////////
@@ -82,7 +83,7 @@ class StatementList : public Statement {
   int codeGen(const Binding &_binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
-  void bind(const Binding &binding) override;
+  void bind(const Binding &_binding) override;
 };
 
 ////////////////////////////////////////
@@ -117,7 +118,7 @@ class WhileLoop : public Statement {
   int codeGen(const Binding &_binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
-  void bind(const Binding &binding) override;
+  void bind(const Binding &_binding) override;
 };
 
 #endif
