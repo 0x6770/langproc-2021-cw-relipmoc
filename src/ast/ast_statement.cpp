@@ -99,7 +99,8 @@ void VarDeclare::bind(const Binding &_binding) {
   logger->info("binding...VarAssign\n");
   binding = _binding;
   print_map(binding, "VarDeclare");
-  ((Program *)expression)->bind(binding);
+  if(expression){
+  ((Program *)expression)->bind(binding);}
 }
 
 ////////////////////////////////////////
