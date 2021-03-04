@@ -89,9 +89,9 @@ int MulEqual::codeGen(const Binding &_binding, int reg) const {
   int right_type = right->getType();
    right->codeGen(binding,3);
   left->codeGen(binding,2);
-  if (!(right_type == 'i'))
-  printf("lw $3,%d($fp)\n", right->getPos(binding));
-  printf("mul $2,$3\n");
+  if (!((right_type == 'i') | (right_type == 'x')))
+    printf("lw $3,%d($fp)\n", right->getPos(binding));
+  printf("mult $2,$3\n");
   printf("mflo $2\n");
   std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" << "#store the result for mul equal" << std::endl;
   return 0;
@@ -331,8 +331,7 @@ int BitwiseEqual_XOR::codeGen(const Binding &_binding, int reg) const {
 ////////////////////////////////////////
 
 Increment_Post::Increment_Post(ProgramPtr _left, int _pos)
-    : Operation(_left, 0, _pos) {
-    std::cout << "entered here constructor" << std::endl;    
+    : Operation(_left, 0, _pos) {   
   fprintf(stderr, "construct increment prefix\n");
 }
 
@@ -349,18 +348,18 @@ int Increment_Post::evaluate(const Binding &_binding) const {
 }
 
 int Increment_Post::codeGen(const Binding &_binding, int reg) const {
-  int right_type = right->getType();
-  //left->codeGen(binding, 2);
-  //std::cout << "entered here" << std::endl;
-  //if (!((left_type == 'i') | (left_type == 'x')))
-  //  printf("lw $2,%d($fp)\n", left->getPos(binding));
-  std::cout << right_type<< std::endl; 
-  printf("lw $2 %d($fp)\n",left->getPos(binding));
-  //printf("addiu $2,$2,1\n");
-  //printf("sw $2,%d($fp)\t# store result of post_increment\n", pos);
-  std::cout << "entered here increment codegen" << std::endl; 
+  int left_type = left->getType();
+  left->codeGen(binding, 2);
+
+  if (!((left_type == 'i') | (left_type == 'x')))
+    printf("lw $2,%d($fp)\n", left->getPos(binding));
+
+  printf("addiu $3,$2,1\n");
+  printf("sw $2,%d($fp)\t# store result of post_decrement\n", pos);
+  printf("sw $3,%d($fp)\t# store result of post_decrement\n", left->getPos(binding));
   return 0;
 }
+
 
 ////////////////////////////////////////
 // prefix increment
@@ -388,9 +387,9 @@ int Increment_Pre::codeGen(const Binding &_binding, int reg) const {
 
   if (!((left_type == 'i') | (left_type == 'x')))
     printf("lw $2,%d($fp)\n", left->getPos(binding));
-
-  printf("addiu $3,$2,1\n");
-  printf("sw $3,%d($fp)\t# store result of pre_increment\n", pos);
+  printf("addiu $2,$2,1 # %d\n",pos);
+  printf("sw $2,%d($fp)\t# store result of pre_increment\n",pos);
+  printf("sw $2,%d($fp)\t# store result of pre_increment\n",left->getPos(binding));
   return 0; }
 
 ////////////////////////////////////////
@@ -422,7 +421,8 @@ int Decrement_Post::codeGen(const Binding &_binding, int reg) const {
     printf("lw $2,%d($fp)\n", left->getPos(binding));
 
   printf("addiu $3,$2,-1\n");
-  printf("sw $3,%d($fp)\t# store result of post_decrement\n", pos);
+  printf("sw $2,%d($fp)\t# store result of post_decrement\n", pos);
+  printf("sw $3,%d($fp)\t# store result of post_decrement\n", left->getPos(binding));
   return 0;
 }
 
@@ -453,6 +453,6 @@ int Decrement_Pre::codeGen(const Binding &_binding, int reg) const {
   if (!((left_type == 'i') | (left_type == 'x')))
     printf("lw $2,%d($fp)\n", left->getPos(binding));
 
-  printf("addiu $3,$2,-1\n");
-  printf("sw $3,%d($fp)\t# store result of pre_decrement\n", pos);
+  printf("addiu $2,$2,-1\n");
+  printf("sw $2,%d($fp)\t# store result of pre_decrement\n", pos);
   return 0; }

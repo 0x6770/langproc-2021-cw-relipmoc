@@ -1,7 +1,7 @@
-int a(){
+int f(){
     int a;
-    a = 17;
+    a = 127;
     int b = 3;
-    a = (++a)+b*2;
+    a &= b*2+b;
     return a;
 }

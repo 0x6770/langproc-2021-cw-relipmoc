@@ -39,10 +39,10 @@ int Addition::codeGen(const Binding &_binding, int reg) const {
     right->codeGen(binding, 3);
   }
 
- if (!((left_type == 'i') | (left_type == 'x')))
-    printf("lw $2,%d($fp)\n", left->getPos(binding));
-  if (!((right_type == 'i') | (right_type == 'x')))
-    printf("lw $3,%d($fp)\n", right->getPos(binding));
+ if (!(left_type == 'i'))
+    printf("lw $2,%d($fp) # hhhh \n", left->getPos(binding));
+  if (!(right_type == 'i'))
+    printf("lw $3,%d($fp) # aaaa\n", right->getPos(binding));
   printf("add $2,$2,$3\n");
   printf("sw $2,%d($fp)\t# store result of addition\n", pos);
 

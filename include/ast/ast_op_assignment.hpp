@@ -127,8 +127,6 @@ class BitwiseEqual_XOR : public Operation {
 // Suffix/postfix increment
 ////////////////////////////////////////
 class Increment_Post : public Operation {
- private:
-  ProgramPtr left;
 
  public:
   Increment_Post(ProgramPtr _left, int _pos);
@@ -142,8 +140,6 @@ class Increment_Post : public Operation {
 ////////////////////////////////////////
 
 class Increment_Pre : public Operation {
- private:
-  ProgramPtr left;
 
  public:
   Increment_Pre(ProgramPtr _left, int _pos);
@@ -157,8 +153,6 @@ class Increment_Pre : public Operation {
 ////////////////////////////////////////
 
 class Decrement_Post : public Operation {
- private:
-  ProgramPtr left;
 
  public:
   Decrement_Post(ProgramPtr _left, int _pos);
@@ -172,8 +166,6 @@ class Decrement_Post : public Operation {
 ////////////////////////////////////////
 
 class Decrement_Pre : public Operation {
- private:
-  ProgramPtr left;
 
  public:
   Decrement_Pre(ProgramPtr _left, int _pos);

@@ -148,12 +148,12 @@ unary : unary_prefix              { $$ = $1;}
       ;   
 
 unary_prefix : unary_postfix                   { $$ = $1;}
-             | T_INCREMENT unary_prefix        { $$ = new Increment_Pre($2, getPos(4)); }
-             | T_DECREMENT unary_prefix        { $$ = new Decrement_Pre($2, getPos(4)); }
+             | T_INCREMENT unary_prefix        { $$ = new Increment_Pre($2, pos);pos+=4; }
+             | T_DECREMENT unary_prefix        { $$ = new Decrement_Pre($2, pos);pos+=4; }
 
 unary_postfix : factor                         { $$ = $1;}
-              | unary_postfix T_INCREMENT      { $$ = new Increment_Post($1, getPos(4)); }
-              | unary_postfix T_DECREMENT      { $$ = new Decrement_Post($1, getPos(4)); }
+              | unary_postfix T_INCREMENT      { $$ = new Increment_Post($1, pos);pos+=4; }
+              | unary_postfix T_DECREMENT      { $$ = new Decrement_Post($1, pos);pos+=4; }
 
 factor : T_INT_VALUE        { $$ = new Integer($1); }
        | '(' expr ')'       { $$ = $2;}

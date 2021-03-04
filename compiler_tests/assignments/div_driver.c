@@ -1,4 +1,4 @@
-int x();
+int g();
 int main(){
-    return !(x()==10);
+    return !(g()==41);
 }
