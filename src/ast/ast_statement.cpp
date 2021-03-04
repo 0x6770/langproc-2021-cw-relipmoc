@@ -78,7 +78,7 @@ void VarDeclare::print(std::ostream &dst, int indentation) const {
   dst << var_type << " " << id;
   if (expression) {
     dst << " = ";
-    expression->print(dst, indentation);
+    expression->print(dst, 0);
   }
   dst << ";\n";
 }
@@ -99,8 +99,9 @@ void VarDeclare::bind(const Binding &_binding) {
   logger->info("binding...VarAssign\n");
   binding = _binding;
   print_map(binding, "VarDeclare");
-  if(expression){
-  ((Program *)expression)->bind(binding);}
+  if (expression) {
+    ((Program *)expression)->bind(binding);
+  }
 }
 
 ////////////////////////////////////////
@@ -113,7 +114,7 @@ VarAssign::VarAssign(std::string _name, ProgramPtr _expression)
 void VarAssign::print(std::ostream &dst, int indentation) const {
   printIndent(dst, indentation);
   dst << name << " = ";
-  expression->print(dst, indentation);
+  expression->print(dst, 0);
   dst << ";\n";
 }
 
@@ -226,7 +227,7 @@ IfStatement::IfStatement(ProgramPtr _condition, ProgramPtr _if_statement,
 void IfStatement::print(std::ostream &dst, int indentation) const {
   printIndent(dst, indentation);
   dst << "if (";
-  condition->print(dst, indentation);
+  condition->print(dst, 0);
   dst << ")";
   if (if_statement) {
     dst << " {\n";
