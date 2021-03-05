@@ -50,6 +50,8 @@ sizeof                            {fprintf(stderr, "T_SIZEOF ");   return T_SIZE
  \|\=                             {fprintf(stderr, "|=");   return T_BITWISEEQUAL_OR;}
  \%\=                             {return T_MODEQUAL;}
 
+\,                                {return T_COMMA;}
+
  /* calculation */
 \+\+                              {fprintf(stderr, "++");   return T_INCREMENT;}
 \-\-                              {fprintf(stderr, "--");   return T_DECREMENT;}

@@ -1,7 +1,6 @@
-int a(){
-    int a;
-    a = 17;
-    int b = 3;
-    a = (++a)+b*2;
-    return a;
+int f()
+{
+    int a = 1;
+    int b = 2;
+    return a&&b;
 }

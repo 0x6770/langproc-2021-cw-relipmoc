@@ -47,10 +47,14 @@ int LessEqual::codeGen(const Binding &_binding, int reg) const {
     printf("lw $2,%d($fp)\n", left->getPos(binding));
   if (!((right_type == 'i') | (right_type == 'x')))
     printf("lw $3,%d($fp)\n", right->getPos(binding));
+  
 
-  printf("slt $2,$2,$3\n");
   if (is_equal == 1) {
+    printf("slt $2,$3,$2\n");
     printf("xori $2,$2,0x1\n");
+  }
+  else{
+    printf("slt $2,$2,$3\n");
   }
   printf("andi $2,$2,0x00ff\n");
   // TODO: there is also a line " andi $2,$2,0x00ff" in the online converter.
@@ -257,7 +261,7 @@ int LogicalOr::codeGen(const Binding &_binding, int reg) const {
   right->codeGen(binding, 2);
   printf("nop\n");
   // TODO： add counter to create unique label:
-  std::cout << "bne $2,$0,"
+  std::cout << "beq $2,$0,"
             << "L3" << std::endl;
   printf("nop\n");
 

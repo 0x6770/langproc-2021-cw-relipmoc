@@ -245,7 +245,21 @@ void IfStatement::print(std::ostream &dst, int indentation) const {
 
 int IfStatement::evaluate(const Binding &_binding) const { return 0; }
 
-int IfStatement::codeGen(const Binding &_binding, int reg) const { return 0; }
+int IfStatement::codeGen(const Binding &_binding, int reg) const { 
+  condition->codeGen(binding,2);
+  printf("nop\n");
+  printf("beq $2,$0,L2\n");
+  printf("nop\n");
+  if_statement->codeGen(binding,2);
+  // TODO: use return to generate the label code;
+  printf("b end\n");
+  printf("nop\n");
+  printf("L2:\n");
+  if(else_statement!=NULL){
+  else_statement->codeGen(binding,2);}
+
+
+  return 0; }
 
 ////////////////////////////////////////
 // WhileLoop
