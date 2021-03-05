@@ -29,11 +29,12 @@
 %token T_CHAR T_STRING
 %token T_UNSIGNED T_STRUCT T_TYPEDEF T_SIZEOF T_ENUM
 %token T_INT_VALUE T_FLOAT_VALUE T_DOUBLE_VALUE T_CHAR_VALUE 
-%token T_WHILE T_FOR T_SWITCH T_IF T_ELSE T_BREAK T_CONTINUE
+%token T_WHILE T_FOR T_SWITCH T_IF T_ELSE T_BREAK T_CONTINUE 
+%token T_COMMA
  
 %type <program> program function term unary factor expr add_sub shift_operator relational 
-%type <program> relational_equal bitwise_and bitwise_xor bitwise_or logical_and
-%type <program> stmt stmt_list loop assignment
+%type <program> relational_equal bitwise_and bitwise_xor bitwise_or logical_and param_list param
+%type <program> stmt stmt_list loop assignment control_flow_if
 %type <program> unary_postfix unary_prefix
 %type <integer> T_INT_VALUE 
 %type <string> type T_NAME T_INT
@@ -49,15 +50,23 @@ program : function  { root = $1; }
         ;
 
 function : type T_NAME '(' ')' stmt             { $$ = new Function(*$1, *$2, $5, pos); } 
-         | type T_NAME '(' param_list ')' stmt  { $$ = new Function(*$1, *$2, $6, pos); } 
+         | type T_NAME '(' param_list ')' stmt  { $$ = new Function(*$1, *$2, $6, $4, pos); } 
          ;
 
  /* TODO: Implicit param e.g. int f(a, b); */
-param_list : param                 { }
-           | param_list ',' param  {  }
-           ;
+param_list : param            { 
+             $$ = new Paramlist($1);
+          } 
+          | param_list T_COMMA type T_NAME   {
+             Param* temp = new Param("int",*$4);
+             ((Paramlist*)$$)->add_argument(temp);
+          }
+          
+          ;
 
-param : type T_NAME  { }
+
+
+param : type T_NAME  { $$ = new Param("int",*$2); }
       ;
 
 /*scope : '{' stmt_list '}'  { $$ = $2; }*/
@@ -67,8 +76,7 @@ stmt_list : %empty              { $$ = new StatementList(); }
           | stmt_list stmt      { ((StatementList *)$1)->addStatement($2); $$ = $1; }
           ;
 
-stmt : T_IF '(' expr ')' stmt              { $$ = new IfStatement($3, $5, 0); }
-     | T_IF '(' expr ')' stmt T_ELSE stmt  { $$ = new IfStatement($3, $5, $7); }
+stmt : control_flow_if                     { $$ = $1; }
      | assignment ';'                      { $$ = $1; }
      | type T_NAME ';'                     { $$ = new VarDeclare(*$1, *$2, 0, pos); pos+=4; }
      | type T_NAME '=' assignment ';'      { $$ = new VarDeclare(*$1, *$2, $4, pos); pos+=4; }
@@ -80,6 +88,9 @@ stmt : T_IF '(' expr ')' stmt              { $$ = new IfStatement($3, $5, 0); }
 loop : T_WHILE '(' assignment ')' stmt { $$ = new WhileLoop($3, $5); }
      /*| T_FOR '(' stmt stmt stmt ')' scope        { $$ = new WhileLoop($7, $5); }*/
      ;
+
+control_flow_if : T_IF '(' expr ')' stmt              { $$ = new IfStatement($3, $5, NULL); }
+                | T_IF '(' expr ')' stmt T_ELSE stmt  { $$ = new IfStatement($3, $5, $7); }
 
 assignment : expr                                  { $$ = $1; }
            | T_NAME '=' assignment                 { $$ = new VarAssign(*$1, $3); }
@@ -148,12 +159,12 @@ unary : unary_prefix              { $$ = $1;}
       ;   
 
 unary_prefix : unary_postfix                   { $$ = $1;}
-             | T_INCREMENT unary_prefix        { $$ = new Increment_Pre($2, getPos(4)); }
-             | T_DECREMENT unary_prefix        { $$ = new Decrement_Pre($2, getPos(4)); }
+             | T_INCREMENT unary_prefix        { $$ = new Increment_Pre($2, pos);pos+=4; }
+             | T_DECREMENT unary_prefix        { $$ = new Decrement_Pre($2, pos);pos+=4; }
 
 unary_postfix : factor                         { $$ = $1;}
-              | unary_postfix T_INCREMENT      { $$ = new Increment_Post($1, getPos(4)); }
-              | unary_postfix T_DECREMENT      { $$ = new Decrement_Post($1, getPos(4)); }
+              | unary_postfix T_INCREMENT      { $$ = new Increment_Post($1, pos);pos+=4; }
+              | unary_postfix T_DECREMENT      { $$ = new Decrement_Post($1, pos);pos+=4; }
 
 factor : T_INT_VALUE        { $$ = new Integer($1); }
        | '(' expr ')'       { $$ = $2;}

@@ -4,6 +4,7 @@
 // Program
 ////////////////////////////////////////
 
+
 int Program::getType() const { return node_type; };
 
 int Program::getSize() const { return size; };

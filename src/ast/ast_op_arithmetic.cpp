@@ -43,6 +43,8 @@ int Addition::codeGen(const Binding &_binding, int reg) const {
     printf("lw $2,%d($fp)\n", left->getPos(binding));
   if (!((right_type == 'i') | (right_type == 'x')))
     printf("lw $3,%d($fp)\n", right->getPos(binding));
+
+
   printf("add $2,$2,$3\n");
   printf("sw $2,%d($fp)\t# store result of addition\n", pos);
 
@@ -88,10 +90,11 @@ int Subtraction::codeGen(const Binding &_binding, int reg) const {
     right->codeGen(binding, 3);
   }
 
-  if (!(left_type == 'i'))
+ if (!((left_type == 'i') | (left_type == 'x')))
     printf("lw $2,%d($fp)\n", left->getPos(binding));
-  if (!(right_type == 'i'))
+  if (!((right_type == 'i') | (right_type == 'x')))
     printf("lw $3,%d($fp)\n", right->getPos(binding));
+
 
   printf("sub $2,$2,$3\n");
   printf("sw $2,%d($fp)\t# store result of subtraction\n", pos);
@@ -179,10 +182,11 @@ int Division::codeGen(const Binding &_binding, int reg) const {
     right->codeGen(binding, 3);
   }
 
-  if (!(left_type == 'i'))
+ if (!((left_type == 'i') | (left_type == 'x')))
     printf("lw $2,%d($fp)\n", left->getPos(binding));
   if (!((right_type == 'i') | (right_type == 'x')))
     printf("lw $3,%d($fp)\n", right->getPos(binding));
+
 
   printf("div $2,$3\n");
   printf("mflo $2\n");
@@ -225,10 +229,11 @@ int Modulus::codeGen(const Binding &_binding, int reg) const {
     right->codeGen(binding, 3);
   }
 
-  if (!((left_type == 'i')))
+ if (!((left_type == 'i') | (left_type == 'x')))
     printf("lw $2,%d($fp)\n", left->getPos(binding));
-  if (!((right_type == 'i')))
+  if (!((right_type == 'i') | (right_type == 'x')))
     printf("lw $3,%d($fp)\n", right->getPos(binding));
+
 
   printf("div $2,$3\n");
   printf("mfhi $2\n");
