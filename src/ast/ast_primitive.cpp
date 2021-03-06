@@ -1,5 +1,6 @@
-#include "ast.hpp"
 #include <iterator>
+
+#include "ast.hpp"
 
 ////////////////////////////////////////
 // Integer
@@ -16,7 +17,7 @@ int Integer::evaluate(const Binding &_binding) const { return value; }
 
 int Integer::codeGen(const Binding &_binding, int reg) const {
   logger->info("generate code for integer\n");
-  printf("li $%d,%d\t\t# load %d\n", reg, value, value);
+  printf("\tli\t$%d,%d\t\t# load %d\n", reg, value, value);
   return 0;
 }
 
@@ -48,7 +49,7 @@ int Variable::codeGen(const Binding &_binding, int reg) const {
     logger->error("\"%s\" has not been declared\n", id.c_str());
     exit(1);
   }
-  printf("lw $%d,%d($fp)\t# load %s\n", reg, binding.at(id), id.c_str());
+  printf("\tlw\t$%d,%d($fp)\t# load %s\n", reg, binding.at(id), id.c_str());
   return 0;
 }
 

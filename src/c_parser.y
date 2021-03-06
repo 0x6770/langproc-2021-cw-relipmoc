@@ -78,8 +78,8 @@ stmt_list : %empty              { $$ = new StatementList(); }
 
 stmt : control_flow_if                     { $$ = $1; }
      | assignment ';'                      { $$ = $1; }
-     | type T_NAME ';'                     { $$ = new VarDeclare(*$1, *$2, 0, pos); pos+=4; }
-     | type T_NAME '=' assignment ';'      { $$ = new VarDeclare(*$1, *$2, $4, pos); pos+=4; }
+     | type T_NAME ';'                     { $$ = new VarDeclare(*$1, *$2, 0, getPos(4)); }
+     | type T_NAME '=' assignment ';'      { $$ = new VarDeclare(*$1, *$2, $4, getPos(4)); }
      | T_RETURN expr ';'                   { $$ = new Return($2); }
      | loop                                { $$ = $1; }
      | '{' stmt_list '}'                   { $$ = $2; }
@@ -89,8 +89,9 @@ loop : T_WHILE '(' assignment ')' stmt { $$ = new WhileLoop($3, $5); }
      /*| T_FOR '(' stmt stmt stmt ')' scope        { $$ = new WhileLoop($7, $5); }*/
      ;
 
-control_flow_if : T_IF '(' expr ')' stmt              { $$ = new IfStatement($3, $5, NULL); }
-                | T_IF '(' expr ')' stmt T_ELSE stmt  { $$ = new IfStatement($3, $5, $7); }
+control_flow_if : T_IF '(' expr ')' stmt              { $$ = new IfStatement($3, $5, 0, label++); }
+                | T_IF '(' expr ')' stmt T_ELSE stmt  { $$ = new IfStatement($3, $5, $7, label++); }
+                ;
 
 assignment : expr                                  { $$ = $1; }
            | T_NAME '=' assignment                 { $$ = new VarAssign(*$1, $3); }
@@ -107,51 +108,51 @@ assignment : expr                                  { $$ = $1; }
            ;
 
 expr : logical_and              { $$ = $1; }
-     | expr T_OR_L logical_and  { $$ = new LogicalOr($1, $3, pos); pos+=4; }
+     | expr T_OR_L logical_and  { $$ = new LogicalOr($1, $3, getPos(4)); }
      ; 
 
 logical_and : bitwise_or                      { $$ = $1; }
-            | logical_and T_AND_L bitwise_or  { $$ = new LogicalAnd($1, $3, pos); pos+=4; }
+            | logical_and T_AND_L bitwise_or  { $$ = new LogicalAnd($1, $3, getPos(4)); }
             ;
 
 
 bitwise_or : bitwise_xor                 { $$ = $1; }
-           | bitwise_or '|' bitwise_and  { $$ = new BitwiseOr($1, $3, pos); pos+=4; }
+           | bitwise_or '|' bitwise_and  { $$ = new BitwiseOr($1, $3, getPos(4)); }
            ;
 
 bitwise_xor : bitwise_and                 { $$ = $1; }
-            | bitwise_xor '^' bitwise_and { $$ = new BitwiseXor($1,$3,pos); pos+=4;} 
+            | bitwise_xor '^' bitwise_and { $$ = new BitwiseXor($1, $3, getPos(4)); } 
 
 bitwise_and : relational_equal                  { $$ = $1;}
-            | bitwise_and '&' relational_equal  { $$ = new BitwiseAnd($1, $3, pos); pos+=4;}
+            | bitwise_and '&' relational_equal  { $$ = new BitwiseAnd($1, $3, getPos(4)); }
             ;
 
 relational_equal : relational                                   { $$ = $1;}
-                 | relational_equal T_EQUAL shift_operator      { $$ = new Equal($1, $3, pos, 0); pos+=4; }
-                 | relational_equal T_NOT_EQUAL shift_operator  { $$ = new Equal($1, $3, pos, 1); pos+=4; }
+                 | relational_equal T_EQUAL shift_operator      { $$ = new Equal($1, $3, getPos(4), 0); }
+                 | relational_equal T_NOT_EQUAL shift_operator  { $$ = new Equal($1, $3, getPos(4), 1); }
                  ;
 
 relational : shift_operator                             { $$ = $1;}
-           | shift_operator T_LESS_E shift_operator     { $$ = new LessEqual($1, $3, pos, 1); pos+=4; }
-           | shift_operator T_LESS shift_operator       { $$ = new LessEqual($1, $3, pos, 0); pos+=4; }
-           | shift_operator T_GREATER_E shift_operator  { $$ = new GreaterEqual($1, $3, pos, 1); pos+=4; }
-           | shift_operator T_GREATER shift_operator    { $$ = new GreaterEqual($1, $3, pos, 0); pos+=4; }
+           | shift_operator T_LESS_E shift_operator     { $$ = new LessEqual($1, $3, getPos(4), 1); }
+           | shift_operator T_LESS shift_operator       { $$ = new LessEqual($1, $3, getPos(4), 0); }
+           | shift_operator T_GREATER_E shift_operator  { $$ = new GreaterEqual($1, $3, getPos(4), 1); }
+           | shift_operator T_GREATER shift_operator    { $$ = new GreaterEqual($1, $3, getPos(4), 0); }
            ;
 
 shift_operator : add_sub                           { $$ = $1;}   
-               | shift_operator T_SHIFT_L add_sub  { $$ = new ShiftLeft($1, $3, pos); pos+=4; }
-               | shift_operator T_SHIFT_R add_sub  { $$ = new ShiftRight($1, $3, pos); pos+=4; }
+               | shift_operator T_SHIFT_L add_sub  { $$ = new ShiftLeft($1, $3, getPos(4)); }
+               | shift_operator T_SHIFT_R add_sub  { $$ = new ShiftRight($1, $3, getPos(4)); }
                ;
 
 add_sub : term              { $$ = $1; }
-        | add_sub '+' term  { $$ = new Addition($1, $3, pos); pos+=4; }
-        | add_sub '-' term  { $$ = new Subtraction($1, $3, pos); pos+=4; }
+        | add_sub '+' term  { $$ = new Addition($1, $3, getPos(4)); }
+        | add_sub '-' term  { $$ = new Subtraction($1, $3, getPos(4)); }
         ;
 
 term : unary                { $$ = $1; }
-     | term '*' unary       { $$ = new Multiplication($1, $3, pos); pos+=4; }
-     | term '/' unary       { $$ = new Division($1, $3, pos); pos+=4; }
-     | term '%' unary       { $$ = new Modulus($1, $3, pos); pos+=4; }
+     | term '*' unary       { $$ = new Multiplication($1, $3, getPos(4)); }
+     | term '/' unary       { $$ = new Division($1, $3, getPos(4)); }
+     | term '%' unary       { $$ = new Modulus($1, $3, getPos(4)); }
      ;
 
 unary : unary_prefix              { $$ = $1;}
@@ -182,3 +183,4 @@ const Program *parseAST(FILE *source_file) {
 }
 
 int pos = 0;
+int label = 0;

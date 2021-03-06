@@ -46,7 +46,7 @@ class VarDeclare : public Statement {
 
  public:
   VarDeclare(std::string _var_type, std::string _id, ProgramPtr _expression,
-             int &_pos);
+             int _pos);
   int codeGen(const Binding &_binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   void bind(const Binding &_binding) override;
@@ -95,13 +95,15 @@ class IfStatement : public Statement {
   ProgramPtr condition;
   ProgramPtr if_statement;
   ProgramPtr else_statement;
+  int label;
 
  public:
   IfStatement(ProgramPtr _condition, ProgramPtr _if_statement,
-              ProgramPtr _else_statement);
+              ProgramPtr _else_statement, int _label);
   int codeGen(const Binding &_binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
+  void bind(const Binding &_binding) override;
 };
 
 ////////////////////////////////////////

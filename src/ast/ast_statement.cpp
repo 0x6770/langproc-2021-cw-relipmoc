@@ -49,6 +49,10 @@ void Return::print(std::ostream &dst, int indentation) const {
 int Return::codeGen(const Binding &_binding, int reg) const {
   logger->info("generate code for Return\n");
   expression->codeGen(binding, 2);
+  printf(
+      "\tb\tend\t\t# \033[1;33m[RETURN]\033[0m jump to end of "
+      "function\n");
+  printf("\tnop\n\n");
   return 0;
 }
 
@@ -62,7 +66,7 @@ void Return::bind(const Binding &_binding) {
 ////////////////////////////////////////
 
 VarDeclare::VarDeclare(std::string _var_type, std::string _id,
-                       ProgramPtr _expression, int &_pos)
+                       ProgramPtr _expression, int _pos)
     : Statement(_expression), var_type(_var_type), id(_id) {
   logger->info("construct VarDeclare\n");
   node_type = 'd';
@@ -88,7 +92,7 @@ int VarDeclare::codeGen(const Binding &_binding, int reg) const {
 
   if (expression) {
     expression->codeGen(binding, reg);
-    printf("sw $2,%d($fp)\n", pos);
+    printf("\tsw\t$2,%d($fp)\n", pos);
   }
   return 0;
 }
@@ -127,7 +131,7 @@ int VarAssign::codeGen(const Binding &_binding, int reg) const {
   };
   int pos_in_binding = binding.at(name);
   expression->codeGen(binding, reg);
-  printf("sw $2,%d($fp)\t# assign %s\n", pos_in_binding, name.c_str());
+  printf("\tsw\t$2,%d($fp)\t# assign %s\n", pos_in_binding, name.c_str());
   return 0;
 }
 
@@ -169,11 +173,7 @@ int StatementList::evaluate(const Binding &_binding) const {
 }
 
 int StatementList::codeGen(const Binding &_binding, int reg) const {
-  logger->info("generate code for StatementList\n");
-  logger->info("Mapping of variables\n");
-  logger->info("---------------------\n");
-  logger->info("%10s|%10s\n", "name", "position");
-  logger->info("---------------------\n");
+  print_map(binding, "StatementList");
   for (auto it : binding) {
     logger->info("%10s|%10d\n", it.first.c_str(), it.second);
   }
@@ -218,11 +218,12 @@ void StatementList::bind(const Binding &_binding) {
 ////////////////////////////////////////
 
 IfStatement::IfStatement(ProgramPtr _condition, ProgramPtr _if_statement,
-                         ProgramPtr _else_statement)
+                         ProgramPtr _else_statement, int _label)
     : Statement(0),
       condition(_condition),
       if_statement(_if_statement),
-      else_statement(_else_statement) {}
+      else_statement(_else_statement),
+      label(_label) {}
 
 void IfStatement::print(std::ostream &dst, int indentation) const {
   printIndent(dst, indentation);
@@ -246,21 +247,61 @@ void IfStatement::print(std::ostream &dst, int indentation) const {
 
 int IfStatement::evaluate(const Binding &_binding) const { return 0; }
 
-int IfStatement::codeGen(const Binding &_binding, int reg) const { 
-  condition->codeGen(binding,2);
-  printf("nop\n");
-  printf("beq $2,$0,L2\n");
-  printf("nop\n");
-  if_statement->codeGen(binding,2);
-  // TODO: use return to generate the label code;
-  printf("b end\n");
-  printf("nop\n");
-  printf("L2:\n");
-  if(else_statement!=NULL){
-  else_statement->codeGen(binding,2);}
+int IfStatement::codeGen(const Binding &_binding, int reg) const {
+  int random_id = rand() % 10000;
+  int label_end = label * 2;
+  int label_else_statement = label * 2 + 1;
 
+  printf(
+      "\t\t\t\t# \u001b[38;5;%dm#### BEGIN IF ELSE STATEMENT "
+      "##### %d\u001b[0m\n",
+      random_id % 256, random_id);
 
-  return 0; }
+  condition->codeGen(binding, 2);
+
+  if (else_statement) {
+    printf("\tnop\n");
+    printf(
+        "\tbeq\t$2,$0,$L%d\t# jump to \"else "
+        "statement\" if !condition\n",
+        label_else_statement);
+    printf("\tnop\n\n");
+    if_statement->codeGen(binding, 2);
+    // TODO: use return to generate the label code;
+    printf("\tnop\n");
+    printf(
+        "\tb\t$L%d\t\t# jump to \"next "
+        "statement\"\n",
+        label_end);
+    printf("\tnop\n\n");
+    printf("$L%d:\t\t\t\t# \033[1;36m[LABEL]\033[0m else statement\n",
+           label_else_statement);
+    else_statement->codeGen(binding, 2);
+  } else {
+    printf("\tnop\n");
+    printf("\tbeq\t$2,$0,$L%d\t# jump to \"end of IF ELSE\" if !condition\n",
+           label_end);
+    printf("\tnop\n\n");
+    if_statement->codeGen(binding, 2);
+  }
+
+  printf("$L%d:\t\t\t\t# \033[1;36m[LABEL]\033[0m end of IF ELSE\n",
+         label_end);  // next label
+
+  printf(
+      "\t\t\t\t# \u001b[38;5;%dm#### END   IF ELSE STATEMENT "
+      "##### %d\u001b[0m\n",
+      random_id % 256, random_id);
+
+  return 0;
+}
+
+void IfStatement::bind(const Binding &_binding) {
+  binding = _binding;
+  ((Program *)condition)->bind(binding);
+  ((Program *)if_statement)->bind(binding);
+  if (else_statement) ((Program *)else_statement)->bind(binding);
+}
 
 ////////////////////////////////////////
 // WhileLoop
@@ -288,24 +329,40 @@ void WhileLoop::print(std::ostream &dst, int indentation) const {
 
 int WhileLoop::evaluate(const Binding &_binding) const { return 0; }
 
-// two labels: $L(2n) and $L(2n+1) if
+// TODO add support for return
 int WhileLoop::codeGen(const Binding &_binding, int reg) const {
+  int random_id = rand() % 10000;
+
+  printf(
+      "\t\t\t\t# \u001b[38;5;%dm#### BEGIN WHILE LOOP "
+      "##### %d\u001b[0m\n",
+      random_id % 256, random_id);
+
   print_map(binding, "WhileLoop");
-  int label_statement = condition->getPos(binding) * 2;
-  int label_condition = condition->getPos(binding) * 2 + 1;
+  int label_condition = condition->getPos(binding) * 2;
+  int label_end = condition->getPos(binding) * 2 + 1;
   logger->info("generate code for WhileLoop\n");
-  // start while loop
-  printf("b $L%d\t\t# jump to WHILE condition\n", label_condition);
-  printf("nop\n\n");
-  // body of while loop
-  printf("$L%d:\t\t# label for WHILE statement\n", label_statement);
-  condition->codeGen(binding, reg);
+
   // condition for while loop
-  printf("$L%d:\t\t# label for WHILE condition\n", label_condition);
+  printf("$L%d:\t\t\t\t# \033[1;36m[LABEL]\033[0m WHILE condition\n",
+         label_condition);
+  condition->codeGen(binding, reg);
+  printf("\tbeq\t$2,$0,$L%d\t# jump to end of WHILE\n",
+         label_end);  // check condition again
+
+  // body of while loop
   statement_list->codeGen(binding, reg);
-  printf("bne $2,$0,$L%d\n",
-         label_statement);  // run statement if result of condition is not 0
-  printf("nop\n\n");
+  printf("\tb\t$L%d\t\t# jump to condition\n",
+         label_condition);  // check condition again
+  printf("\tnop\n\n");
+
+  printf("$L%d:\t\t\t\t# \033[1;36m[LABEL]\033[0m end of WHILE\n", label_end);
+
+  printf(
+      "\t\t\t\t# \u001b[38;5;%dm#### END   WHILE LOOP "
+      "##### %d\u001b[0m\n",
+      random_id % 256, random_id);
+
   return 0;
 }
 
