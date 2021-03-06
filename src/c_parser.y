@@ -155,9 +155,9 @@ term : unary                { $$ = $1; }
      | term '%' unary       { $$ = new Modulus($1, $3, getPos(4)); }
      ;
 
-unary : unary_prefix              { $$ = $1;}
-      | '-' unary_prefix          { $$ = $2;}    
-      ;   
+unary : unary_prefix      { $$ = $1; }
+      | '-' unary_prefix  { $$ = new Negation($2, getPos(4)); }
+      ;
 
 unary_prefix : unary_postfix                   { $$ = $1;}
              | T_INCREMENT unary_prefix        { $$ = new Increment_Pre($2, pos);pos+=4; }

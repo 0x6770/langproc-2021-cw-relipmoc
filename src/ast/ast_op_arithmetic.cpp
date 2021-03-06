@@ -237,3 +237,30 @@ int Modulus::codeGen(const Binding &_binding, int reg) const {
 
   return 0;
 }
+
+////////////////////////////////////////
+// Negation
+////////////////////////////////////////
+
+Negation::Negation(ProgramPtr _right, int _pos) : Operation(0, _right, _pos) {
+  fprintf(stderr, "construct Negation\n");
+}
+
+void Negation::print(std::ostream &dst, int indentation) const {
+  dst << "-";
+  dst << "(";
+  right->print(dst, indentation);
+  dst << ")";
+}
+
+int Negation::evaluate(const Binding &_binding) const {
+  return -(right->evaluate(binding));
+}
+
+int Negation::codeGen(const Binding &_binding, int reg) const {
+  right->codeGen(binding, 2);
+  printf("\tsub\t$2,$0,$2\n");
+  printf("\tsw\t$2,%d($fp)\t# store result of Negation\n", pos);
+
+  return 0;
+}

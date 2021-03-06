@@ -63,4 +63,16 @@ class Modulus : public Operation {
   int evaluate(const Binding &_binding) const override;
 };
 
+////////////////////////////////////////
+// Negation
+////////////////////////////////////////
+
+class Negation : public Operation {
+ public:
+  Negation(ProgramPtr _right, int _pos);
+  int codeGen(const Binding &_binding, int reg) const override;
+  void print(std::ostream &dst, int indentation) const override;
+  int evaluate(const Binding &_binding) const override;
+};
+
 #endif
