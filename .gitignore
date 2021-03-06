@@ -18,3 +18,5 @@ src/*.yy.cpp
 src/*.output
 
 test
+test.c
+test.s

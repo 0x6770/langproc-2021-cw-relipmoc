@@ -18,6 +18,7 @@ extern const Program *parseAST(FILE *source_file);
 
 extern Log *logger;
 extern FILE *yyin;
-extern int pos;  // position of a variable or expression result in stack frame
+extern int pos;    // position of a variable or expression result in stack frame
+extern int label;  // used to generate labels
 
 #endif

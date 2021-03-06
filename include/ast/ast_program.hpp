@@ -15,6 +15,7 @@ typedef std::map<std::string, int> Binding;  // map<string name, int pos>
 
 void print_map(const Binding &_binding, std::string _name);
 
+
 // node_type
 //
 // integer        i
