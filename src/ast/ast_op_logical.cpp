@@ -204,25 +204,30 @@ int LogicalAnd::evaluate(const Binding &_binding) const {
 
 int LogicalAnd::codeGen(const Binding &_binding, int reg) const {
   left->codeGen(binding, 2);
+  std::string labelL2 = "L2_logical_and_"  + std::to_string(pos); 
+  std::string labelL3 = "L3_logical_and_"  + std::to_string(pos);
   printf("nop\n");
   // TODO： add counter to create unique label:
   std::cout << "beq $0,$2,"
-            << "L2" << std::endl;
+            << labelL2 << std::endl;
   printf("nop\n");  // Add empty delay slot
 
   right->codeGen(binding, 2);
   printf("nop\n");
   // TODO： add counter to create unique label:
   std::cout << "beq $0,$2,"
-            << "L2" << std::endl;
+            << labelL2 << std::endl;
   printf("nop\n");
 
   printf("li $2,1\n");
-  printf("b L3\n");  // TODO： add counter to create unique label:
+  //printf("b L3\n");  // TODO： add counter to create unique label:
+  std::cout << "b " << labelL3 << std::endl;
   printf("nop\n");   // Add empty delay slot
-  printf("L2:\n");
+  //printf("L2:\n");
+  std::cout << labelL2 <<":" << std::endl;
   printf("move $2,$0\n");
-  printf("L3:\n");
+  //printf("L3:\n");
+  std::cout << labelL3 <<":" << std::endl;
   printf("sw $2,%d($fp)\t# store result of logical and\n", pos);
   printf("lw $2,%d($fp)\n", pos);
 
@@ -253,25 +258,32 @@ int LogicalOr::evaluate(const Binding &_binding) const {
 int LogicalOr::codeGen(const Binding &_binding, int reg) const {
   left->codeGen(binding, 2);
   printf("nop\n");
+  std::string labelL2 = "L2_logical_or_"  + std::to_string(pos); 
+  std::string labelL3 = "L3_logical_or_"  + std::to_string(pos);
+  std::string labelL4 = "L4_logical_or_"  + std::to_string(pos);
   // TODO： add counter to create unique label:
   std::cout << "bne $2,$0,"
-            << "L2" << std::endl;
+            << labelL2 << std::endl;
   printf("nop\n");  // Add empty delay slot
 
   right->codeGen(binding, 2);
   printf("nop\n");
   // TODO： add counter to create unique label:
   std::cout << "beq $2,$0,"
-            << "L3" << std::endl;
+            << labelL3 << std::endl;
   printf("nop\n");
 
-  printf("L2:\n");
+  //printf("L2:\n");
+  std::cout << labelL2 << ":" << std::endl;
   printf("li $2,1\n");
-  printf("b L4\n");  // TODO： add counter to create unique label:
+  //printf("b L4\n");  // TODO： add counter to create unique label:
+  std::cout << "b " << labelL4 << std::endl;
   printf("nop\n");
-  printf("L3:\n");
+  //printf("L3:\n");
+  std::cout << labelL3 << ":" << std::endl;
   printf("move $2,$0\n");
-  printf("L4:\n");
+  //printf("L4:\n");
+  std::cout << labelL4 << ":" << std::endl;
   printf("sw $2,%d($fp)\t #store the value of logical or", pos);
   printf("lw $2,%d($fp)\n", pos);
 
