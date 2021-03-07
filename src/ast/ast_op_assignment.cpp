@@ -449,10 +449,10 @@ int Decrement_Pre::evaluate(const Binding &_binding) const {
 int Decrement_Pre::codeGen(const Binding &_binding, int reg) const { 
   int left_type = left->getType();
   left->codeGen(binding, 2);
-
   if (!((left_type == 'i') | (left_type == 'x')))
     printf("lw $2,%d($fp)\n", left->getPos(binding));
 
   printf("addiu $2,$2,-1\n");
+  printf("sw $2,%d($fp)\t# store result of pre_decrement\n", left->getPos(binding));
   printf("sw $2,%d($fp)\t# store result of pre_decrement\n", pos);
   return 0; }

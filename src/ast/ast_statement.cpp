@@ -208,6 +208,9 @@ void StatementList::bind(const Binding &_binding) {
       print_map(local_binding, std::to_string(x));
       print_map(binding, std::to_string(x));
     }
+    if(it->getType() == 'A'){
+      ((Array*)it)->add_bind(binding);
+    }
     ((Statement *)it)->bind(binding);
   }
   print_map(binding, std::to_string(x));

@@ -35,7 +35,7 @@
 %type <program> program function term unary factor expr add_sub shift_operator relational 
 %type <program> relational_equal bitwise_and bitwise_xor bitwise_or logical_and param_list param
 %type <program> stmt stmt_list loop assignment control_flow_if
-%type <program> unary_postfix unary_prefix
+%type <program> unary_postfix unary_prefix array_declare array_call
 %type <integer> T_INT_VALUE 
 %type <string> type T_NAME T_INT
 
@@ -78,12 +78,20 @@ stmt_list : %empty              { $$ = new StatementList(); }
 
 stmt : control_flow_if                     { $$ = $1; }
      | assignment ';'                      { $$ = $1; }
-     | type T_NAME ';'                     { $$ = new VarDeclare(*$1, *$2, 0, getPos(4)); }
-     | type T_NAME '=' assignment ';'      { $$ = new VarDeclare(*$1, *$2, $4, getPos(4)); }
+     | type T_NAME ';'                     { $$ = new VarDeclare(*$1, *$2, 0, getPos(4)); delete $1; delete $2; }
+     | type T_NAME '=' assignment ';'      { $$ = new VarDeclare(*$1, *$2, $4, getPos(4)); delete $1; delete $2;}
      | T_RETURN expr ';'                   { $$ = new Return($2); }
      | loop                                { $$ = $1; }
      | '{' stmt_list '}'                   { $$ = $2; }
+     | array_declare                       { $$ = $1; }
+     | array_call                          { $$ = $1; }
+     | T_RETURN array_call ';'              { $$ = new Return($2); }
      ; 
+
+array_declare : type T_NAME '[' T_INT_VALUE ']' ';'  { $$ = new Array(*$1,$4,*$2, getPos(4)); pos+=(4*$4);delete $1; delete $2;}
+
+array_call :  T_NAME '[' expr ']' '=' expr ';'  { $$ = new ArrayElement($3,$6,*$1); delete $1; }
+           |  T_NAME '[' expr ']'                { $$ = new ArrayElement($3,*$1); delete $1;}
 
 loop : T_WHILE '(' assignment ')' stmt { $$ = new WhileLoop($3, $5); }
      /*| T_FOR '(' stmt stmt stmt ')' scope        { $$ = new WhileLoop($7, $5); }*/
@@ -160,12 +168,12 @@ unary : unary_prefix      { $$ = $1; }
       ;
 
 unary_prefix : unary_postfix                   { $$ = $1;}
-             | T_INCREMENT unary_prefix        { $$ = new Increment_Pre($2, pos);pos+=4; }
-             | T_DECREMENT unary_prefix        { $$ = new Decrement_Pre($2, pos);pos+=4; }
+             | T_INCREMENT unary_prefix        { $$ = new Increment_Pre($2, getPos(4)); }
+             | T_DECREMENT unary_prefix        { $$ = new Decrement_Pre($2, getPos(4)); }
 
 unary_postfix : factor                         { $$ = $1;}
-              | unary_postfix T_INCREMENT      { $$ = new Increment_Post($1, pos);pos+=4; }
-              | unary_postfix T_DECREMENT      { $$ = new Decrement_Post($1, pos);pos+=4; }
+              | unary_postfix T_INCREMENT      { $$ = new Increment_Post($1, getPos(4)); }
+              | unary_postfix T_DECREMENT      { $$ = new Decrement_Post($1, getPos(4)); }
 
 factor : T_INT_VALUE        { $$ = new Integer($1); }
        | '(' expr ')'       { $$ = $2;}

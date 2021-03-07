@@ -24,7 +24,7 @@ Function::Function(std::string _type, std::string _name, ProgramPtr _statements,
   int tmp_size = _pos + 8;
   size = (tmp_size % 8) ? tmp_size + 4 : tmp_size;
   // ADD spaces for four parameters:
-  size = size + 16;
+  //size = size + 16;
   logger->info("construct Function with arguments\n");
   node_type = 'F';
   with_param = 1;
@@ -94,6 +94,7 @@ int Function::codeGen(const Binding &_binding, int reg) const {
 }
 
 void Function::bind(const Binding &_binding) {}
+
 
 Param::Param(std::string _type, std::string _name) {
   type = _type;
