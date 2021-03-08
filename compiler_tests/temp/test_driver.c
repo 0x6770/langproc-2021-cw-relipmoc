@@ -1,11 +1,9 @@
-int f(int x, int y);
+int f();
+
+int g()
+{ return 20; }
 
 int main()
 {
-    //if( (f(0,0)!=0) ) return 1;
-    //if( (f(0,1)!=1) ) return 1;
-    if( (f(1,0)!=23) ) return 1;
-    //if( (f(-1,1)!=1) ) return 1;
-    //if( (f(1,-1)!=0) ) return 1;
-    return 0;
+    return !(f()==20);
 }

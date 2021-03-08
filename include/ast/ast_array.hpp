@@ -33,6 +33,7 @@ private:
 public:
 ArrayElement(ProgramPtr _left,std::string _name);
 ArrayElement(ProgramPtr _left, ProgramPtr _right,std::string _name);
+void array_assignment(ProgramPtr _right);
 void print(std::ostream &dst, int indentation) const override;
 int codeGen(const Binding &_binding, int reg) const override;
 int evaluate(const Binding &_binding) const override;

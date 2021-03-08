@@ -18,7 +18,6 @@ Function::Function(std::string _type, std::string _name, ProgramPtr _statements,
 Function::Function(std::string _type, std::string _name, ProgramPtr _statements,
                    ProgramPtr _Arguments, int _pos) {
   type = _type;
-  name = _name;
   statements = _statements;
   Arguments = _Arguments;
   int tmp_size = _pos + 8;
@@ -28,6 +27,9 @@ Function::Function(std::string _type, std::string _name, ProgramPtr _statements,
   logger->info("construct Function with arguments\n");
   node_type = 'F';
   with_param = 1;
+  // std::string function_name = _name + "_" + ((Paramlist*)Arguments)->get_type_string();
+  name = _name;
+  //std::cout << name << std::endl;
 }
 
 void Function::print(std::ostream &dst, int indentation) const {
@@ -96,6 +98,33 @@ int Function::codeGen(const Binding &_binding, int reg) const {
 void Function::bind(const Binding &_binding) {}
 
 
+MultiFunction::MultiFunction(ProgramPtr _function){
+  logger->info("construct one function");
+  functoins.push_back(_function);
+}
+
+void MultiFunction::add_function(ProgramPtr _function){
+  logger->info("construct more functions");
+  functoins.push_back(_function);
+}
+
+void MultiFunction::print(std::ostream &dst, int indentation) const {
+
+}
+int MultiFunction::codeGen(const Binding &_binding, int reg) const {
+  for(auto it:functoins){
+    ((Function*)it)->codeGen(binding,2);
+  }
+  return 0;
+}
+int MultiFunction::evaluate(const Binding &_binding) const {
+  return 0;
+}
+
+void MultiFunction::bind(const Binding &_binding){
+
+}
+
 Param::Param(std::string _type, std::string _name) {
   type = _type;
   name = _name;
@@ -115,6 +144,10 @@ void Param::bind(const Binding &_binding) {}
 Binding Param::return_bind(Binding &_binding, int pos) {
   _binding[name] = pos;
   return _binding;
+}
+
+std::string Param::getType(){
+  return type;
 }
 
 Paramlist::Paramlist() {
@@ -164,4 +197,39 @@ Binding Paramlist::return_bind(const Binding &_binding, int pos) {
   }
   binding = result;
   return result;
+}
+
+
+std::string Paramlist::get_type_string(){
+  std::string name = ((Param*)parameters[0])->getType();
+  int n = parameters.size();
+  name = name + "_"+ std::to_string(n);
+  return name;
+}
+
+FunctionCall::FunctionCall(std::string _name){
+  logger->info("construct function call");
+  name = _name;
+}
+void FunctionCall::add_Arguments(ProgramPtr _Argument){
+  arguments.push_back(_Argument);
+
+} 
+void FunctionCall::print(std::ostream &dst, int indentation) const{
+
+}
+
+// assuming all variable types are int for now
+int FunctionCall::codeGen(const Binding &_binding, int reg) const {
+  if(arguments.size() == 0){
+    std::cout << "jal " << name << std::endl;
+    printf("nop\n");
+  }
+  return 0;
+}
+int FunctionCall::evaluate(const Binding &_binding) const {
+  return 0;
+}
+void FunctionCall::bind(const Binding &_binding) {
+
 }

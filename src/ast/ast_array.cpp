@@ -46,7 +46,6 @@ std::string Array::getName(){
 }
 
 ArrayElement::ArrayElement(ProgramPtr _left,std::string _name){
-    call = 1;
     left = _left;
     name = _name;
 }
@@ -55,7 +54,11 @@ ArrayElement::ArrayElement(ProgramPtr _left, ProgramPtr _right,std::string _name
     left = _left;
     right = _right;
     name = _name;
-    call = 0;
+}
+
+void ArrayElement::array_assignment(ProgramPtr _right){
+    right = _right;
+    call = 1;
 }
 
 void ArrayElement::print(std::ostream &dst, int indentation) const{
@@ -72,15 +75,15 @@ int ArrayElement::codeGen(const Binding &_binding, int reg) const
         }
     }
     left->codeGen(binding,2);
-    printf("sll $2,$2,2\n");
-    printf("addiu $3,$fp,8\n");
-    printf("addu $2,$3,$2\n");
-    if(call == 0 ){
+    printf("\tsll $2,$2,2\n");
+    printf("\taddiu $3,$fp,8\n");
+    printf("\taddu $2,$3,$2\n");
+    if(call == 1 ){
     right->codeGen(binding,3);
-    printf("sw $3,%d($2)\n",start_location);
+    printf("\tsw $3,%d($2)\n",start_location);
     }
     else{
-        printf("lw $2,%d($2)\n",start_location);
+        printf("\tlw $2,%d($2)\n",start_location);
     }
 
     return 0;
@@ -91,7 +94,7 @@ int ArrayElement::evaluate(const Binding &_binding) const{
 void ArrayElement::bind(const Binding &_binding){
     binding = _binding;
     ((Program*)left)->bind(binding);
-    if(call == 0){
+    if(call == 1){
         ((Program*)right)->bind(binding);
     }
 }
