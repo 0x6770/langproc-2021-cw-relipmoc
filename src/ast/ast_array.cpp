@@ -37,6 +37,10 @@ void Array::add_bind(Binding &_binding){
     }
 }
 
+void Array::passFunctionName(std::string _name){
+    function_name = _name;
+}
+
 uint32_t Array::getSize(){
     return size*4;
 }
@@ -97,4 +101,10 @@ void ArrayElement::bind(const Binding &_binding){
     if(call == 1){
         ((Program*)right)->bind(binding);
     }
+}
+
+void ArrayElement::passFunctionName(std::string _name){
+    function_name = _name;
+    ((Program*)left)->passFunctionName(_name);
+    ((Program*)right)->passFunctionName(_name);
 }

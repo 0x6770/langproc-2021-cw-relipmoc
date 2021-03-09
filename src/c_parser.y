@@ -35,7 +35,7 @@
 %type <program> program function term unary factor expr add_sub shift_operator relational 
 %type <program> relational_equal bitwise_and bitwise_xor bitwise_or logical_and param_list param
 %type <program> stmt stmt_list loop assignment control_flow_if multiple_function
-%type <program> unary_postfix unary_prefix array_declare function_call
+%type <program> unary_postfix unary_prefix array_declare expression_list
 %type <integer> T_INT_VALUE 
 %type <string> type T_NAME T_INT
 
@@ -86,15 +86,9 @@ stmt : control_flow_if                     { $$ = $1; }
      | loop                                { $$ = $1; }
      | '{' stmt_list '}'                   { $$ = $2; }
      | array_declare                       { $$ = $1; }
-      // | array_call                          { $$ = $1; }
-     //| T_RETURN array_call ';'             { $$ = new Return($2); }
-     | function_call                       { $$ = $1; }
+     //| function_call                       { $$ = $1; }
      ; 
 
-function_call : T_NAME '('                 { $$ = new FunctionCall(*$1); delete $1; }
-              | function_call ')'          { $$ = $1; }
-              | function_call expr         { ((FunctionCall*)$1)->add_Arguments($2);
-                                             $$ = $1; }
 
 array_declare : type T_NAME '[' T_INT_VALUE ']' ';'  { $$ = new Array(*$1,$4,*$2, getPos(4)); pos+=(4*$4);delete $1; delete $2;}
 
@@ -120,6 +114,7 @@ assignment : expr                                  { $$ = $1; }
            | factor T_BITWISEEQUAL_OR assignment   { $$ = new BitwiseEqual_OR($1, $3, getPos(4)); }
            | factor T_BITWISEEQUAL_XOR assignment  { $$ = new BitwiseEqual_XOR($1, $3, getPos(4)); }
            ;
+
 
 expr : logical_and              { $$ = $1; }
      | expr T_OR_L logical_and  { $$ = new LogicalOr($1, $3, getPos(4)); }
@@ -185,8 +180,13 @@ unary_postfix : factor                         { $$ = $1;}
 factor : T_INT_VALUE        { $$ = new Integer($1); }
        | '(' expr ')'       { $$ = $2;}
        | T_NAME             { $$ = new Variable(*$1);}
-       |  T_NAME '[' expr ']'         { $$ = new ArrayElement($3,*$1);}
+       | T_NAME '[' expr ']'         { $$ = new ArrayElement($3,*$1);}
+       | T_NAME '(' expression_list ')'     { $$ = new FunctionCall(*$1,$3);}
        ;
+expression_list : expr                             { $$ = $1;}
+                | expression_list T_COMMA expr     { ExpressionList* temp = new ExpressionList($1);
+                                                   ((ExpressionList*)temp)->add_argument_expression($3); $$ = temp;}
+
 
 %%
 

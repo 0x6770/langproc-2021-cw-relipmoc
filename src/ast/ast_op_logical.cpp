@@ -62,6 +62,11 @@ int LessEqual::codeGen(const Binding &_binding, int reg) const {
 
   return 0;
 }
+void LessEqual::passFunctionName(std::string _name){
+    function_name = _name;
+    ((Program*)left)->passFunctionName(_name);
+    ((Program*)right)->passFunctionName(_name);
+}
 
 ////////////////////////////////////////
 // GreaterEqual
@@ -121,6 +126,11 @@ int GreaterEqual::codeGen(const Binding &_binding, int reg) const {
   return 0;
 }
 
+void GreaterEqual::passFunctionName(std::string _name){
+    function_name = _name;
+    ((Program*)left)->passFunctionName(_name);
+    ((Program*)right)->passFunctionName(_name);
+}
 ////////////////////////////////////////
 // Equal
 ////////////////////////////////////////
@@ -181,6 +191,11 @@ int Equal::codeGen(const Binding &_binding, int reg) const {
   return 0;
 }
 
+void Equal::passFunctionName(std::string _name){
+    function_name = _name;
+    ((Program*)left)->passFunctionName(_name);
+    ((Program*)right)->passFunctionName(_name);
+}
 ////////////////////////////////////////
 // LogicalAnd
 ////////////////////////////////////////
@@ -204,34 +219,40 @@ int LogicalAnd::evaluate(const Binding &_binding) const {
 
 int LogicalAnd::codeGen(const Binding &_binding, int reg) const {
   left->codeGen(binding, 2);
-  std::string labelL2 = "L2_logical_and_"  + std::to_string(pos); 
-  std::string labelL3 = "L3_logical_and_"  + std::to_string(pos);
-  printf("nop\n");
+  std::string labelL2 = "F" + function_name + "_2a_"  + std::to_string(pos); 
+  std::string labelL3 = "F" +  function_name + "_3a_"  + std::to_string(pos);
+  printf("\tnop\n");
   // TODO： add counter to create unique label:
-  std::cout << "beq $0,$2,"
+  std::cout << "\tbeq $0,$2,"
             << labelL2 << std::endl;
-  printf("nop\n");  // Add empty delay slot
+  printf("\tnop\n");  // Add empty delay slot
 
   right->codeGen(binding, 2);
-  printf("nop\n");
+  printf("\tnop\n");
   // TODO： add counter to create unique label:
-  std::cout << "beq $0,$2,"
+  std::cout << "\tbeq $0,$2,"
             << labelL2 << std::endl;
-  printf("nop\n");
+  printf("\tnop\n");
 
-  printf("li $2,1\n");
+  printf("\tli $2,1\n");
   //printf("b L3\n");  // TODO： add counter to create unique label:
-  std::cout << "b " << labelL3 << std::endl;
-  printf("nop\n");   // Add empty delay slot
+  std::cout << "\tb " << labelL3 << std::endl;
+  printf("\tnop\n");   // Add empty delay slot
   //printf("L2:\n");
-  std::cout << labelL2 <<":" << std::endl;
-  printf("move $2,$0\n");
+  std::cout <<  "\t"<<labelL2 <<":" << std::endl;
+  printf("\tmove $2,$0\n");
   //printf("L3:\n");
-  std::cout << labelL3 <<":" << std::endl;
-  printf("sw $2,%d($fp)\t# store result of logical and\n", pos);
-  printf("lw $2,%d($fp)\n", pos);
+  std::cout << "\t" <<labelL3 <<":" << std::endl;
+  printf("\tsw $2,%d($fp)\t# store result of logical and\n", pos);
+  printf("\tlw $2,%d($fp)\n", pos);
 
   return 0;
+}
+
+void LogicalAnd::passFunctionName(std::string _name){
+     function_name = _name;
+    ((Program*)left)->passFunctionName(_name);
+    ((Program*)right)->passFunctionName(_name);
 }
 
 ////////////////////////////////////////
@@ -258,9 +279,9 @@ int LogicalOr::evaluate(const Binding &_binding) const {
 int LogicalOr::codeGen(const Binding &_binding, int reg) const {
   left->codeGen(binding, 2);
   printf("nop\n");
-  std::string labelL2 = "L2_logical_or_"  + std::to_string(pos); 
-  std::string labelL3 = "L3_logical_or_"  + std::to_string(pos);
-  std::string labelL4 = "L4_logical_or_"  + std::to_string(pos);
+  std::string labelL2 = "F" + function_name + "L2_or"  + std::to_string(pos); 
+  std::string labelL3 = "F" + function_name + "L3_or"  + std::to_string(pos);
+  std::string labelL4 = "F" + function_name + "L4_or"  + std::to_string(pos);
   // TODO： add counter to create unique label:
   std::cout << "bne $2,$0,"
             << labelL2 << std::endl;
@@ -288,4 +309,10 @@ int LogicalOr::codeGen(const Binding &_binding, int reg) const {
   printf("lw $2,%d($fp)\n", pos);
 
   return 0;
+}
+
+void LogicalOr::passFunctionName(std::string _name){
+     function_name = _name;
+    ((Program*)left)->passFunctionName(_name);
+    ((Program*)right)->passFunctionName(_name);
 }

@@ -13,6 +13,7 @@ class Addition : public Operation {
   int codeGen(const Binding &_binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
+  void passFunctionName(std::string _name) override;
 };
 
 ////////////////////////////////////////
@@ -25,6 +26,7 @@ class Subtraction : public Operation {
   int codeGen(const Binding &_binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
+  void passFunctionName(std::string _name) override;
 };
 
 ////////////////////////////////////////
@@ -37,6 +39,7 @@ class Multiplication : public Operation {
   int codeGen(const Binding &_binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
+  void passFunctionName(std::string _name) override;
 };
 
 ////////////////////////////////////////
@@ -49,6 +52,7 @@ class Division : public Operation {
   int codeGen(const Binding &_binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
+  void passFunctionName(std::string _name) override;
 };
 
 ////////////////////////////////////////
@@ -61,6 +65,7 @@ class Modulus : public Operation {
   int codeGen(const Binding &_binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
+  void passFunctionName(std::string _name) override;
 };
 
 ////////////////////////////////////////
@@ -73,6 +78,7 @@ class Negation : public Operation {
   int codeGen(const Binding &_binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
+  void passFunctionName(std::string _name) override;
 };
 
 #endif

@@ -22,6 +22,11 @@ int Integer::codeGen(const Binding &_binding, int reg) const {
 }
 
 void Integer::bind(const Binding &_binding) {}
+void Integer::passFunctionName(std::string _name){
+      function_name = _name;
+
+}
+
 
 ////////////////////////////////////////
 // Variable
@@ -64,4 +69,8 @@ int Variable::getPos(const Binding &_binding) const {
 void Variable::bind(const Binding &_binding) {
   binding = _binding;
   logger->debug("binding...variable\n");
+}
+
+void Variable::passFunctionName(std::string _name){
+      function_name = _name;
 }

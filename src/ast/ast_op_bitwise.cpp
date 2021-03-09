@@ -44,6 +44,12 @@ int BitwiseAnd::codeGen(const Binding &_binding, int reg) const {
   return 0;
 }
 
+void BitwiseAnd::passFunctionName(std::string _name){
+    function_name = _name;
+    ((Program*)left)->passFunctionName(_name);
+    ((Program*)right)->passFunctionName(_name);
+}
+
 ////////////////////////////////////////
 // BitwiseOr
 ////////////////////////////////////////
@@ -87,7 +93,11 @@ int BitwiseOr::codeGen(const Binding &_binding, int reg) const {
 
   return 0;
 }
-
+void BitwiseOr::passFunctionName(std::string _name){
+    function_name = _name;
+    ((Program*)left)->passFunctionName(_name);
+    ((Program*)right)->passFunctionName(_name);
+}
 ////////////////////////////////////////
 // BitwiseXor
 ////////////////////////////////////////
@@ -131,6 +141,11 @@ int BitwiseXor::codeGen(const Binding &_binding, int reg) const {
   return 0;
 }
 
+void BitwiseXor::passFunctionName(std::string _name){
+    function_name = _name;
+    ((Program*)left)->passFunctionName(_name);
+    ((Program*)right)->passFunctionName(_name);
+}
 ////////////////////////////////////////
 // ShiftLeft
 ////////////////////////////////////////
@@ -175,6 +190,11 @@ int ShiftLeft::codeGen(const Binding &_binding, int reg) const {
   return 0;
 }
 
+void ShiftLeft::passFunctionName(std::string _name){
+    function_name = _name;
+    ((Program*)left)->passFunctionName(_name);
+    ((Program*)right)->passFunctionName(_name);
+}
 ////////////////////////////////////////
 // ShiftRight
 ////////////////////////////////////////
@@ -218,4 +238,10 @@ int ShiftRight::codeGen(const Binding &_binding, int reg) const {
   printf("sw $2,%d($fp)\t# store result of right shift operation\n", pos);
 
   return 0;
+}
+
+void ShiftRight::passFunctionName(std::string _name){
+    function_name = _name;
+    ((Program*)left)->passFunctionName(_name);
+    ((Program*)right)->passFunctionName(_name);
 }
