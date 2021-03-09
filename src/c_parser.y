@@ -35,7 +35,7 @@
 %type <program> program function term unary factor expr add_sub shift_operator relational 
 %type <program> relational_equal bitwise_and bitwise_xor bitwise_or logical_and param_list param
 %type <program> stmt stmt_list loop assignment control_flow_if multiple_function
-%type <program> unary_postfix unary_prefix array_declare expression_list
+%type <program> unary_postfix unary_prefix array_declare expression_list function_call function_define
 %type <integer> T_INT_VALUE 
 %type <string> type T_NAME T_INT
 
@@ -52,9 +52,13 @@ program : multiple_function  { root = $1; }
 multiple_function : function     { $$ = new MultiFunction($1); pos = 0;}
                   | multiple_function function { ((MultiFunction*)$$)->add_function($2); pos=0; }
 
-function : type T_NAME '(' ')' stmt             { $$ = new Function(*$1, *$2, $5, pos); } 
-         | type T_NAME '(' param_list ')' stmt  { $$ = new Function(*$1, *$2, $6, $4, pos); } 
+function : type T_NAME '(' ')' stmt             { $$ = new Function(*$1, *$2, $5, pos, call,number_argu);  call = 0;} 
+         | type T_NAME '(' param_list ')' stmt  { $$ = new Function(*$1, *$2, $6, $4, pos, call,number_argu); call = 0;} 
+         | function_define                      { $$ = $1;}
          ;
+
+function_define : type T_NAME '(' param_list ')' ';' { $$ = new FunctionDeclare(*$2,$4); }
+                | type T_NAME '(' ')' ';'               { $$ = new FunctionDeclare(*$2); }
 
  /* TODO: Implicit param e.g. int f(a, b); */
 param_list : param            { 
@@ -181,11 +185,19 @@ factor : T_INT_VALUE        { $$ = new Integer($1); }
        | '(' expr ')'       { $$ = $2;}
        | T_NAME             { $$ = new Variable(*$1);}
        | T_NAME '[' expr ']'         { $$ = new ArrayElement($3,*$1);}
-       | T_NAME '(' expression_list ')'     { $$ = new FunctionCall(*$1,$3);}
+       | function_call      { $$ = $1; }
        ;
-expression_list : expr                             { $$ = $1;}
-                | expression_list T_COMMA expr     { ExpressionList* temp = new ExpressionList($1);
-                                                   ((ExpressionList*)temp)->add_argument_expression($3); $$ = temp;}
+
+function_call :  T_NAME '(' expression_list ')'    { $$ = new FunctionCall(*$1,$3); call =1;}
+              | T_NAME  '(' ')'                    { $$ = new FunctionCall(*$1); call = 1;
+                                                     number_argu = 0;
+                                                    }
+
+expression_list : expr                             { $$ = new ExpressionList($1); number_argu = number_argu +1;}
+                | expression_list T_COMMA expr     { //ExpressionList* temp = new ExpressionList($1);
+                                                   ((ExpressionList*)$1)->add_argument_expression($3); $$ = $1;
+                                                     number_argu = number_argu +1;
+                                                    }
 
 
 %%
@@ -200,3 +212,5 @@ const Program *parseAST(FILE *source_file) {
 
 int pos = 0;
 int label = 0;
+int call = 0;
+int number_argu = 0;

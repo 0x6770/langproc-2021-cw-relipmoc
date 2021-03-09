@@ -16,12 +16,15 @@ class Function : public Program {
   ProgramPtr statements;
   ProgramPtr Arguments;
   int with_param;
+   int with_function_call = 0;
+  int is_define = 0;
+  int argu_size;
 
  public:
   Function(std::string _type, std::string _name, ProgramPtr _statements,
-           int _pos);
+           int _pos, int _call, int _argu_number);
   Function(std::string _type, std::string _name, ProgramPtr _statements, ProgramPtr _Arguments,
-           int _pos);
+           int _pos, int _call, int _argu_number);
   void print(std::ostream &dst, int indentation) const override;
   int codeGen(const Binding &_binding, int reg) const override;
   int evaluate(const Binding &_binding) const override;
@@ -97,8 +100,10 @@ class FunctionCall : public Program{
 private:
    std::string name;
    ProgramPtr expression_list;
+   int with_argument = 0;
 public: 
   // function calls without arguments:
+  FunctionCall(std::string _name);
   FunctionCall(std::string _name, ProgramPtr _argument);
   void add_Arguments(ProgramPtr _Argument); 
   void print(std::ostream &dst, int indentation) const override;
@@ -123,6 +128,26 @@ public:
   virtual void bind(const Binding &_binding) override;
   virtual void passFunctionName(std::string _name) override;
 };
+
+
+// Function defination:
+
+class FunctionDeclare : public Program{
+  private:
+  ProgramPtr parameters;
+  std::string name;
+public:
+  void print(std::ostream &dst, int indentation) const override;
+  int codeGen(const Binding &_binding, int reg) const override;
+  int evaluate(const Binding &_binding) const override;
+  virtual void bind(const Binding &_binding) override;
+  FunctionDeclare(std::string _name,ProgramPtr _param_list);
+  virtual void passFunctionName(std::string _name) override;
+  FunctionDeclare(std::string _name);
+
+};
+
+
 
 
 #endif
