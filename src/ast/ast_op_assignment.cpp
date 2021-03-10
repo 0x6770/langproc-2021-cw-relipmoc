@@ -32,6 +32,10 @@ int AddEqual::codeGen(const Binding &_binding, int reg) const {
   return 0;
 }
 
+void AddEqual::passFunctionName(std::string _name){
+
+}
+
 ////////////////////////////////////////
 // Subtraction Equal
 ////////////////////////////////////////
@@ -64,6 +68,10 @@ int SubEqual::codeGen(const Binding &_binding, int reg) const {
   return 0;
 }
 
+
+void SubEqual::passFunctionName(std::string _name){
+
+}
 ////////////////////////////////////////
 // Product assignment
 ////////////////////////////////////////
@@ -97,6 +105,9 @@ int MulEqual::codeGen(const Binding &_binding, int reg) const {
   return 0;
  }
 
+void MulEqual::passFunctionName(std::string _name){
+
+}
 ////////////////////////////////////////
 // Quotient assignment
 ////////////////////////////////////////
@@ -131,6 +142,9 @@ int right_type = right->getType();
 
  }
 
+void QuoEqual::passFunctionName(std::string _name){
+
+}
 ////////////////////////////////////////
 // Modulus assignment
 ////////////////////////////////////////
@@ -164,6 +178,10 @@ int ModEqual::codeGen(const Binding &_binding, int reg) const {
 
  }
 
+ void ModEqual::passFunctionName(std::string _name){
+
+}
+
 ////////////////////////////////////////
 // shift left assignment
 ////////////////////////////////////////
@@ -196,6 +214,9 @@ int ShiftEqual_L::codeGen(const Binding &_binding, int reg) const {
   return 0;
 }
 
+void ShiftEqual_L::passFunctionName(std::string _name){
+
+}
 ////////////////////////////////////////
 // shift right assignment
 ////////////////////////////////////////
@@ -227,6 +248,9 @@ int ShiftEqual_R::codeGen(const Binding &_binding, int reg) const {
   std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" << "#store the result for shift right equal" << std::endl;
   return 0;
  }
+void ShiftEqual_R::passFunctionName(std::string _name){
+
+}
 
 ////////////////////////////////////////
 // bitwise AND assignment
@@ -261,6 +285,9 @@ int BitwiseEqual_AND::codeGen(const Binding &_binding, int reg) const {
   return 0;
 }
 
+void BitwiseEqual_AND::passFunctionName(std::string _name){
+
+}
 ////////////////////////////////////////
 // bitwise OR assignment
 ////////////////////////////////////////
@@ -292,7 +319,11 @@ int BitwiseEqual_OR::codeGen(const Binding &_binding, int reg) const {
   std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" << "#store the result for bitwise or equal" << std::endl;
   return 0;
 }
-
+void BitwiseEqual_OR::passFunctionName(std::string _name){
+    function_name = _name;
+    ((Program*)left)->passFunctionName(_name);
+    ((Program*)right)->passFunctionName(_name);
+}
 ////////////////////////////////////////
 // bitwise XOR assignment
 ////////////////////////////////////////
@@ -325,7 +356,11 @@ int BitwiseEqual_XOR::codeGen(const Binding &_binding, int reg) const {
   std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" << "#store the result for bitwise xor equal" << std::endl;
   return 0;
 }
-
+void BitwiseEqual_XOR::passFunctionName(std::string _name){
+    function_name = _name;
+    ((Program*)left)->passFunctionName(_name);
+    ((Program*)right)->passFunctionName(_name);
+}
 ////////////////////////////////////////
 // Postfix increment
 ////////////////////////////////////////
@@ -359,7 +394,10 @@ int Increment_Post::codeGen(const Binding &_binding, int reg) const {
   printf("sw $3,%d($fp)\t# store result of post_decrement\n", left->getPos(binding));
   return 0;
 }
-
+void Increment_Post::passFunctionName(std::string _name){
+    function_name = _name;
+    ((Program*)left)->passFunctionName(_name);
+}
 
 ////////////////////////////////////////
 // prefix increment
@@ -391,7 +429,10 @@ int Increment_Pre::codeGen(const Binding &_binding, int reg) const {
   printf("sw $2,%d($fp)\t# store result of pre_increment\n",pos);
   printf("sw $2,%d($fp)\t# store result of pre_increment\n",left->getPos(binding));
   return 0; }
-
+void Increment_Pre::passFunctionName(std::string _name){
+    function_name = _name;
+    ((Program*)left)->passFunctionName(_name);
+}
 ////////////////////////////////////////
 // Postfix decrement
 ////////////////////////////////////////
@@ -426,6 +467,10 @@ int Decrement_Post::codeGen(const Binding &_binding, int reg) const {
   return 0;
 }
 
+void Decrement_Post::passFunctionName(std::string _name){
+    function_name = _name;
+    ((Program*)left)->passFunctionName(_name);
+}
 ////////////////////////////////////////
 // prefix increment
 ////////////////////////////////////////
@@ -449,10 +494,14 @@ int Decrement_Pre::evaluate(const Binding &_binding) const {
 int Decrement_Pre::codeGen(const Binding &_binding, int reg) const { 
   int left_type = left->getType();
   left->codeGen(binding, 2);
-
   if (!((left_type == 'i') | (left_type == 'x')))
     printf("lw $2,%d($fp)\n", left->getPos(binding));
 
   printf("addiu $2,$2,-1\n");
+  printf("sw $2,%d($fp)\t# store result of pre_decrement\n", left->getPos(binding));
   printf("sw $2,%d($fp)\t# store result of pre_decrement\n", pos);
   return 0; }
+void Decrement_Pre::passFunctionName(std::string _name){
+    function_name = _name;
+    ((Program*)left)->passFunctionName(_name);
+}

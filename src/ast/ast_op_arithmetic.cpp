@@ -50,6 +50,12 @@ int Addition::codeGen(const Binding &_binding, int reg) const {
   return 0;
 }
 
+void Addition::passFunctionName(std::string _name){
+    function_name = _name;
+    ((Program*)left)->passFunctionName(_name);
+    ((Program*)right)->passFunctionName(_name);
+}
+
 ////////////////////////////////////////
 // Subtraction
 ////////////////////////////////////////
@@ -100,6 +106,12 @@ int Subtraction::codeGen(const Binding &_binding, int reg) const {
   return 0;
 }
 
+void Subtraction::passFunctionName(std::string _name){
+    function_name = _name;
+    ((Program*)left)->passFunctionName(_name);
+    ((Program*)right)->passFunctionName(_name);
+}
+
 ////////////////////////////////////////
 // Multiplication
 ////////////////////////////////////////
@@ -144,6 +156,12 @@ int Multiplication::codeGen(const Binding &_binding, int reg) const {
   printf("\tsw\t$2,%d($fp)\t# store result of multiplication\n", pos);
 
   return 0;
+}
+
+void Multiplication::passFunctionName(std::string _name){
+    function_name = _name;
+    ((Program*)left)->passFunctionName(_name);
+    ((Program*)right)->passFunctionName(_name);
 }
 
 ////////////////////////////////////////
@@ -192,6 +210,12 @@ int Division::codeGen(const Binding &_binding, int reg) const {
   return 0;
 }
 
+
+void Division::passFunctionName(std::string _name){
+    function_name = _name;
+    ((Program*)left)->passFunctionName(_name);
+    ((Program*)right)->passFunctionName(_name);
+}
 ////////////////////////////////////////
 // Modulus
 ////////////////////////////////////////
@@ -238,6 +262,12 @@ int Modulus::codeGen(const Binding &_binding, int reg) const {
   return 0;
 }
 
+void Modulus::passFunctionName(std::string _name){
+    function_name = _name;
+    ((Program*)left)->passFunctionName(_name);
+    ((Program*)right)->passFunctionName(_name);
+}
+
 ////////////////////////////////////////
 // Negation
 ////////////////////////////////////////
@@ -263,4 +293,11 @@ int Negation::codeGen(const Binding &_binding, int reg) const {
   printf("\tsw\t$2,%d($fp)\t# store result of Negation\n", pos);
 
   return 0;
+}
+
+
+void Negation::passFunctionName(std::string _name){
+    function_name = _name;
+    //((Program*)left)->passFunctionName(_name);
+    ((Program*)right)->passFunctionName(_name);
 }

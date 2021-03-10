@@ -20,3 +20,10 @@ void Operation::bind(const Binding &_binding) {
   if (left) ((Program *)left)->bind(_binding);
   if (right) ((Program *)right)->bind(_binding);
 }
+
+
+void Operation::passFunctionName(std::string _name){
+      function_name = _name;
+    ((Program*)left)->passFunctionName(_name);
+    ((Program*)right)->passFunctionName(_name);
+}

@@ -1,4 +1,6 @@
-int f(int x, int y)
+int g(int x, int y);
+
+int f()
 {
-    return x<y;
+    return g(10,20);
 }

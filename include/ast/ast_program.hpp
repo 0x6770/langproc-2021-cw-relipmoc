@@ -22,6 +22,7 @@ void print_map(const Binding &_binding, std::string _name);
 // statement_list l
 // declaration    d
 // return         r
+// array          A
 
 class Program {
  protected:
@@ -29,6 +30,10 @@ class Program {
   int size;
   int pos;          // position of a variable or expression in stack frame
   Binding binding;  // variables binding
+  std::string function_name;
+  // Every sub class should get the name the the function
+  // if the statement is declared globally: 
+  // default value should be ~G;
 
  public:
   virtual ~Program() {}
@@ -45,5 +50,6 @@ class Program {
   virtual int getPos(const Binding &_binding) const;
   void printIndent(std::ostream &dst, int &indentation) const;
   virtual void bind(const Binding &_binding) = 0;
+  virtual void passFunctionName(std::string _name) = 0;
 };
 #endif

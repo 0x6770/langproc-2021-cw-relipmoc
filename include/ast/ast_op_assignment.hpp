@@ -13,6 +13,7 @@ class AddEqual : public Operation {
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   int codeGen(const Binding &_binding, int reg) const override;
+  void passFunctionName(std::string _name) override;
 };
 
 ////////////////////////////////////////
@@ -25,6 +26,7 @@ class SubEqual : public Operation {
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   int codeGen(const Binding &_binding, int reg) const override;
+  void passFunctionName(std::string _name) override;
 };
 
 ////////////////////////////////////////
@@ -37,6 +39,7 @@ class MulEqual : public Operation {
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   int codeGen(const Binding &_binding, int reg) const override;
+  void passFunctionName(std::string _name) override;
 };
 
 ////////////////////////////////////////
@@ -49,6 +52,7 @@ class QuoEqual : public Operation {
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   int codeGen(const Binding &_binding, int reg) const override;
+  void passFunctionName(std::string _name) override;
 };
 
 ////////////////////////////////////////
@@ -61,6 +65,7 @@ class ModEqual : public Operation {
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   int codeGen(const Binding &_binding, int reg) const override;
+  void passFunctionName(std::string _name) override;
 };
 
 ////////////////////////////////////////
@@ -73,6 +78,7 @@ class ShiftEqual_L : public Operation {
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   int codeGen(const Binding &_binding, int reg) const override;
+  void passFunctionName(std::string _name) override;
 };
 
 ////////////////////////////////////////
@@ -85,6 +91,7 @@ class ShiftEqual_R : public Operation {
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   int codeGen(const Binding &_binding, int reg) const override;
+  void passFunctionName(std::string _name) override;
 };
 
 ////////////////////////////////////////
@@ -97,6 +104,7 @@ class BitwiseEqual_AND : public Operation {
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   int codeGen(const Binding &_binding, int reg) const override;
+  void passFunctionName(std::string _name) override;
 };
 
 ////////////////////////////////////////
@@ -109,6 +117,7 @@ class BitwiseEqual_OR : public Operation {
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   int codeGen(const Binding &_binding, int reg) const override;
+  void passFunctionName(std::string _name) override;
 };
 
 ////////////////////////////////////////
@@ -121,6 +130,7 @@ class BitwiseEqual_XOR : public Operation {
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   int codeGen(const Binding &_binding, int reg) const override;
+  void passFunctionName(std::string _name) override;
 };
 
 ////////////////////////////////////////
@@ -133,6 +143,7 @@ class Increment_Post : public Operation {
   int codeGen(const Binding &_binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
+  void passFunctionName(std::string _name) override;
 };
 
 ////////////////////////////////////////
@@ -146,6 +157,7 @@ class Increment_Pre : public Operation {
   int codeGen(const Binding &_binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
+  void passFunctionName(std::string _name) override;
 };
 
 ////////////////////////////////////////
@@ -159,6 +171,7 @@ class Decrement_Post : public Operation {
   int codeGen(const Binding &_binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
+  void passFunctionName(std::string _name) override;
 };
 
 ////////////////////////////////////////
@@ -172,6 +185,7 @@ class Decrement_Pre : public Operation {
   int codeGen(const Binding &_binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
+  void passFunctionName(std::string _name) override;
 };
 
 #endif
