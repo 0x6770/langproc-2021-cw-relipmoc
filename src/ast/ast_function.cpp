@@ -39,7 +39,6 @@ Function::Function(std::string _type, std::string _name, ProgramPtr _statements,
   with_param = 1;
   // std::string function_name = _name + "_" + ((Paramlist*)Arguments)->get_type_string();
   name = _name;
-  //std::cout << name << std::endl;
   passFunctionName(_name);
   with_function_call = _call;
   argu_size = _argu_number;
@@ -119,7 +118,7 @@ int Function::codeGen(const Binding &_binding, int reg) const {
     Arguments->codeGen(temp, 2);
   }
   statements->codeGen(binding, 2);  // store  result result of to $2
-  std::cout << function_end;
+  printf("%s",function_end.c_str());
   printf(":\t\t\t\t# \033[1;036m[LABEL]\033[0m end of function\n");
   // TODO: return statement to determine the label part
   printf("\tmove\t$sp,$fp\n");
@@ -183,7 +182,6 @@ Param::Param(std::string _type, std::string _name) {
   logger->info("construct one parameter\n");
   type = _type;
   name = _name;
-  // std::cout << "construct Param" << std::endl;
 }
 
 void Param::print(std::ostream &dst, int indentation) const {
@@ -219,12 +217,10 @@ Paramlist::Paramlist() {
 Paramlist::Paramlist(ProgramPtr argument) {
   parameters.push_back(argument);
   logger->info("construct paramlist with on param\n");
-  // std::cout << "only one argument" << std::endl;
 }
 
 void Paramlist::add_argument(ProgramPtr argument) {
   parameters.push_back(argument);
-  // std::cout << "add one more argument" << std::endl;
 }
 
 void Paramlist::print(std::ostream &dst, int indentation) const {

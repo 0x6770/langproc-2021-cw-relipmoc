@@ -28,7 +28,7 @@ int AddEqual::codeGen(const Binding &_binding, int reg) const {
   if (!((right_type == 'i')))
     printf("lw $3,%d($fp)\n", right->getPos(binding));
   printf("add $2,$2,$3\n");
-  std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" << "#store the result for add equal" << std::endl;
+  printf("sw $2,%d($fp)\n",left->getPos(binding));
   return 0;
 }
 
@@ -64,7 +64,8 @@ int SubEqual::codeGen(const Binding &_binding, int reg) const {
   if (!((right_type == 'i') | (right_type == 'x')))
     printf("lw $3,%d($fp)\n", right->getPos(binding));
   printf("sub $2,$2,$3\n");
-  std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" << "#store the result for sub equal" << std::endl;
+  printf("sw $2,%d($fp)\n",left->getPos(binding));
+  //std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" << "#store the result for sub equal" << std::endl;
   return 0;
 }
 
@@ -101,7 +102,8 @@ int MulEqual::codeGen(const Binding &_binding, int reg) const {
     printf("lw $3,%d($fp)\n", right->getPos(binding));
   printf("mult $2,$3\n");
   printf("mflo $2\n");
-  std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" << "#store the result for mul equal" << std::endl;
+  printf("sw $2,%d($fp)\n",left->getPos(binding));
+  //std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" << "#store the result for mul equal" << std::endl;
   return 0;
  }
 
@@ -137,7 +139,8 @@ int right_type = right->getType();
     printf("lw $3,%d($fp)\n", right->getPos(binding));
   printf("div $2,$3\n");
   printf("mflo $2\n");
-  std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" << "#store the result for quo equal" << std::endl;
+  printf("sw $2,%d($fp)\n",left->getPos(binding));
+  //std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" << "#store the result for quo equal" << std::endl;
   return 0;
 
  }
@@ -173,7 +176,8 @@ int ModEqual::codeGen(const Binding &_binding, int reg) const {
     printf("lw $3,%d($fp)\n", right->getPos(binding));
   printf("div $2,$3\n");
   printf("mfhi $2\n");
-  std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" << "#store the result for modulus equal" << std::endl;
+  printf("sw $2,%d($fp)\n",left->getPos(binding));
+  //std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" << "#store the result for modulus equal" << std::endl;
   return 0;
 
  }
@@ -210,7 +214,8 @@ int ShiftEqual_L::codeGen(const Binding &_binding, int reg) const {
   if (!((right_type == 'i') | (right_type == 'x')))
     printf("lw $3,%d($fp)\n", right->getPos(binding));
   printf("sll $2,$2,$3\n");
-  std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" << "#store the result for shift left equal" << std::endl;
+  printf("sw $2,%d($fp)\n",left->getPos(binding));
+  //std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" << "#store the result for shift left equal" << std::endl;
   return 0;
 }
 
@@ -245,7 +250,8 @@ int ShiftEqual_R::codeGen(const Binding &_binding, int reg) const {
   if (!((right_type == 'i') | (right_type == 'x')))
   printf("lw $3,%d($fp)\n", right->getPos(binding));
   printf("sra $2,$2,$3\n");
-  std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" << "#store the result for shift right equal" << std::endl;
+  printf("sw $2,%d($fp)\n",left->getPos(binding));
+  //std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" << "#store the result for shift right equal" << std::endl;
   return 0;
  }
 void ShiftEqual_R::passFunctionName(std::string _name){
@@ -281,7 +287,8 @@ int BitwiseEqual_AND::codeGen(const Binding &_binding, int reg) const {
   if (!((right_type == 'i') | (right_type == 'x')))
     printf("lw $3,%d($fp)\n", right->getPos(binding));
   printf("and $2,$2,$3\n");
-  std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" << "#store the result for bitwise and equal" << std::endl;
+  printf("sw $2,%d($fp)\n",left->getPos(binding));
+  //std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" << "#store the result for bitwise and equal" << std::endl;
   return 0;
 }
 
@@ -316,7 +323,8 @@ int BitwiseEqual_OR::codeGen(const Binding &_binding, int reg) const {
   if (!((right_type == 'i') | (right_type == 'x')))
     printf("lw $3,%d($fp)\n", right->getPos(binding));
   printf("or $2,$2,$3\n");
-  std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" << "#store the result for bitwise or equal" << std::endl;
+  printf("sw $2,%d($fp)\n",left->getPos(binding));
+  //std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" << "#store the result for bitwise or equal" << std::endl;
   return 0;
 }
 void BitwiseEqual_OR::passFunctionName(std::string _name){
@@ -353,7 +361,8 @@ int BitwiseEqual_XOR::codeGen(const Binding &_binding, int reg) const {
   if (!((right_type == 'i') | (right_type == 'x')))
     printf("lw $3,%d($fp)\n", right->getPos(binding));
   printf("xor $2,$2,$3\n");
-  std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" << "#store the result for bitwise xor equal" << std::endl;
+  printf("sw $2,%d($fp)\n",left->getPos(binding));
+  //std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" << "#store the result for bitwise xor equal" << std::endl;
   return 0;
 }
 void BitwiseEqual_XOR::passFunctionName(std::string _name){
