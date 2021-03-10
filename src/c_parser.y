@@ -188,8 +188,8 @@ factor : T_INT_VALUE        { $$ = new Integer($1); }
        | function_call      { $$ = $1; }
        ;
 
-function_call :  T_NAME '(' expression_list ')'    { $$ = new FunctionCall(*$1,$3); call =1;}
-              | T_NAME  '(' ')'                    { $$ = new FunctionCall(*$1); call = 1;
+function_call :  T_NAME '(' expression_list ')'    { $$ = new FunctionCall(*$1,$3,getPos(4)); call =1;}
+              | T_NAME  '(' ')'                    { $$ = new FunctionCall(*$1,getPos(4)); call = 1;
                                                      number_argu = 0;
                                                     }
 

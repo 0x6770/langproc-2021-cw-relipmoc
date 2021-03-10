@@ -49,6 +49,7 @@ class Param : public Program {
   virtual void bind(const Binding &_binding) override;
   Binding return_bind(Binding &_binding,int pos);
   std::string getType();
+  std::string getName();
   virtual void passFunctionName(std::string _name) override;
 };
 
@@ -103,8 +104,8 @@ private:
    int with_argument = 0;
 public: 
   // function calls without arguments:
-  FunctionCall(std::string _name);
-  FunctionCall(std::string _name, ProgramPtr _argument);
+  FunctionCall(std::string _name,int _pos);
+  FunctionCall(std::string _name, ProgramPtr _argument, int _pos);
   void add_Arguments(ProgramPtr _Argument); 
   void print(std::ostream &dst, int indentation) const override;
   int codeGen(const Binding &_binding, int reg) const override;

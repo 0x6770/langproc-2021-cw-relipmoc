@@ -106,5 +106,6 @@ void ArrayElement::bind(const Binding &_binding){
 void ArrayElement::passFunctionName(std::string _name){
     function_name = _name;
     ((Program*)left)->passFunctionName(_name);
-    ((Program*)right)->passFunctionName(_name);
+    if(call == 1){
+    ((Program*)right)->passFunctionName(_name);}
 }

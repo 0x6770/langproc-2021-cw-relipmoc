@@ -9,11 +9,13 @@ Function::Function(std::string _type, std::string _name, ProgramPtr _statements,
     : type(_type), name(_name), statements(_statements) {
   int tmp_size = _pos + 8;
   tmp_size = tmp_size + (_argu_number)*4;
+  // free space for the number of arguments;
   if(_call == 1)  tmp_size = tmp_size+4;
+  // add 4 for store the value in $ra when there is function call in the function;
   size = (tmp_size % 8) ? tmp_size + 4 : tmp_size;
   // ADD spaces for four parameters:
   // size = size + 16;
-  logger->info("construct Function\n");
+  logger->info("construct Function with no arguments\n");
   node_type = 'F';
   passFunctionName(_name);
   with_function_call = _call;
@@ -85,17 +87,23 @@ int Function::codeGen(const Binding &_binding, int reg) const {
   logger->info("====================\n");
   logger->info("generate code for Function\n");
   logger->info("size of stack frame: %d\n", getSize());
-  printf(".text\n");
-  printf(".align\t2\n");
-  printf(".set\tnomips16\n");
-  printf(".set\tnomicromips\n");
-  printf(".ent\t%s\n",name.c_str());
-  printf(".cprestore\t%d\n",argu_size*4+4);
+  //printf(".text\n");
+  //printf(".align\t2\n");
+  //printf(".set\tnomips16\n");
+  //printf(".set\tnomicromips\n");
+  //printf(".cpload $25\n");
+  //printf(".ent\t%s\n",name.c_str());
+  //printf(".cprestore %d\n",argu_size*4+4);
   printf(".globl\t%s\n", name.c_str());
-  // printf(".ent\t%s\n", name.c_str());
+  //printf(".ent\t%s\n", name.c_str());
   printf("\n");
   printf("%s:\n", name.c_str());
-  printf("\t.frame $fp,%d,$31\n",size);
+  //printf("\t.cprestore %d\n",argu_size*4+4);
+  //printf("\t.frame $fp,%d,$31\n",size);
+  //printf("\t.mask 0xc0000000,-4\n");
+  //printf("\t.fmask 0x00000000,0\n");
+  //printf(".set\tnomacro\n");
+  //printf(".set\tnoreoder\n");
   // printf(".frame\t$fp,%d,$31\n", size);
   printf("\taddiu\t$sp,$sp,%d\n", -size);
   if(with_function_call == 1){
@@ -127,7 +135,9 @@ int Function::codeGen(const Binding &_binding, int reg) const {
   printf("\tnop\n");
   printf("\n");
   
-  
+  //printf(".set\tmacro\n");
+ // printf(".set\treorder\n");
+  //printf(".end\t%s\n",name.c_str());
   // printf(".end\t%s\n", name.c_str());
   return 0;
 }
@@ -170,6 +180,7 @@ void MultiFunction::passFunctionName(std::string _name){
 }
 
 Param::Param(std::string _type, std::string _name) {
+  logger->info("construct one parameter\n");
   type = _type;
   name = _name;
   // std::cout << "construct Param" << std::endl;
@@ -187,6 +198,10 @@ void Param::bind(const Binding &_binding) {}
 
 void Param::passFunctionName(std::string _name){}
 
+std::string Param::getName(){
+  return name;
+}
+
 Binding Param::return_bind(Binding &_binding, int pos) {
   _binding[name] = pos;
   return _binding;
@@ -198,10 +213,12 @@ std::string Param::getType(){
 
 Paramlist::Paramlist() {
   // do nothing;
+  logger->info("Build an empty parameter list\n");
 }
 
 Paramlist::Paramlist(ProgramPtr argument) {
   parameters.push_back(argument);
+  logger->info("construct paramlist with on param\n");
   // std::cout << "only one argument" << std::endl;
 }
 
@@ -220,12 +237,18 @@ int Paramlist::codeGen(const Binding &_binding, int reg) const {
   std::string key;
   int value = 0;
   int regtemp = 4;
+  
+  int count = 1;
   for (auto it : _binding) {
+    if(count<=4){
     key = it.first;
     value = it.second;
-    printf("sw $%d,%d($fp)\n", regtemp, value);
+    printf("\tsw \t$%d,%d($fp)\n", regtemp, value);
     regtemp = regtemp + 1;
+    count = count + 1;
+    }
   }
+
   return 0;
 }
 
@@ -237,9 +260,18 @@ Binding Paramlist::return_bind(const Binding &_binding, int pos) {
   Binding result;
   Binding temp;
   int n = pos;
+  int counter = 1;
+  std::string tmp_string;
   for (auto it : parameters) {
+    if(counter <= 4){
     result = ((Param *)it)->return_bind(temp, n);
     n = n + 4;
+    counter = counter + 1;}
+    else{
+      tmp_string = ((Param*)it)->getName();
+      result[tmp_string] = n;
+      n = n + 4;
+    }
   }
   binding = result;
   return result;
@@ -255,16 +287,18 @@ std::string Paramlist::get_type_string(){
 
 void Paramlist::passFunctionName(std::string _name){}
 
-FunctionCall::FunctionCall(std::string _name){
+FunctionCall::FunctionCall(std::string _name,int _pos){
   name = _name;
+  pos = _pos;
   logger->info("construct function NO arguments");
   with_argument = 0;
 }
 
 
-FunctionCall::FunctionCall(std::string _name, ProgramPtr _argument){
+FunctionCall::FunctionCall(std::string _name, ProgramPtr _argument,int _pos){
   logger->info("construct function call with arguments");
   name = _name;
+  pos = _pos;
   expression_list = _argument;
   with_argument = 1;
 }
@@ -278,11 +312,13 @@ void FunctionCall::print(std::ostream &dst, int indentation) const{
 
 // assuming all variable types are int for now
 int FunctionCall::codeGen(const Binding &_binding, int reg) const {
+  //int pos = 20;
   if(with_argument == 1){
   ((Program*)expression_list)->codeGen(binding,2);}
  // printf("\t.cprestore 20\n");
   printf("\t jal %s\n",name.c_str());
   printf("\tnop\n");
+  printf("\tsw\t$2,%d($fp)    # store the value after function call\n",pos);  
   return 0;
 }
 int FunctionCall::evaluate(const Binding &_binding) const {

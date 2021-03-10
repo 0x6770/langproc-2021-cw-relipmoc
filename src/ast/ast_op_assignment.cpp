@@ -397,7 +397,6 @@ int Increment_Post::codeGen(const Binding &_binding, int reg) const {
 void Increment_Post::passFunctionName(std::string _name){
     function_name = _name;
     ((Program*)left)->passFunctionName(_name);
-    ((Program*)right)->passFunctionName(_name);
 }
 
 ////////////////////////////////////////
@@ -433,7 +432,6 @@ int Increment_Pre::codeGen(const Binding &_binding, int reg) const {
 void Increment_Pre::passFunctionName(std::string _name){
     function_name = _name;
     ((Program*)left)->passFunctionName(_name);
-    ((Program*)right)->passFunctionName(_name);
 }
 ////////////////////////////////////////
 // Postfix decrement
@@ -472,7 +470,6 @@ int Decrement_Post::codeGen(const Binding &_binding, int reg) const {
 void Decrement_Post::passFunctionName(std::string _name){
     function_name = _name;
     ((Program*)left)->passFunctionName(_name);
-    ((Program*)right)->passFunctionName(_name);
 }
 ////////////////////////////////////////
 // prefix increment
@@ -507,5 +504,4 @@ int Decrement_Pre::codeGen(const Binding &_binding, int reg) const {
 void Decrement_Pre::passFunctionName(std::string _name){
     function_name = _name;
     ((Program*)left)->passFunctionName(_name);
-    ((Program*)right)->passFunctionName(_name);
 }
