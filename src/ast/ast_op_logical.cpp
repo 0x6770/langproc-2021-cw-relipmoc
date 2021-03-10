@@ -223,26 +223,28 @@ int LogicalAnd::codeGen(const Binding &_binding, int reg) const {
   std::string labelL3 = "F" +  function_name + "_3a_"  + std::to_string(pos);
   printf("\tnop\n");
   // TODO： add counter to create unique label:
-  std::cout << "\tbeq $0,$2,"
-            << labelL2 << std::endl;
+  //std::cout << "\tbeq $0,$2,"
+  //          << labelL2 << std::endl;
+  printf("\tbeq $0,$2,%s\n",labelL2.c_str());
   printf("\tnop\n");  // Add empty delay slot
 
   right->codeGen(binding, 2);
   printf("\tnop\n");
   // TODO： add counter to create unique label:
-  std::cout << "\tbeq $0,$2,"
-            << labelL2 << std::endl;
+  //std::cout << "\tbeq $0,$2,"
+  //          << labelL2 << std::endl;
+  printf("\tbeq $0,$2,%s\n",labelL2.c_str());
   printf("\tnop\n");
 
   printf("\tli $2,1\n");
-  //printf("b L3\n");  // TODO： add counter to create unique label:
-  std::cout << "\tb " << labelL3 << std::endl;
+  printf("b %s\n",labelL3.c_str());  // TODO： add counter to create unique label:
+  //std::cout << "\tb " << labelL3 << std::endl;
   printf("\tnop\n");   // Add empty delay slot
-  //printf("L2:\n");
-  std::cout <<  "\t"<<labelL2 <<":" << std::endl;
+  printf("%s:\n",labelL2.c_str());
+  //std::cout <<  "\t"<<labelL2 <<":" << std::endl;
   printf("\tmove $2,$0\n");
-  //printf("L3:\n");
-  std::cout << "\t" <<labelL3 <<":" << std::endl;
+  printf("%s:\n",labelL3.c_str());
+  //std::cout << "\t" <<labelL3 <<":" << std::endl;
   printf("\tsw $2,%d($fp)\t# store result of logical and\n", pos);
   printf("\tlw $2,%d($fp)\n", pos);
 
@@ -283,30 +285,32 @@ int LogicalOr::codeGen(const Binding &_binding, int reg) const {
   std::string labelL3 = "F" + function_name + "L3_or"  + std::to_string(pos);
   std::string labelL4 = "F" + function_name + "L4_or"  + std::to_string(pos);
   // TODO： add counter to create unique label:
-  std::cout << "bne $2,$0,"
-            << labelL2 << std::endl;
+  //std::cout << "bne $2,$0,"
+  //          << labelL2 << std::endl;
+  printf("\tbne $2,$0,%s\n",labelL2.c_str());
   printf("nop\n");  // Add empty delay slot
 
   right->codeGen(binding, 2);
   printf("nop\n");
   // TODO： add counter to create unique label:
-  std::cout << "beq $2,$0,"
-            << labelL3 << std::endl;
-  printf("nop\n");
+  //std::cout << "beq $2,$0,"
+  //          << labelL3 << std::endl;
+  printf("\tbeq $2,$0,%s\n",labelL3.c_str());
+  printf("\tnop\n");
 
-  //printf("L2:\n");
-  std::cout << labelL2 << ":" << std::endl;
+  printf("%s:\n",labelL2.c_str());
+  //std::cout << labelL2 << ":" << std::endl;
   printf("li $2,1\n");
-  //printf("b L4\n");  // TODO： add counter to create unique label:
-  std::cout << "b " << labelL4 << std::endl;
-  printf("nop\n");
-  //printf("L3:\n");
-  std::cout << labelL3 << ":" << std::endl;
-  printf("move $2,$0\n");
-  //printf("L4:\n");
-  std::cout << labelL4 << ":" << std::endl;
-  printf("sw $2,%d($fp)\t #store the value of logical or", pos);
-  printf("lw $2,%d($fp)\n", pos);
+  printf("b %s\n",labelL4.c_str());  // TODO： add counter to create unique label:
+  //std::cout << "b " << labelL4 << std::endl;
+  printf("\tnop\n");
+  printf("%s:\n",labelL3.c_str());
+ // std::cout << labelL3 << ":" << std::endl;
+  printf("\tmove $2,$0\n");
+  printf("%s:\n",labelL4.c_str());
+  //std::cout << labelL4 << ":" << std::endl;
+  printf("\tsw $2,%d($fp)\t #store the value of logical or", pos);
+  printf("\tlw $2,%d($fp)\n", pos);
 
   return 0;
 }

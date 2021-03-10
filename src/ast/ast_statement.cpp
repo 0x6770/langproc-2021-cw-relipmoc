@@ -54,7 +54,8 @@ int Return::codeGen(const Binding &_binding, int reg) const {
   logger->info("generate code for Return\n");
   expression->codeGen(binding, 2);
   std::string return_end = "end" + function_name;
-  std::cout << "\t" << "b" << "\t" << return_end;
+  printf("\tb\t%s\n",return_end.c_str());
+  //std::cout << "\t" << "b" << "\t" << return_end;
   printf(
       "\t\t# \033[1;33m[RETURN]\033[0m jump to end of "
       "function\n");
@@ -390,20 +391,24 @@ int WhileLoop::codeGen(const Binding &_binding, int reg) const {
   logger->info("generate code for WhileLoop\n");
 
   // condition for while loop
-  std::cout << "$L" << label_condtion_string << ":";
+  //std::cout << "$L" << label_condtion_string << ":";
+  printf("\t$L%s:\n",label_condtion_string.c_str());
   printf("\t\t\t\t# \033[1;36m[LABEL]\033[0m WHILE condition\n"); 
   condition->codeGen(binding, reg);
-  std::cout << "\t" << "beq\t $2,$0,";
-  std::cout << "$L" << label_end_string;  
+  printf("\tbeq\t$2,$0,$L%s\n",label_end_string.c_str());
+  //std::cout << "\t" << "beq\t $2,$0,";
+  //std::cout << "$L" << label_end_string;  
   printf("\t# jump to end of WHILE\n");  // check condition again
 
   // body of while loop
   statement_list->codeGen(binding, reg);
-  std::cout << "\tb\t$L" << label_condtion_string;
+  printf("\tb\t$L%s\n",label_condtion_string.c_str());
+  //std::cout << "\tb\t$L" << label_condtion_string;
   printf("\t\t# jump to condition\n");  // check condition again
   printf("\tnop\n\n");
 
- std::cout << "$L" << label_end_string; 
+  printf("\t$L%s",label_end_string.c_str());
+  //std::cout << "$L" << label_end_string; 
   printf(":\t\t\t\t# \033[1;36m[LABEL]\033[0m end of WHILE\n");
 
   printf(
