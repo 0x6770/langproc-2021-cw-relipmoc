@@ -50,6 +50,6 @@ class Program {
   virtual int getPos(const Binding &_binding) const;
   void printIndent(std::ostream &dst, int &indentation) const;
   virtual void bind(const Binding &_binding) = 0;
-  virtual void passFunctionName(std::string _name) = 0;
+  virtual void passFunctionName(std::string _name,int _pos) = 0;
 };
 #endif

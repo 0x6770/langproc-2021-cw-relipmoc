@@ -22,8 +22,9 @@ void Operation::bind(const Binding &_binding) {
 }
 
 
-void Operation::passFunctionName(std::string _name){
+void Operation::passFunctionName(std::string _name,int _pos){
       function_name = _name;
-    ((Program*)left)->passFunctionName(_name);
-    ((Program*)right)->passFunctionName(_name);
+      pos = pos + _pos;
+    ((Program*)left)->passFunctionName(_name,_pos);
+    ((Program*)right)->passFunctionName(_name,_pos);
 }

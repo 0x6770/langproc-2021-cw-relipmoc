@@ -21,7 +21,7 @@ class Statement : public Program {
   virtual int evaluate(const Binding &_binding) const override;
   virtual void bind(const Binding &_binding) override;
   ProgramPtr getExpression() const;
-  virtual void passFunctionName(std::string _name) override;
+  virtual void passFunctionName(std::string _name,int _pos) override;
 };
 
 ////////////////////////////////////////
@@ -34,7 +34,7 @@ class Return : public Statement {
   int codeGen(const Binding &_binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   void bind(const Binding &_binding) override;
-  void passFunctionName(std::string _name) override;
+  void passFunctionName(std::string _name,int _pos) override;
 };
 
 ////////////////////////////////////////
@@ -53,7 +53,7 @@ class VarDeclare : public Statement {
   void print(std::ostream &dst, int indentation) const override;
   void bind(const Binding &_binding) override;
   std::string getId() const;
-  void passFunctionName(std::string _name) override;
+  void passFunctionName(std::string _name,int _pos) override;
 };
 
 ////////////////////////////////////////
@@ -69,7 +69,7 @@ class VarAssign : public Statement {
   int codeGen(const Binding &_binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   void bind(const Binding &_binding) override;
-  void passFunctionName(std::string _name) override;
+  void passFunctionName(std::string _name,int _pos) override;
 };
 
 ////////////////////////////////////////
@@ -88,7 +88,7 @@ class StatementList : public Statement {
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void bind(const Binding &_binding) override;
-  void passFunctionName(std::string _name);
+  void passFunctionName(std::string _name,int _pos);
 };
 
 ////////////////////////////////////////
@@ -109,7 +109,7 @@ class IfStatement : public Statement {
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void bind(const Binding &_binding) override;
-  void passFunctionName(std::string _name);
+  void passFunctionName(std::string _name,int _pos);
 };
 
 ////////////////////////////////////////
@@ -127,7 +127,7 @@ class WhileLoop : public Statement {
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void bind(const Binding &_binding) override;
-  void passFunctionName(std::string _name);
+  void passFunctionName(std::string _name,int _pos);
 };
 
 #endif

@@ -44,10 +44,11 @@ int BitwiseAnd::codeGen(const Binding &_binding, int reg) const {
   return 0;
 }
 
-void BitwiseAnd::passFunctionName(std::string _name){
+void BitwiseAnd::passFunctionName(std::string _name,int _pos){
     function_name = _name;
-    ((Program*)left)->passFunctionName(_name);
-    ((Program*)right)->passFunctionName(_name);
+    pos = pos + _pos;
+    ((Program*)left)->passFunctionName(_name,_pos);
+    ((Program*)right)->passFunctionName(_name,_pos);
 }
 
 ////////////////////////////////////////
@@ -93,10 +94,11 @@ int BitwiseOr::codeGen(const Binding &_binding, int reg) const {
 
   return 0;
 }
-void BitwiseOr::passFunctionName(std::string _name){
+void BitwiseOr::passFunctionName(std::string _name,int _pos){
     function_name = _name;
-    ((Program*)left)->passFunctionName(_name);
-    ((Program*)right)->passFunctionName(_name);
+    pos = pos + _pos;
+    ((Program*)left)->passFunctionName(_name,_pos);
+    ((Program*)right)->passFunctionName(_name,_pos);
 }
 ////////////////////////////////////////
 // BitwiseXor
@@ -141,10 +143,11 @@ int BitwiseXor::codeGen(const Binding &_binding, int reg) const {
   return 0;
 }
 
-void BitwiseXor::passFunctionName(std::string _name){
+void BitwiseXor::passFunctionName(std::string _name,int _pos){
     function_name = _name;
-    ((Program*)left)->passFunctionName(_name);
-    ((Program*)right)->passFunctionName(_name);
+    pos = pos + _pos;
+    ((Program*)left)->passFunctionName(_name,_pos);
+    ((Program*)right)->passFunctionName(_name,_pos);
 }
 ////////////////////////////////////////
 // ShiftLeft
@@ -190,10 +193,11 @@ int ShiftLeft::codeGen(const Binding &_binding, int reg) const {
   return 0;
 }
 
-void ShiftLeft::passFunctionName(std::string _name){
+void ShiftLeft::passFunctionName(std::string _name,int _pos){
     function_name = _name;
-    ((Program*)left)->passFunctionName(_name);
-    ((Program*)right)->passFunctionName(_name);
+    pos = pos + _pos;
+    ((Program*)left)->passFunctionName(_name,_pos);
+    ((Program*)right)->passFunctionName(_name,_pos);
 }
 ////////////////////////////////////////
 // ShiftRight
@@ -240,8 +244,9 @@ int ShiftRight::codeGen(const Binding &_binding, int reg) const {
   return 0;
 }
 
-void ShiftRight::passFunctionName(std::string _name){
+void ShiftRight::passFunctionName(std::string _name,int _pos){
     function_name = _name;
-    ((Program*)left)->passFunctionName(_name);
-    ((Program*)right)->passFunctionName(_name);
+    pos = pos + _pos;
+    ((Program*)left)->passFunctionName(_name,_pos);
+    ((Program*)right)->passFunctionName(_name,_pos);
 }

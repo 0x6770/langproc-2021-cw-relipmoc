@@ -29,7 +29,7 @@ class Function : public Program {
   int codeGen(const Binding &_binding, int reg) const override;
   int evaluate(const Binding &_binding) const override;
   virtual void bind(const Binding &_binding) override;
-  virtual void passFunctionName(std::string _name) override;
+  virtual void passFunctionName(std::string _name,int _pos) override;
 };
 
 
@@ -50,7 +50,7 @@ class Param : public Program {
   Binding return_bind(Binding &_binding,int pos);
   std::string getType();
   std::string getName();
-  virtual void passFunctionName(std::string _name) override;
+  virtual void passFunctionName(std::string _name,int _pos) override;
 };
 
 
@@ -68,10 +68,10 @@ class Paramlist : public Program {
   int codeGen(const Binding &_binding, int reg) const override;
   int evaluate(const Binding &_binding) const override;
   virtual void bind(const Binding &_binding) override;
-  Binding return_bind(const Binding &_binding,int pos);
+  Binding return_bind(const Binding &_binding,int _pos);
   void add_argument(ProgramPtr argument);
   std::string get_type_string();
-  virtual void passFunctionName(std::string _name) override;
+  virtual void passFunctionName(std::string _name,int _pos) override;
 };
 
 
@@ -88,7 +88,7 @@ public:
   int codeGen(const Binding &_binding, int reg) const override;
   int evaluate(const Binding &_binding) const override;
   virtual void bind(const Binding &_binding) override;
-  virtual void passFunctionName(std::string _name) override;
+  virtual void passFunctionName(std::string _name,int _pos) override;
 
 };
 
@@ -111,7 +111,7 @@ public:
   int codeGen(const Binding &_binding, int reg) const override;
   int evaluate(const Binding &_binding) const override;
   virtual void bind(const Binding &_binding) override;
-  virtual void passFunctionName(std::string _name) override;
+  virtual void passFunctionName(std::string _name,int _pos) override;
 };
 
 ////////////////////////////////////////
@@ -127,7 +127,7 @@ public:
   int codeGen(const Binding &_binding, int reg) const override;
   int evaluate(const Binding &_binding) const override;
   virtual void bind(const Binding &_binding) override;
-  virtual void passFunctionName(std::string _name) override;
+  virtual void passFunctionName(std::string _name,int _pos) override;
 };
 
 
@@ -143,7 +143,7 @@ public:
   int evaluate(const Binding &_binding) const override;
   virtual void bind(const Binding &_binding) override;
   FunctionDeclare(std::string _name,ProgramPtr _param_list);
-  virtual void passFunctionName(std::string _name) override;
+  virtual void passFunctionName(std::string _name,int _pos) override;
   FunctionDeclare(std::string _name);
 
 };

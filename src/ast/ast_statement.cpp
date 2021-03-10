@@ -30,9 +30,9 @@ void Statement::bind(const Binding &_binding) {
   logger->info("binding...%c\n", node_type);
 }
 
-void Statement::passFunctionName(std::string _name){
+void Statement::passFunctionName(std::string _name,int _pos){
   function_name = _name;
-  ((Program*)expression)->passFunctionName(_name);
+  ((Program*)expression)->passFunctionName(_name,_pos);
 }
 ////////////////////////////////////////
 // Return
@@ -68,10 +68,10 @@ void Return::bind(const Binding &_binding) {
   ((Program *)expression)->bind(binding);
 }
 
-void Return::passFunctionName(std::string _name){
+void Return::passFunctionName(std::string _name,int _pos){
   function_name = _name;
   //std::cout << _name << std::endl;
-  ((Program*)expression)->passFunctionName(_name);
+  ((Program*)expression)->passFunctionName(_name,_pos);
 }
 ////////////////////////////////////////
 // VarDeclare
@@ -120,10 +120,11 @@ void VarDeclare::bind(const Binding &_binding) {
   }
 }
 
-void VarDeclare::passFunctionName(std::string _name){
+void VarDeclare::passFunctionName(std::string _name,int _pos){
+  pos = pos + _pos;
       function_name = _name;
   if (expression) {
-    ((Program *)expression)->passFunctionName(_name);
+    ((Program *)expression)->passFunctionName(_name,_pos);
   }
 }
 
@@ -161,9 +162,10 @@ void VarAssign::bind(const Binding &_binding) {
   ((Program *)expression)->bind(binding);
 }
 
-void VarAssign::passFunctionName(std::string _name){
+void VarAssign::passFunctionName(std::string _name,int _pos){
+  pos = pos + _pos;
     if (expression) {
-    ((Program *)expression)->passFunctionName(_name);
+    ((Program *)expression)->passFunctionName(_name,_pos);
   }
 }
 ////////////////////////////////////////
@@ -240,10 +242,10 @@ void StatementList::bind(const Binding &_binding) {
   print_map(binding, std::to_string(x));
 }
 
-void StatementList::passFunctionName(std::string _name){
+void StatementList::passFunctionName(std::string _name,int _pos){
    for(auto it: statements){
     //std::cout << "entered pass name in statemetlist" << std::endl;
-     ((Program*)it)->passFunctionName(_name);
+     ((Program*)it)->passFunctionName(_name,_pos);
    }
    function_name = _name;
    //std::cout << _name << std::endl;
@@ -341,11 +343,12 @@ void IfStatement::bind(const Binding &_binding) {
   if (else_statement) ((Program *)else_statement)->bind(binding);
 }
 
-void IfStatement::passFunctionName(std::string _name){
+void IfStatement::passFunctionName(std::string _name,int _pos){
+  pos = pos + _pos;
   function_name = _name;
-  ((Program*)condition)->passFunctionName(_name);
-  ((Program*)if_statement)->passFunctionName(_name);
-  if (else_statement) ((Program *)else_statement)->passFunctionName(_name);
+  ((Program*)condition)->passFunctionName(_name,_pos);
+  ((Program*)if_statement)->passFunctionName(_name,_pos);
+  if (else_statement) ((Program *)else_statement)->passFunctionName(_name,_pos);
 }
 
 ////////////////////////////////////////
@@ -425,9 +428,10 @@ void WhileLoop::bind(const Binding &_binding) {
   ((Statement *)statement_list)->bind(binding);
 }
 
-void WhileLoop::passFunctionName(std::string _name){
+void WhileLoop::passFunctionName(std::string _name,int _pos){
+  pos = pos + _pos;
   function_name = _name;
-  ((Program*)condition)->passFunctionName(_name);
-  ((Statement*)statement_list)->passFunctionName(_name);
+  ((Program*)condition)->passFunctionName(_name,_pos);
+  ((Statement*)statement_list)->passFunctionName(_name,_pos);
 }
 

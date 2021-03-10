@@ -19,7 +19,7 @@ public:
   void add_bind(Binding &_binding);
   uint32_t getSize();
   std::string getName();
-  virtual void passFunctionName(std::string _name);
+  virtual void passFunctionName(std::string _name,int _pos);
 };
 
 
@@ -39,7 +39,7 @@ void print(std::ostream &dst, int indentation) const override;
 int codeGen(const Binding &_binding, int reg) const override;
 int evaluate(const Binding &_binding) const override;
 virtual void bind(const Binding &_binding) override;
-virtual void passFunctionName(std::string _name) ;
+virtual void passFunctionName(std::string _name,int _pos) ;
 
 };
 

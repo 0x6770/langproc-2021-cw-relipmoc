@@ -8,7 +8,7 @@ Function::Function(std::string _type, std::string _name, ProgramPtr _statements,
                    int _pos, int _call , int _argu_number)
     : type(_type), name(_name), statements(_statements) {
   int tmp_size = _pos + 8;
-  tmp_size = tmp_size + (_argu_number)*4;
+  tmp_size = tmp_size + (_argu_number)*4 + 4;
   // free space for the number of arguments;
   if(_call == 1)  tmp_size = tmp_size+4;
   // add 4 for store the value in $ra when there is function call in the function;
@@ -17,9 +17,10 @@ Function::Function(std::string _type, std::string _name, ProgramPtr _statements,
   // size = size + 16;
   logger->info("construct Function with no arguments\n");
   node_type = 'F';
-  passFunctionName(_name);
+  passFunctionName(_name,_argu_number*4);
   with_function_call = _call;
   argu_size = _argu_number;
+  //std::cout << _argu_number << std::endl;
   //if(_statements == 0){is_define = 1;}
 }
 
@@ -29,7 +30,7 @@ Function::Function(std::string _type, std::string _name, ProgramPtr _statements,
   statements = _statements;
   Arguments = _Arguments;
   int tmp_size = _pos + 8;
-  tmp_size = tmp_size + (_argu_number)*4;
+  tmp_size = tmp_size + (_argu_number)*4 + 4;
   if(_call == 1)  tmp_size = tmp_size+4;
   size = (tmp_size % 8) ? tmp_size + 4 : tmp_size;
   // ADD spaces for four parameters:
@@ -39,10 +40,11 @@ Function::Function(std::string _type, std::string _name, ProgramPtr _statements,
   with_param = 1;
   // std::string function_name = _name + "_" + ((Paramlist*)Arguments)->get_type_string();
   name = _name;
-  passFunctionName(_name);
+  passFunctionName(_name,_argu_number*4);
   with_function_call = _call;
   argu_size = _argu_number;
   //if(_statements == 0){is_define = 1;}
+  //std::cout << _argu_number << std::endl;
 }
 
 void Function::print(std::ostream &dst, int indentation) const {
@@ -93,7 +95,7 @@ int Function::codeGen(const Binding &_binding, int reg) const {
   //printf(".cpload $25\n");
   //printf(".ent\t%s\n",name.c_str());
   //printf(".cprestore %d\n",argu_size*4+4);
-  printf(".globl\t%s\n", name.c_str());
+  printf(".global\t%s\n", name.c_str());
   //printf(".ent\t%s\n", name.c_str());
   printf("\n");
   printf("%s:\n", name.c_str());
@@ -143,8 +145,8 @@ int Function::codeGen(const Binding &_binding, int reg) const {
 
 void Function::bind(const Binding &_binding) {}
 
-void Function::passFunctionName(std::string _name){
-  ((Program*)statements)->passFunctionName(_name);
+void Function::passFunctionName(std::string _name,int _pos){
+  ((Program*)statements)->passFunctionName(_name,_pos);
 }
 
 MultiFunction::MultiFunction(ProgramPtr _function){
@@ -174,7 +176,7 @@ void MultiFunction::bind(const Binding &_binding){
 
 }
 
-void MultiFunction::passFunctionName(std::string _name){
+void MultiFunction::passFunctionName(std::string _name,int _pos){
 
 }
 
@@ -194,7 +196,7 @@ int Param::evaluate(const Binding &_binding) const { return 0; }
 
 void Param::bind(const Binding &_binding) {}
 
-void Param::passFunctionName(std::string _name){}
+void Param::passFunctionName(std::string _name,int _pos){}
 
 std::string Param::getName(){
   return name;
@@ -252,10 +254,10 @@ int Paramlist::evaluate(const Binding &_binding) const { return 0; }
 
 void Paramlist::bind(const Binding &_binding) {}
 
-Binding Paramlist::return_bind(const Binding &_binding, int pos) {
+Binding Paramlist::return_bind(const Binding &_binding, int _pos) {
   Binding result;
   Binding temp;
-  int n = pos;
+  int n = _pos;
   int counter = 1;
   std::string tmp_string;
   for (auto it : parameters) {
@@ -281,7 +283,9 @@ std::string Paramlist::get_type_string(){
   return name;
 }
 
-void Paramlist::passFunctionName(std::string _name){}
+void Paramlist::passFunctionName(std::string _name,int _pos){
+  pos = pos + _pos;
+}
 
 FunctionCall::FunctionCall(std::string _name,int _pos){
   name = _name;
@@ -326,7 +330,9 @@ void FunctionCall::bind(const Binding &_binding) {
   ((Program*)expression_list)->bind(binding);}
 }
 
-void FunctionCall::passFunctionName(std::string _name){}
+void FunctionCall::passFunctionName(std::string _name,int _pos){
+  pos = pos + _pos;
+}
 
 ExpressionList::ExpressionList(ProgramPtr _argument){
   logger->info("Build expression list\n");
@@ -371,7 +377,9 @@ void ExpressionList::bind(const Binding &_binding) {
   }
 }
 
-void ExpressionList::passFunctionName(std::string _name){}
+void ExpressionList::passFunctionName(std::string _name,int _pos){
+  pos = pos + _pos;
+}
 
 FunctionDeclare::FunctionDeclare(std::string _name){
   name = _name;
@@ -395,4 +403,4 @@ void FunctionDeclare::bind(const Binding &_binding) {
 }
 
 
-void FunctionDeclare::passFunctionName(std::string _name){}
+void FunctionDeclare::passFunctionName(std::string _name,int _pos){}
