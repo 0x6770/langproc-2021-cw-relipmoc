@@ -190,7 +190,11 @@ void Param::print(std::ostream &dst, int indentation) const {
   dst << type << " " << name << " ";
 }
 
-int Param::codeGen(const Binding &_binding, int reg) const { return 0; }
+int Param::codeGen(const Binding &_binding, int reg) const { 
+  Binding temp = binding;
+   std::string variable_name = name;
+  printf("\tsw\t$%d,%d($fp)\n",reg, temp[variable_name]);
+  return 0; }
 
 int Param::evaluate(const Binding &_binding) const { return 0; }
 
@@ -198,12 +202,14 @@ void Param::bind(const Binding &_binding) {}
 
 void Param::passFunctionName(std::string _name,int _pos){}
 
+
 std::string Param::getName(){
   return name;
 }
 
 Binding Param::return_bind(Binding &_binding, int pos) {
   _binding[name] = pos;
+  binding = _binding;
   return _binding;
 }
 
@@ -233,15 +239,13 @@ void Paramlist::print(std::ostream &dst, int indentation) const {
 
 int Paramlist::codeGen(const Binding &_binding, int reg) const {
   std::string key;
-  int value = 0;
   int regtemp = 4;
   
   int count = 1;
-  for (auto it : _binding) {
+
+  for (auto it : parameters) {
     if(count<=4){
-    key = it.first;
-    value = it.second;
-    printf("\tsw \t$%d,%d($fp)\n", regtemp, value);
+    ((Param*)it)->codeGen(binding,regtemp);
     regtemp = regtemp + 1;
     count = count + 1;
     }
@@ -255,6 +259,7 @@ int Paramlist::evaluate(const Binding &_binding) const { return 0; }
 void Paramlist::bind(const Binding &_binding) {}
 
 Binding Paramlist::return_bind(const Binding &_binding, int _pos) {
+  // _pos is the size of stack in the function:
   Binding result;
   Binding temp;
   int n = _pos;
