@@ -32,8 +32,11 @@ int AddEqual::codeGen(const Binding &_binding, int reg) const {
   return 0;
 }
 
-void AddEqual::passFunctionName(std::string _name){
-
+void AddEqual::passFunctionName(std::string _name,int _pos){
+      function_name = _name;
+      pos = pos + _pos;
+    ((Program*)left)->passFunctionName(_name,_pos);
+    ((Program*)right)->passFunctionName(_name,_pos);
 }
 
 ////////////////////////////////////////
@@ -70,8 +73,11 @@ int SubEqual::codeGen(const Binding &_binding, int reg) const {
 }
 
 
-void SubEqual::passFunctionName(std::string _name){
-
+void SubEqual::passFunctionName(std::string _name,int _pos){
+      function_name = _name;
+      pos = pos + _pos;
+    ((Program*)left)->passFunctionName(_name,_pos);
+    ((Program*)right)->passFunctionName(_name,_pos);
 }
 ////////////////////////////////////////
 // Product assignment
@@ -107,8 +113,11 @@ int MulEqual::codeGen(const Binding &_binding, int reg) const {
   return 0;
  }
 
-void MulEqual::passFunctionName(std::string _name){
-
+void MulEqual::passFunctionName(std::string _name,int _pos){
+      function_name = _name;
+      pos = pos + _pos;
+    ((Program*)left)->passFunctionName(_name,_pos);
+    ((Program*)right)->passFunctionName(_name,_pos);
 }
 ////////////////////////////////////////
 // Quotient assignment
@@ -145,8 +154,11 @@ int right_type = right->getType();
 
  }
 
-void QuoEqual::passFunctionName(std::string _name){
-
+void QuoEqual::passFunctionName(std::string _name,int _pos){
+      function_name = _name;
+      pos = pos + _pos;
+    ((Program*)left)->passFunctionName(_name,_pos);
+    ((Program*)right)->passFunctionName(_name,_pos);
 }
 ////////////////////////////////////////
 // Modulus assignment
@@ -182,8 +194,11 @@ int ModEqual::codeGen(const Binding &_binding, int reg) const {
 
  }
 
- void ModEqual::passFunctionName(std::string _name){
-
+ void ModEqual::passFunctionName(std::string _name,int _pos){
+       function_name = _name;
+       pos = pos + _pos;
+    ((Program*)left)->passFunctionName(_name,_pos);
+    ((Program*)right)->passFunctionName(_name,_pos);
 }
 
 ////////////////////////////////////////
@@ -219,8 +234,11 @@ int ShiftEqual_L::codeGen(const Binding &_binding, int reg) const {
   return 0;
 }
 
-void ShiftEqual_L::passFunctionName(std::string _name){
-
+void ShiftEqual_L::passFunctionName(std::string _name,int _pos){
+      function_name = _name;
+      pos = pos + _pos;
+    ((Program*)left)->passFunctionName(_name,_pos);
+    ((Program*)right)->passFunctionName(_name,_pos);
 }
 ////////////////////////////////////////
 // shift right assignment
@@ -254,8 +272,11 @@ int ShiftEqual_R::codeGen(const Binding &_binding, int reg) const {
   //std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" << "#store the result for shift right equal" << std::endl;
   return 0;
  }
-void ShiftEqual_R::passFunctionName(std::string _name){
-
+void ShiftEqual_R::passFunctionName(std::string _name,int _pos){
+      function_name = _name;
+      pos = pos + _pos;
+    ((Program*)left)->passFunctionName(_name,_pos);
+    ((Program*)right)->passFunctionName(_name,_pos);
 }
 
 ////////////////////////////////////////
@@ -292,8 +313,10 @@ int BitwiseEqual_AND::codeGen(const Binding &_binding, int reg) const {
   return 0;
 }
 
-void BitwiseEqual_AND::passFunctionName(std::string _name){
-
+void BitwiseEqual_AND::passFunctionName(std::string _name,int _pos){
+      function_name = _name;
+    ((Program*)left)->passFunctionName(_name,_pos);
+    ((Program*)right)->passFunctionName(_name,_pos);
 }
 ////////////////////////////////////////
 // bitwise OR assignment
@@ -327,10 +350,11 @@ int BitwiseEqual_OR::codeGen(const Binding &_binding, int reg) const {
   //std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" << "#store the result for bitwise or equal" << std::endl;
   return 0;
 }
-void BitwiseEqual_OR::passFunctionName(std::string _name){
+void BitwiseEqual_OR::passFunctionName(std::string _name,int _pos){
     function_name = _name;
-    ((Program*)left)->passFunctionName(_name);
-    ((Program*)right)->passFunctionName(_name);
+    pos = pos + _pos;
+    ((Program*)left)->passFunctionName(_name,_pos);
+    ((Program*)right)->passFunctionName(_name,_pos);
 }
 ////////////////////////////////////////
 // bitwise XOR assignment
@@ -365,10 +389,11 @@ int BitwiseEqual_XOR::codeGen(const Binding &_binding, int reg) const {
   //std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" << "#store the result for bitwise xor equal" << std::endl;
   return 0;
 }
-void BitwiseEqual_XOR::passFunctionName(std::string _name){
+void BitwiseEqual_XOR::passFunctionName(std::string _name,int _pos){
     function_name = _name;
-    ((Program*)left)->passFunctionName(_name);
-    ((Program*)right)->passFunctionName(_name);
+    pos = pos + _pos;
+    ((Program*)left)->passFunctionName(_name,_pos);
+    ((Program*)right)->passFunctionName(_name,_pos);
 }
 ////////////////////////////////////////
 // Postfix increment
@@ -403,9 +428,10 @@ int Increment_Post::codeGen(const Binding &_binding, int reg) const {
   printf("sw $3,%d($fp)\t# store result of post_decrement\n", left->getPos(binding));
   return 0;
 }
-void Increment_Post::passFunctionName(std::string _name){
+void Increment_Post::passFunctionName(std::string _name,int _pos){
     function_name = _name;
-    ((Program*)left)->passFunctionName(_name);
+    pos = pos + _pos;
+    ((Program*)left)->passFunctionName(_name,_pos);
 }
 
 ////////////////////////////////////////
@@ -438,9 +464,10 @@ int Increment_Pre::codeGen(const Binding &_binding, int reg) const {
   printf("sw $2,%d($fp)\t# store result of pre_increment\n",pos);
   printf("sw $2,%d($fp)\t# store result of pre_increment\n",left->getPos(binding));
   return 0; }
-void Increment_Pre::passFunctionName(std::string _name){
+void Increment_Pre::passFunctionName(std::string _name,int _pos){
     function_name = _name;
-    ((Program*)left)->passFunctionName(_name);
+    pos = pos + _pos;
+    ((Program*)left)->passFunctionName(_name,_pos);
 }
 ////////////////////////////////////////
 // Postfix decrement
@@ -476,9 +503,10 @@ int Decrement_Post::codeGen(const Binding &_binding, int reg) const {
   return 0;
 }
 
-void Decrement_Post::passFunctionName(std::string _name){
+void Decrement_Post::passFunctionName(std::string _name,int _pos){
     function_name = _name;
-    ((Program*)left)->passFunctionName(_name);
+    pos = pos + _pos;
+    ((Program*)left)->passFunctionName(_name,_pos);
 }
 ////////////////////////////////////////
 // prefix increment
@@ -510,7 +538,8 @@ int Decrement_Pre::codeGen(const Binding &_binding, int reg) const {
   printf("sw $2,%d($fp)\t# store result of pre_decrement\n", left->getPos(binding));
   printf("sw $2,%d($fp)\t# store result of pre_decrement\n", pos);
   return 0; }
-void Decrement_Pre::passFunctionName(std::string _name){
+void Decrement_Pre::passFunctionName(std::string _name,int _pos){
     function_name = _name;
-    ((Program*)left)->passFunctionName(_name);
+    pos = pos + _pos;
+    ((Program*)left)->passFunctionName(_name,_pos);
 }

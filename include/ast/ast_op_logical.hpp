@@ -16,7 +16,7 @@ class LessEqual : public Operation {
   int codeGen(const Binding &_binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
-  void passFunctionName(std::string _name) override;
+  void passFunctionName(std::string _name,int _pos) override;
 };
 
 ////////////////////////////////////////
@@ -32,7 +32,7 @@ class GreaterEqual : public Operation {
   int codeGen(const Binding &_binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
-  void passFunctionName(std::string _name) override;
+  void passFunctionName(std::string _name,int _pos) override;
 };
 
 ////////////////////////////////////////
@@ -48,7 +48,7 @@ class Equal : public Operation {
   int codeGen(const Binding &_binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
-  void passFunctionName(std::string _name) override;
+  void passFunctionName(std::string _name,int _pos) override;
 };
 
 ////////////////////////////////////////
@@ -61,7 +61,7 @@ class LogicalAnd : public Operation {
   int codeGen(const Binding &_binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
-  void passFunctionName(std::string _name) override;
+  void passFunctionName(std::string _name,int _pos) override;
 };
 
 ////////////////////////////////////////
@@ -74,7 +74,7 @@ class LogicalOr : public Operation {
   int codeGen(const Binding &_binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
-  void passFunctionName(std::string _name) override;
+  void passFunctionName(std::string _name,int _pos) override;
 };
 
 #endif

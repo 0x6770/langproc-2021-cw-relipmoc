@@ -62,10 +62,11 @@ int LessEqual::codeGen(const Binding &_binding, int reg) const {
 
   return 0;
 }
-void LessEqual::passFunctionName(std::string _name){
+void LessEqual::passFunctionName(std::string _name,int _pos){
     function_name = _name;
-    ((Program*)left)->passFunctionName(_name);
-    ((Program*)right)->passFunctionName(_name);
+    pos = pos + _pos;
+    ((Program*)left)->passFunctionName(_name,_pos);
+    ((Program*)right)->passFunctionName(_name,_pos);
 }
 
 ////////////////////////////////////////
@@ -126,10 +127,11 @@ int GreaterEqual::codeGen(const Binding &_binding, int reg) const {
   return 0;
 }
 
-void GreaterEqual::passFunctionName(std::string _name){
+void GreaterEqual::passFunctionName(std::string _name,int _pos){
     function_name = _name;
-    ((Program*)left)->passFunctionName(_name);
-    ((Program*)right)->passFunctionName(_name);
+    pos = pos + _pos;
+    ((Program*)left)->passFunctionName(_name,_pos);
+    ((Program*)right)->passFunctionName(_name,_pos);
 }
 ////////////////////////////////////////
 // Equal
@@ -191,10 +193,11 @@ int Equal::codeGen(const Binding &_binding, int reg) const {
   return 0;
 }
 
-void Equal::passFunctionName(std::string _name){
+void Equal::passFunctionName(std::string _name,int _pos){
     function_name = _name;
-    ((Program*)left)->passFunctionName(_name);
-    ((Program*)right)->passFunctionName(_name);
+    pos = pos + _pos;
+    ((Program*)left)->passFunctionName(_name,_pos);
+    ((Program*)right)->passFunctionName(_name,_pos);
 }
 ////////////////////////////////////////
 // LogicalAnd
@@ -251,10 +254,11 @@ int LogicalAnd::codeGen(const Binding &_binding, int reg) const {
   return 0;
 }
 
-void LogicalAnd::passFunctionName(std::string _name){
+void LogicalAnd::passFunctionName(std::string _name,int _pos){
      function_name = _name;
-    ((Program*)left)->passFunctionName(_name);
-    ((Program*)right)->passFunctionName(_name);
+     pos = pos + _pos;
+    ((Program*)left)->passFunctionName(_name,_pos);
+    ((Program*)right)->passFunctionName(_name,_pos);
 }
 
 ////////////////////////////////////////
@@ -315,8 +319,9 @@ int LogicalOr::codeGen(const Binding &_binding, int reg) const {
   return 0;
 }
 
-void LogicalOr::passFunctionName(std::string _name){
+void LogicalOr::passFunctionName(std::string _name,int _pos){
      function_name = _name;
-    ((Program*)left)->passFunctionName(_name);
-    ((Program*)right)->passFunctionName(_name);
+     pos = pos + _pos;
+    ((Program*)left)->passFunctionName(_name,_pos);
+    ((Program*)right)->passFunctionName(_name,_pos);
 }
