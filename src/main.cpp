@@ -25,11 +25,6 @@ int main(int argc, char **argv) {
 
   ast->codeGen(binding, 2);
 
-  // std::cout << "====================\n";
-  // std::cout << "exit status: ";
-  // std::cout << ast->evaluate(0);
-  // std::cout << std::endl;
-
   std::cerr << std::endl;
   ast->print(std::cerr, 0);
   std::cerr << std::endl;
