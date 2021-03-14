@@ -34,6 +34,7 @@ void Statement::passFunctionName(std::string _name, int _pos) {
   function_name = _name;
   ((Program *)expression)->passFunctionName(_name, _pos);
 }
+
 ////////////////////////////////////////
 // Return
 ////////////////////////////////////////
@@ -72,6 +73,7 @@ void Return::passFunctionName(std::string _name, int _pos) {
   // std::cout << _name << std::endl;
   ((Program *)expression)->passFunctionName(_name, _pos);
 }
+
 ////////////////////////////////////////
 // VarDeclare
 ////////////////////////////////////////
@@ -167,6 +169,7 @@ void VarAssign::passFunctionName(std::string _name, int _pos) {
     ((Program *)expression)->passFunctionName(_name, _pos);
   }
 }
+
 ////////////////////////////////////////
 // StatementList
 ////////////////////////////////////////

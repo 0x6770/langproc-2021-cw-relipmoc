@@ -96,7 +96,9 @@ ForLoop::ForLoop(ProgramPtr _init_expr, ProgramPtr _test_expr,
       statement_list(_statement_list) {
   logger->info("construct For Loop\n");
 };
+
 int ForLoop::codeGen(const Binding &_binding, int reg) const { return 0; }
+
 void ForLoop::print(std::ostream &dst, int indentation) const {
   printIndent(dst, indentation);
   dst << "for (";
@@ -112,6 +114,22 @@ void ForLoop::print(std::ostream &dst, int indentation) const {
   }
   dst << "\n";
 };
+
 int ForLoop::evaluate(const Binding &_binding) const { return 0; };
-void ForLoop::bind(const Binding &_binding){};
-void ForLoop::passFunctionName(std::string _name, int _pos){};
+
+void ForLoop::bind(const Binding &_binding) {
+  binding = _binding;
+  ((Program *)init_expr)->bind(const_cast<Binding &>(binding));
+  ((Program *)test_expr)->bind(const_cast<Binding &>(binding));
+  ((Program *)update_expr)->bind(const_cast<Binding &>(binding));
+  ((Statement *)statement_list)->bind(binding);
+};
+
+void ForLoop::passFunctionName(std::string _name, int _pos) {
+  pos = pos + _pos;
+  function_name = _name;
+  ((Program *)init_expr)->passFunctionName(_name, _pos);
+  ((Program *)test_expr)->passFunctionName(_name, _pos);
+  ((Program *)update_expr)->passFunctionName(_name, _pos);
+  ((Statement *)statement_list)->passFunctionName(_name, _pos);
+};

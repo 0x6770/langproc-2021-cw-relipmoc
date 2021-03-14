@@ -19,7 +19,7 @@ class Integer : public Program {
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void bind(const Binding &_binding) override;
-  void passFunctionName(std::string _name,int _pos) override;
+  void passFunctionName(std::string _name, int _pos) override;
 };
 
 ////////////////////////////////////////
@@ -39,7 +39,7 @@ class Variable : public Program {
   int evaluate(const Binding &_binding) const override;
   int getPos(const Binding &_binding) const override;
   void bind(const Binding &_binding) override;
-  void passFunctionName(std::string _name,int _pos) override;
+  void passFunctionName(std::string _name, int _pos) override;
 };
 
 #endif

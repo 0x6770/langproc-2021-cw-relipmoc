@@ -90,24 +90,9 @@ int Function::codeGen(const Binding &_binding, int reg) const {
   logger->info("====================\n");
   logger->info("generate code for Function\n");
   logger->info("size of stack frame: %d\n", getSize());
-  // printf(".text\n");
-  // printf(".align\t2\n");
-  // printf(".set\tnomips16\n");
-  // printf(".set\tnomicromips\n");
-  // printf(".cpload $25\n");
-  // printf(".ent\t%s\n",name.c_str());
-  // printf(".cprestore %d\n",argu_size*4+4);
   printf(".global\t%s\n", name.c_str());
-  // printf(".ent\t%s\n", name.c_str());
   printf("\n");
   printf("%s:\n", name.c_str());
-  // printf("\t.cprestore %d\n",argu_size*4+4);
-  // printf("\t.frame $fp,%d,$31\n",size);
-  // printf("\t.mask 0xc0000000,-4\n");
-  // printf("\t.fmask 0x00000000,0\n");
-  // printf(".set\tnomacro\n");
-  // printf(".set\tnoreoder\n");
-  //  printf(".frame\t$fp,%d,$31\n", size);
   printf("\taddiu\t$sp,$sp,%d\n", -size);
   if (with_function_call == 1) {
     printf("\tsw\t$31,%d($sp)\n", (size - 4));
@@ -136,10 +121,6 @@ int Function::codeGen(const Binding &_binding, int reg) const {
   printf("\tnop\n");
   printf("\n");
 
-  // printf(".set\tmacro\n");
-  // printf(".set\treorder\n");
-  // printf(".end\t%s\n",name.c_str());
-  // printf(".end\t%s\n", name.c_str());
   return 0;
 }
 
@@ -151,17 +132,21 @@ void Function::passFunctionName(std::string _name, int _pos) {
 
 MultiFunction::MultiFunction(ProgramPtr _function) {
   logger->info("construct one function");
-  functoins.push_back(_function);
+  functions.push_back(_function);
 }
 
 void MultiFunction::add_function(ProgramPtr _function) {
   logger->info("construct more functions");
-  functoins.push_back(_function);
+  functions.push_back(_function);
 }
 
-void MultiFunction::print(std::ostream &dst, int indentation) const {}
+void MultiFunction::print(std::ostream &dst, int indentation) const {
+  for (auto function : this->functions) {
+    function->print(dst, indentation);
+  }
+}
 int MultiFunction::codeGen(const Binding &_binding, int reg) const {
-  for (auto it : functoins) {
+  for (auto it : functions) {
     ((Program *)it)->codeGen(binding, 2);
   }
   return 0;

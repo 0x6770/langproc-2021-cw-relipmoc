@@ -16,22 +16,21 @@ class Function : public Program {
   ProgramPtr statements;
   ProgramPtr Arguments;
   int with_param;
-   int with_function_call = 0;
+  int with_function_call = 0;
   int is_define = 0;
   int argu_size;
 
  public:
   Function(std::string _type, std::string _name, ProgramPtr _statements,
            int _pos, int _call, int _argu_number);
-  Function(std::string _type, std::string _name, ProgramPtr _statements, ProgramPtr _Arguments,
-           int _pos, int _call, int _argu_number);
+  Function(std::string _type, std::string _name, ProgramPtr _statements,
+           ProgramPtr _Arguments, int _pos, int _call, int _argu_number);
   void print(std::ostream &dst, int indentation) const override;
   int codeGen(const Binding &_binding, int reg) const override;
   int evaluate(const Binding &_binding) const override;
   virtual void bind(const Binding &_binding) override;
-  virtual void passFunctionName(std::string _name,int _pos) override;
+  virtual void passFunctionName(std::string _name, int _pos) override;
 };
-
 
 ////////////////////////////////////////
 // Param -- single parameter
@@ -47,12 +46,11 @@ class Param : public Program {
   int codeGen(const Binding &_binding, int reg) const override;
   int evaluate(const Binding &_binding) const override;
   virtual void bind(const Binding &_binding) override;
-  Binding return_bind(Binding &_binding,int pos);
+  Binding return_bind(Binding &_binding, int pos);
   std::string getType();
   std::string getName();
-  virtual void passFunctionName(std::string _name,int _pos) override;
+  virtual void passFunctionName(std::string _name, int _pos) override;
 };
-
 
 ////////////////////////////////////////
 // parameter list
@@ -68,28 +66,27 @@ class Paramlist : public Program {
   int codeGen(const Binding &_binding, int reg) const override;
   int evaluate(const Binding &_binding) const override;
   virtual void bind(const Binding &_binding) override;
-  Binding return_bind(const Binding &_binding,int _pos);
+  Binding return_bind(const Binding &_binding, int _pos);
   void add_argument(ProgramPtr argument);
   std::string get_type_string();
-  virtual void passFunctionName(std::string _name,int _pos) override;
+  virtual void passFunctionName(std::string _name, int _pos) override;
 };
-
 
 ////////////////////////////////////////
 // A overall class which can contain global statements and multiple functions;
 ////////////////////////////////////////
 class MultiFunction : public Program {
-private:
-  std::vector<ProgramPtr> functoins;
-public:
-  MultiFunction(ProgramPtr _funciton);
+ private:
+  std::vector<ProgramPtr> functions;
+
+ public:
+  MultiFunction(ProgramPtr _function);
   void add_function(ProgramPtr _function);
   void print(std::ostream &dst, int indentation) const override;
   int codeGen(const Binding &_binding, int reg) const override;
   int evaluate(const Binding &_binding) const override;
   virtual void bind(const Binding &_binding) override;
-  virtual void passFunctionName(std::string _name,int _pos) override;
-
+  virtual void passFunctionName(std::string _name, int _pos) override;
 };
 
 ////////////////////////////////////////
@@ -97,58 +94,56 @@ public:
 ////////////////////////////////////////
 
 // functioncall should be similar to the expression
-class FunctionCall : public Program{
-private:
-   std::string name;
-   ProgramPtr expression_list;
-   int with_argument = 0;
-public: 
+class FunctionCall : public Program {
+ private:
+  std::string name;
+  ProgramPtr expression_list;
+  int with_argument = 0;
+
+ public:
   // function calls without arguments:
-  FunctionCall(std::string _name,int _pos);
+  FunctionCall(std::string _name, int _pos);
   FunctionCall(std::string _name, ProgramPtr _argument, int _pos);
-  void add_Arguments(ProgramPtr _Argument); 
+  void add_Arguments(ProgramPtr _Argument);
   void print(std::ostream &dst, int indentation) const override;
   int codeGen(const Binding &_binding, int reg) const override;
   int evaluate(const Binding &_binding) const override;
   virtual void bind(const Binding &_binding) override;
-  virtual void passFunctionName(std::string _name,int _pos) override;
+  virtual void passFunctionName(std::string _name, int _pos) override;
 };
 
 ////////////////////////////////////////
 // Expression List
 ////////////////////////////////////////
-class ExpressionList : public Program{
-private: 
+class ExpressionList : public Program {
+ private:
   std::vector<ProgramPtr> arguments;
-public:
+
+ public:
   ExpressionList(ProgramPtr _argument);
   void add_argument_expression(ProgramPtr _expr);
   void print(std::ostream &dst, int indentation) const override;
   int codeGen(const Binding &_binding, int reg) const override;
   int evaluate(const Binding &_binding) const override;
   virtual void bind(const Binding &_binding) override;
-  virtual void passFunctionName(std::string _name,int _pos) override;
+  virtual void passFunctionName(std::string _name, int _pos) override;
 };
 
+// Function definition:
 
-// Function defination:
-
-class FunctionDeclare : public Program{
-  private:
+class FunctionDeclare : public Program {
+ private:
   ProgramPtr parameters;
   std::string name;
-public:
+
+ public:
   void print(std::ostream &dst, int indentation) const override;
   int codeGen(const Binding &_binding, int reg) const override;
   int evaluate(const Binding &_binding) const override;
   virtual void bind(const Binding &_binding) override;
-  FunctionDeclare(std::string _name,ProgramPtr _param_list);
-  virtual void passFunctionName(std::string _name,int _pos) override;
+  FunctionDeclare(std::string _name, ProgramPtr _param_list);
+  virtual void passFunctionName(std::string _name, int _pos) override;
   FunctionDeclare(std::string _name);
-
 };
-
-
-
 
 #endif
