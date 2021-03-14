@@ -17,8 +17,8 @@ extern "C" int fileno(FILE *stream);
 return                            {fprintf(stderr, "T_RETURN "); return T_RETURN;}
 int                               {fprintf(stderr, "T_INT "); yylval.string=new std::string("int"); return T_INT;}
 while                             {fprintf(stderr, "T_WHILE "); return T_WHILE;}
-if                                {fprintf(stderr, "T_IF "); return T_IF;}
-else                              {fprintf(stderr, "T_ELSE "); return T_ELSE;}
+if                                {fprintf(stderr, "T_IF ");    return T_IF;}
+else                              {fprintf(stderr, "T_ELSE ");  return T_ELSE;}
 
  /* more keywords for intermediate features */ 
 for                               {fprintf(stderr, "T_FOR ");      return T_FOR;}
@@ -43,8 +43,8 @@ sizeof                            {fprintf(stderr, "T_SIZEOF ");   return T_SIZE
  \-\=                             {fprintf(stderr, "-=");   return T_SUBEQUAL;}
  \*\=                             {fprintf(stderr, "*=");   return T_MULEQUAL;}
  \/\=                             {fprintf(stderr, "/=");   return T_DIVEQUAL;}
- \<\<\=                           {fprintf(stderr, "<<=");   return T_SHIFTEQUAL_L;}
- \>\>\=                           {fprintf(stderr, ">>=");   return T_SHIFTEQUAL_R;}
+ \<\<\=                           {fprintf(stderr, "<<=");  return T_SHIFTEQUAL_L;}
+ \>\>\=                           {fprintf(stderr, ">>=");  return T_SHIFTEQUAL_R;}
  \&\=                             {fprintf(stderr, "&=");   return T_BITWISEEQUAL_AND;}
  \^\=                             {fprintf(stderr, "^=");   return T_BITWISEEQUAL_XOR;}
  \|\=                             {fprintf(stderr, "|=");   return T_BITWISEEQUAL_OR;}
@@ -60,7 +60,7 @@ sizeof                            {fprintf(stderr, "T_SIZEOF ");   return T_SIZE
 \^                                {fprintf(stderr, "^");    return yytext[0];}
 \-                                {fprintf(stderr, "-");    return yytext[0];}
 \/                                {fprintf(stderr, "/");    return yytext[0];}
-\%                                {fprintf(stderr, "%%");    return yytext[0];}
+\%                                {fprintf(stderr, "%%");   return yytext[0];}
 \&                                {fprintf(stderr, "&");    return yytext[0];}
 \|                                {fprintf(stderr, "|");    return yytext[0];}
 \~                                {fprintf(stderr, "~");    return yytext[0];}
@@ -74,13 +74,13 @@ sizeof                            {fprintf(stderr, "T_SIZEOF ");   return T_SIZE
 \|\|                              {fprintf(stderr, "||");   return T_OR_L;}
 \!                                {fprintf(stderr, "!");    return yytext[0];}
 \=                                {fprintf(stderr, "=");    return yytext[0];}
-\{                                {fprintf(stderr, " {\n");    return yytext[0];}
-\}                                {fprintf(stderr, "}\n");    return yytext[0];}
+\{                                {fprintf(stderr, " {\n"); return yytext[0];}
+\}                                {fprintf(stderr, "}\n");  return yytext[0];}
 \(                                {fprintf(stderr, "(");    return yytext[0];}
 \)                                {fprintf(stderr, ")");    return yytext[0];}
 \[                                {fprintf(stderr, "[");    return yytext[0];}
 \]                                {fprintf(stderr, "]");    return yytext[0];}
-\;                                {fprintf(stderr, ";\n");    return yytext[0];}
+\;                                {fprintf(stderr, ";\n");  return yytext[0];}
 \<\<                              {fprintf(stderr, "<<");   return T_SHIFT_L;}
 \>\>                              {fprintf(stderr, ">>");   return T_SHIFT_R;}
 [_a-zA-Z][0-9_a-zA-Z]*            {std::string *x=new std::string(yytext); fprintf(stderr, "%s", (*x).c_str()); yylval.string=x; return T_NAME;}

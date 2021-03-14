@@ -6,7 +6,7 @@
 
 AddEqual::AddEqual(ProgramPtr _left, ProgramPtr _right, int _pos)
     : Operation(_left, _right, _pos) {
-  fprintf(stderr, "construct +=\n");
+  logger->info("construct +=\n");
 }
 
 void AddEqual::print(std::ostream &dst, int indentation) const {
@@ -21,22 +21,25 @@ int AddEqual::evaluate(const Binding &_binding) const {
   return left->evaluate(_binding) + right->evaluate(_binding);
 }
 
-int AddEqual::codeGen(const Binding &_binding, int reg) const { 
+int AddEqual::codeGen(const Binding &_binding, int reg) const {
   int right_type = right->getType();
-  right->codeGen(binding,3);
-  left->codeGen(binding,2);
+  int left_type = left->getType();
+  assert(left_type == 'x' && "expression is not assignable");
+
+  right->codeGen(binding, 3);
+  left->codeGen(binding, 2);
   if (!((right_type == 'i')))
-    printf("lw $3,%d($fp)\n", right->getPos(binding));
-  printf("add $2,$2,$3\n");
-  printf("sw $2,%d($fp)\n",left->getPos(binding));
+    printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
+  printf("\tadd\t$2,$2,$3\n");
+  printf("\tsw\t$2,%d($fp)\n", left->getPos(binding));
   return 0;
 }
 
-void AddEqual::passFunctionName(std::string _name,int _pos){
-      function_name = _name;
-      pos = pos + _pos;
-    ((Program*)left)->passFunctionName(_name,_pos);
-    ((Program*)right)->passFunctionName(_name,_pos);
+void AddEqual::passFunctionName(std::string _name, int _pos) {
+  function_name = _name;
+  pos = pos + _pos;
+  ((Program *)left)->passFunctionName(_name, _pos);
+  ((Program *)right)->passFunctionName(_name, _pos);
 }
 
 ////////////////////////////////////////
@@ -45,7 +48,7 @@ void AddEqual::passFunctionName(std::string _name,int _pos){
 
 SubEqual::SubEqual(ProgramPtr _left, ProgramPtr _right, int _pos)
     : Operation(_left, _right, _pos) {
-  fprintf(stderr, "construct -=\n");
+  logger->info("construct -=\n");
 }
 
 void SubEqual::print(std::ostream &dst, int indentation) const {
@@ -60,24 +63,27 @@ int SubEqual::evaluate(const Binding &_binding) const {
   return left->evaluate(_binding) - right->evaluate(_binding);
 }
 
-int SubEqual::codeGen(const Binding &_binding, int reg) const { 
+int SubEqual::codeGen(const Binding &_binding, int reg) const {
   int right_type = right->getType();
-  right->codeGen(binding,3);
-  left->codeGen(binding,2);
+  int left_type = left->getType();
+  assert(left_type == 'x' && "expression is not assignable");
+
+  right->codeGen(binding, 3);
+  left->codeGen(binding, 2);
   if (!((right_type == 'i') | (right_type == 'x')))
-    printf("lw $3,%d($fp)\n", right->getPos(binding));
-  printf("sub $2,$2,$3\n");
-  printf("sw $2,%d($fp)\n",left->getPos(binding));
-  //std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" << "#store the result for sub equal" << std::endl;
+    printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
+  printf("\tsub\t$2,$2,$3\n");
+  printf("\tsw\t$2,%d($fp)\n", left->getPos(binding));
+  // std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" <<
+  // "#store the result for sub equal" << std::endl;
   return 0;
 }
 
-
-void SubEqual::passFunctionName(std::string _name,int _pos){
-      function_name = _name;
-      pos = pos + _pos;
-    ((Program*)left)->passFunctionName(_name,_pos);
-    ((Program*)right)->passFunctionName(_name,_pos);
+void SubEqual::passFunctionName(std::string _name, int _pos) {
+  function_name = _name;
+  pos = pos + _pos;
+  ((Program *)left)->passFunctionName(_name, _pos);
+  ((Program *)right)->passFunctionName(_name, _pos);
 }
 ////////////////////////////////////////
 // Product assignment
@@ -85,7 +91,7 @@ void SubEqual::passFunctionName(std::string _name,int _pos){
 
 MulEqual::MulEqual(ProgramPtr _left, ProgramPtr _right, int _pos)
     : Operation(_left, _right, _pos) {
-  fprintf(stderr, "construct *=\n");
+  logger->info("construct *=\n");
 }
 
 void MulEqual::print(std::ostream &dst, int indentation) const {
@@ -102,22 +108,26 @@ int MulEqual::evaluate(const Binding &_binding) const {
 
 int MulEqual::codeGen(const Binding &_binding, int reg) const {
   int right_type = right->getType();
-   right->codeGen(binding,3);
-  left->codeGen(binding,2);
-  if (!((right_type == 'i') | (right_type == 'x')))
-    printf("lw $3,%d($fp)\n", right->getPos(binding));
-  printf("mult $2,$3\n");
-  printf("mflo $2\n");
-  printf("sw $2,%d($fp)\n",left->getPos(binding));
-  //std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" << "#store the result for mul equal" << std::endl;
-  return 0;
- }
+  int left_type = left->getType();
+  assert(left_type == 'x' && "expression is not assignable");
 
-void MulEqual::passFunctionName(std::string _name,int _pos){
-      function_name = _name;
-      pos = pos + _pos;
-    ((Program*)left)->passFunctionName(_name,_pos);
-    ((Program*)right)->passFunctionName(_name,_pos);
+  right->codeGen(binding, 3);
+  left->codeGen(binding, 2);
+  if (!((right_type == 'i') | (right_type == 'x')))
+    printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
+  printf("\tmult\t$2,$3\n");
+  printf("\tmflo\t$2\n");
+  printf("\tsw\t$2,%d($fp)\n", left->getPos(binding));
+  // std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" <<
+  // "#store the result for mul equal" << std::endl;
+  return 0;
+}
+
+void MulEqual::passFunctionName(std::string _name, int _pos) {
+  function_name = _name;
+  pos = pos + _pos;
+  ((Program *)left)->passFunctionName(_name, _pos);
+  ((Program *)right)->passFunctionName(_name, _pos);
 }
 ////////////////////////////////////////
 // Quotient assignment
@@ -125,7 +135,7 @@ void MulEqual::passFunctionName(std::string _name,int _pos){
 
 QuoEqual::QuoEqual(ProgramPtr _left, ProgramPtr _right, int _pos)
     : Operation(_left, _right, _pos) {
-  fprintf(stderr, "construct /=\n");
+  logger->info("construct /=\n");
 }
 
 void QuoEqual::print(std::ostream &dst, int indentation) const {
@@ -141,24 +151,27 @@ int QuoEqual::evaluate(const Binding &_binding) const {
 }
 
 int QuoEqual::codeGen(const Binding &_binding, int reg) const {
-int right_type = right->getType();
- right->codeGen(binding,3);
-  left->codeGen(binding,2);
+  int right_type = right->getType();
+  int left_type = left->getType();
+  assert(left_type == 'x' && "expression is not assignable");
+
+  right->codeGen(binding, 3);
+  left->codeGen(binding, 2);
   if (!((right_type == 'i') | (right_type == 'x')))
-    printf("lw $3,%d($fp)\n", right->getPos(binding));
-  printf("div $2,$3\n");
-  printf("mflo $2\n");
-  printf("sw $2,%d($fp)\n",left->getPos(binding));
-  //std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" << "#store the result for quo equal" << std::endl;
+    printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
+  printf("\tdiv\t$2,$3\n");
+  printf("\tmflo\t$2\n");
+  printf("\tsw\t$2,%d($fp)\n", left->getPos(binding));
+  // std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" <<
+  // "#store the result for quo equal" << std::endl;
   return 0;
+}
 
- }
-
-void QuoEqual::passFunctionName(std::string _name,int _pos){
-      function_name = _name;
-      pos = pos + _pos;
-    ((Program*)left)->passFunctionName(_name,_pos);
-    ((Program*)right)->passFunctionName(_name,_pos);
+void QuoEqual::passFunctionName(std::string _name, int _pos) {
+  function_name = _name;
+  pos = pos + _pos;
+  ((Program *)left)->passFunctionName(_name, _pos);
+  ((Program *)right)->passFunctionName(_name, _pos);
 }
 ////////////////////////////////////////
 // Modulus assignment
@@ -166,7 +179,7 @@ void QuoEqual::passFunctionName(std::string _name,int _pos){
 
 ModEqual::ModEqual(ProgramPtr _left, ProgramPtr _right, int _pos)
     : Operation(_left, _right, _pos) {
-  fprintf(stderr, "construct %%=\n");
+  logger->info("construct %%=\n");
 }
 
 void ModEqual::print(std::ostream &dst, int indentation) const {
@@ -182,23 +195,26 @@ int ModEqual::evaluate(const Binding &_binding) const {
 }
 int ModEqual::codeGen(const Binding &_binding, int reg) const {
   int right_type = right->getType();
-   right->codeGen(binding,3);
-  left->codeGen(binding,2);
+  int left_type = left->getType();
+  assert(left_type == 'x' && "expression is not assignable");
+
+  right->codeGen(binding, 3);
+  left->codeGen(binding, 2);
   if (!((right_type == 'i') | (right_type == 'x')))
-    printf("lw $3,%d($fp)\n", right->getPos(binding));
-  printf("div $2,$3\n");
-  printf("mfhi $2\n");
-  printf("sw $2,%d($fp)\n",left->getPos(binding));
-  //std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" << "#store the result for modulus equal" << std::endl;
+    printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
+  printf("\tdiv\t$2,$3\n");
+  printf("\tmfhi\t$2\n");
+  printf("\tsw\t$2,%d($fp)\n", left->getPos(binding));
+  // std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" <<
+  // "#store the result for modulus equal" << std::endl;
   return 0;
+}
 
- }
-
- void ModEqual::passFunctionName(std::string _name,int _pos){
-       function_name = _name;
-       pos = pos + _pos;
-    ((Program*)left)->passFunctionName(_name,_pos);
-    ((Program*)right)->passFunctionName(_name,_pos);
+void ModEqual::passFunctionName(std::string _name, int _pos) {
+  function_name = _name;
+  pos = pos + _pos;
+  ((Program *)left)->passFunctionName(_name, _pos);
+  ((Program *)right)->passFunctionName(_name, _pos);
 }
 
 ////////////////////////////////////////
@@ -207,7 +223,7 @@ int ModEqual::codeGen(const Binding &_binding, int reg) const {
 
 ShiftEqual_L::ShiftEqual_L(ProgramPtr _left, ProgramPtr _right, int _pos)
     : Operation(_left, _right, _pos) {
-  fprintf(stderr, "construct <<=\n");
+  logger->info("construct <<=\n");
 }
 
 void ShiftEqual_L::print(std::ostream &dst, int indentation) const {
@@ -222,31 +238,36 @@ int ShiftEqual_L::evaluate(const Binding &_binding) const {
   return left->evaluate(_binding) << right->evaluate(_binding);
 }
 
-int ShiftEqual_L::codeGen(const Binding &_binding, int reg) const { 
+int ShiftEqual_L::codeGen(const Binding &_binding, int reg) const {
   int right_type = right->getType();
-   right->codeGen(binding,3);
-  left->codeGen(binding,2);
+  int left_type = left->getType();
+  assert(left_type == 'x' && "expression is not assignable");
+
+  right->codeGen(binding, 3);
+  left->codeGen(binding, 2);
   if (!((right_type == 'i') | (right_type == 'x')))
-    printf("lw $3,%d($fp)\n", right->getPos(binding));
-  printf("sll $2,$2,$3\n");
-  printf("sw $2,%d($fp)\n",left->getPos(binding));
-  //std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" << "#store the result for shift left equal" << std::endl;
+    printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
+  printf("\tsll\t$2,$2,$3\n");
+  printf("\tsw\t$2,%d($fp)\n", left->getPos(binding));
+  // std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" <<
+  // "#store the result for shift left equal" << std::endl;
   return 0;
 }
 
-void ShiftEqual_L::passFunctionName(std::string _name,int _pos){
-      function_name = _name;
-      pos = pos + _pos;
-    ((Program*)left)->passFunctionName(_name,_pos);
-    ((Program*)right)->passFunctionName(_name,_pos);
+void ShiftEqual_L::passFunctionName(std::string _name, int _pos) {
+  function_name = _name;
+  pos = pos + _pos;
+  ((Program *)left)->passFunctionName(_name, _pos);
+  ((Program *)right)->passFunctionName(_name, _pos);
 }
+
 ////////////////////////////////////////
 // shift right assignment
 ////////////////////////////////////////
 
 ShiftEqual_R::ShiftEqual_R(ProgramPtr _left, ProgramPtr _right, int _pos)
     : Operation(_left, _right, _pos) {
-  fprintf(stderr, "construct >>=\n");
+  logger->info("construct >>=\n");
 }
 
 void ShiftEqual_R::print(std::ostream &dst, int indentation) const {
@@ -263,20 +284,24 @@ int ShiftEqual_R::evaluate(const Binding &_binding) const {
 
 int ShiftEqual_R::codeGen(const Binding &_binding, int reg) const {
   int right_type = right->getType();
-   right->codeGen(binding,3);
-  left->codeGen(binding,2);
+  int left_type = left->getType();
+  assert(left_type == 'x' && "expression is not assignable");
+
+  right->codeGen(binding, 3);
+  left->codeGen(binding, 2);
   if (!((right_type == 'i') | (right_type == 'x')))
-  printf("lw $3,%d($fp)\n", right->getPos(binding));
-  printf("sra $2,$2,$3\n");
-  printf("sw $2,%d($fp)\n",left->getPos(binding));
-  //std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" << "#store the result for shift right equal" << std::endl;
+    printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
+  printf("\tsra\t$2,$2,$3\n");
+  printf("\tsw\t$2,%d($fp)\n", left->getPos(binding));
+  // std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" <<
+  // "#store the result for shift right equal" << std::endl;
   return 0;
- }
-void ShiftEqual_R::passFunctionName(std::string _name,int _pos){
-      function_name = _name;
-      pos = pos + _pos;
-    ((Program*)left)->passFunctionName(_name,_pos);
-    ((Program*)right)->passFunctionName(_name,_pos);
+}
+void ShiftEqual_R::passFunctionName(std::string _name, int _pos) {
+  function_name = _name;
+  pos = pos + _pos;
+  ((Program *)left)->passFunctionName(_name, _pos);
+  ((Program *)right)->passFunctionName(_name, _pos);
 }
 
 ////////////////////////////////////////
@@ -286,7 +311,7 @@ void ShiftEqual_R::passFunctionName(std::string _name,int _pos){
 BitwiseEqual_AND::BitwiseEqual_AND(ProgramPtr _left, ProgramPtr _right,
                                    int _pos)
     : Operation(_left, _right, _pos) {
-  fprintf(stderr, "construct &=\n");
+  logger->info("construct &=\n");
 }
 
 void BitwiseEqual_AND::print(std::ostream &dst, int indentation) const {
@@ -303,28 +328,33 @@ int BitwiseEqual_AND::evaluate(const Binding &_binding) const {
 
 int BitwiseEqual_AND::codeGen(const Binding &_binding, int reg) const {
   int right_type = right->getType();
-   right->codeGen(binding,3);
-  left->codeGen(binding,2);
+  int left_type = left->getType();
+  assert(left_type == 'x' && "expression is not assignable");
+
+  right->codeGen(binding, 3);
+  left->codeGen(binding, 2);
   if (!((right_type == 'i') | (right_type == 'x')))
-    printf("lw $3,%d($fp)\n", right->getPos(binding));
-  printf("and $2,$2,$3\n");
-  printf("sw $2,%d($fp)\n",left->getPos(binding));
-  //std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" << "#store the result for bitwise and equal" << std::endl;
+    printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
+  printf("\tand\t$2,$2,$3\n");
+  printf("\tsw\t$2,%d($fp)\n", left->getPos(binding));
+  // std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" <<
+  // "#store the result for bitwise and equal" << std::endl;
   return 0;
 }
 
-void BitwiseEqual_AND::passFunctionName(std::string _name,int _pos){
-      function_name = _name;
-    ((Program*)left)->passFunctionName(_name,_pos);
-    ((Program*)right)->passFunctionName(_name,_pos);
+void BitwiseEqual_AND::passFunctionName(std::string _name, int _pos) {
+  function_name = _name;
+  ((Program *)left)->passFunctionName(_name, _pos);
+  ((Program *)right)->passFunctionName(_name, _pos);
 }
+
 ////////////////////////////////////////
 // bitwise OR assignment
 ////////////////////////////////////////
 
 BitwiseEqual_OR::BitwiseEqual_OR(ProgramPtr _left, ProgramPtr _right, int _pos)
     : Operation(_left, _right, _pos) {
-  fprintf(stderr, "construct |=\n");
+  logger->info("construct |=\n");
 }
 
 void BitwiseEqual_OR::print(std::ostream &dst, int indentation) const {
@@ -341,21 +371,26 @@ int BitwiseEqual_OR::evaluate(const Binding &_binding) const {
 
 int BitwiseEqual_OR::codeGen(const Binding &_binding, int reg) const {
   int right_type = right->getType();
-   right->codeGen(binding,3);
-  left->codeGen(binding,2);
+  int left_type = left->getType();
+  assert(left_type == 'x' && "expression is not assignable");
+
+  right->codeGen(binding, 3);
+  left->codeGen(binding, 2);
   if (!((right_type == 'i') | (right_type == 'x')))
-    printf("lw $3,%d($fp)\n", right->getPos(binding));
-  printf("or $2,$2,$3\n");
-  printf("sw $2,%d($fp)\n",left->getPos(binding));
-  //std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" << "#store the result for bitwise or equal" << std::endl;
+    printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
+  printf("\tor\t$2,$2,$3\n");
+  printf("\tsw\t$2,%d($fp)\n", left->getPos(binding));
+  // std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" <<
+  // "#store the result for bitwise or equal" << std::endl;
   return 0;
 }
-void BitwiseEqual_OR::passFunctionName(std::string _name,int _pos){
-    function_name = _name;
-    pos = pos + _pos;
-    ((Program*)left)->passFunctionName(_name,_pos);
-    ((Program*)right)->passFunctionName(_name,_pos);
+void BitwiseEqual_OR::passFunctionName(std::string _name, int _pos) {
+  function_name = _name;
+  pos = pos + _pos;
+  ((Program *)left)->passFunctionName(_name, _pos);
+  ((Program *)right)->passFunctionName(_name, _pos);
 }
+
 ////////////////////////////////////////
 // bitwise XOR assignment
 ////////////////////////////////////////
@@ -363,7 +398,7 @@ void BitwiseEqual_OR::passFunctionName(std::string _name,int _pos){
 BitwiseEqual_XOR::BitwiseEqual_XOR(ProgramPtr _left, ProgramPtr _right,
                                    int _pos)
     : Operation(_left, _right, _pos) {
-  fprintf(stderr, "construct ^=\n");
+  logger->info("construct ^=\n");
 }
 
 void BitwiseEqual_XOR::print(std::ostream &dst, int indentation) const {
@@ -380,28 +415,33 @@ int BitwiseEqual_XOR::evaluate(const Binding &_binding) const {
 
 int BitwiseEqual_XOR::codeGen(const Binding &_binding, int reg) const {
   int right_type = right->getType();
-   right->codeGen(binding,3);
-  left->codeGen(binding,2);
+  int left_type = left->getType();
+  assert(left_type == 'x' && "expression is not assignable");
+
+  right->codeGen(binding, 3);
+  left->codeGen(binding, 2);
   if (!((right_type == 'i') | (right_type == 'x')))
-    printf("lw $3,%d($fp)\n", right->getPos(binding));
-  printf("xor $2,$2,$3\n");
-  printf("sw $2,%d($fp)\n",left->getPos(binding));
-  //std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" << "#store the result for bitwise xor equal" << std::endl;
+    printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
+  printf("\txor\t$2,$2,$3\n");
+  printf("\tsw\t$2,%d($fp)\n", left->getPos(binding));
+  // std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" <<
+  // "#store the result for bitwise xor equal" << std::endl;
   return 0;
 }
-void BitwiseEqual_XOR::passFunctionName(std::string _name,int _pos){
-    function_name = _name;
-    pos = pos + _pos;
-    ((Program*)left)->passFunctionName(_name,_pos);
-    ((Program*)right)->passFunctionName(_name,_pos);
+void BitwiseEqual_XOR::passFunctionName(std::string _name, int _pos) {
+  function_name = _name;
+  pos = pos + _pos;
+  ((Program *)left)->passFunctionName(_name, _pos);
+  ((Program *)right)->passFunctionName(_name, _pos);
 }
+
 ////////////////////////////////////////
 // Postfix increment
 ////////////////////////////////////////
 
 Increment_Post::Increment_Post(ProgramPtr _left, int _pos)
-    : Operation(_left, 0, _pos) {   
-  fprintf(stderr, "construct increment prefix\n");
+    : Operation(_left, 0, _pos) {
+  logger->info("construct post increment\n");
 }
 
 void Increment_Post::print(std::ostream &dst, int indentation) const {
@@ -418,20 +458,19 @@ int Increment_Post::evaluate(const Binding &_binding) const {
 
 int Increment_Post::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
+  assert(left_type == 'x' && "expression is not assignable");
   left->codeGen(binding, 2);
 
-  if (!((left_type == 'i') | (left_type == 'x')))
-    printf("lw $2,%d($fp)\n", left->getPos(binding));
-
-  printf("addiu $3,$2,1\n");
-  printf("sw $2,%d($fp)\t# store result of post_decrement\n", pos);
-  printf("sw $3,%d($fp)\t# store result of post_decrement\n", left->getPos(binding));
+  printf("\taddiu\t$3,$2,1\n");
+  printf("\tsw\t$2,%d($fp)\t# store result of post increment\n", pos);
+  printf("\tsw\t$3,%d($fp)\t# store result of post increment\n",
+         left->getPos(binding));
   return 0;
 }
-void Increment_Post::passFunctionName(std::string _name,int _pos){
-    function_name = _name;
-    pos = pos + _pos;
-    ((Program*)left)->passFunctionName(_name,_pos);
+void Increment_Post::passFunctionName(std::string _name, int _pos) {
+  function_name = _name;
+  pos = pos + _pos;
+  ((Program *)left)->passFunctionName(_name, _pos);
 }
 
 ////////////////////////////////////////
@@ -440,7 +479,7 @@ void Increment_Post::passFunctionName(std::string _name,int _pos){
 
 Increment_Pre::Increment_Pre(ProgramPtr _left, int _pos)
     : Operation(_left, 0, _pos) {
-  fprintf(stderr, "construct increment prefix\n");
+  logger->info("construct pre increment\n");
 }
 
 void Increment_Pre::print(std::ostream &dst, int indentation) const {
@@ -454,20 +493,21 @@ int Increment_Pre::evaluate(const Binding &_binding) const {
   return (left->evaluate(_binding) + 1);
 }
 
-int Increment_Pre::codeGen(const Binding &_binding, int reg) const { 
+int Increment_Pre::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
+  assert(left_type == 'x' && "expression is not assignable");
   left->codeGen(binding, 2);
 
-  if (!((left_type == 'i') | (left_type == 'x')))
-    printf("lw $2,%d($fp)\n", left->getPos(binding));
-  printf("addiu $2,$2,1 # %d\n",pos);
-  printf("sw $2,%d($fp)\t# store result of pre_increment\n",pos);
-  printf("sw $2,%d($fp)\t# store result of pre_increment\n",left->getPos(binding));
-  return 0; }
-void Increment_Pre::passFunctionName(std::string _name,int _pos){
-    function_name = _name;
-    pos = pos + _pos;
-    ((Program*)left)->passFunctionName(_name,_pos);
+  printf("\taddiu\t$2,$2,1 # %d\n", pos);
+  printf("\tsw\t$2,%d($fp)\t# store result of pre increment\n", pos);
+  printf("\tsw\t$2,%d($fp)\t# store result of pre increment\n",
+         left->getPos(binding));
+  return 0;
+}
+void Increment_Pre::passFunctionName(std::string _name, int _pos) {
+  function_name = _name;
+  pos = pos + _pos;
+  ((Program *)left)->passFunctionName(_name, _pos);
 }
 ////////////////////////////////////////
 // Postfix decrement
@@ -475,7 +515,7 @@ void Increment_Pre::passFunctionName(std::string _name,int _pos){
 
 Decrement_Post::Decrement_Post(ProgramPtr _left, int _pos)
     : Operation(_left, 0, _pos) {
-  fprintf(stderr, "construct decrement postfix\n");
+  logger->info("construct post increment\n");
 }
 
 void Decrement_Post::print(std::ostream &dst, int indentation) const {
@@ -492,21 +532,20 @@ int Decrement_Post::evaluate(const Binding &_binding) const {
 
 int Decrement_Post::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
+  assert(left_type == 'x' && "expression is not assignable");
   left->codeGen(binding, 2);
 
-  if (!((left_type == 'i') | (left_type == 'x')))
-    printf("lw $2,%d($fp)\n", left->getPos(binding));
-
-  printf("addiu $3,$2,-1\n");
-  printf("sw $2,%d($fp)\t# store result of post_decrement\n", pos);
-  printf("sw $3,%d($fp)\t# store result of post_decrement\n", left->getPos(binding));
+  printf("\taddiu\t$3,$2,-1\n");
+  printf("\tsw\t$2,%d($fp)\t# store result of post decrement\n", pos);
+  printf("\tsw\t$3,%d($fp)\t# store result of post decrement\n",
+         left->getPos(binding));
   return 0;
 }
 
-void Decrement_Post::passFunctionName(std::string _name,int _pos){
-    function_name = _name;
-    pos = pos + _pos;
-    ((Program*)left)->passFunctionName(_name,_pos);
+void Decrement_Post::passFunctionName(std::string _name, int _pos) {
+  function_name = _name;
+  pos = pos + _pos;
+  ((Program *)left)->passFunctionName(_name, _pos);
 }
 ////////////////////////////////////////
 // prefix increment
@@ -514,7 +553,7 @@ void Decrement_Post::passFunctionName(std::string _name,int _pos){
 
 Decrement_Pre::Decrement_Pre(ProgramPtr _left, int _pos)
     : Operation(_left, 0, _pos) {
-  fprintf(stderr, "construct decrement prefix\n");
+  logger->info("construct pre decrement\n");
 }
 
 void Decrement_Pre::print(std::ostream &dst, int indentation) const {
@@ -528,18 +567,19 @@ int Decrement_Pre::evaluate(const Binding &_binding) const {
   return (left->evaluate(_binding) - 1);
 }
 
-int Decrement_Pre::codeGen(const Binding &_binding, int reg) const { 
+int Decrement_Pre::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
+  assert(left_type == 'x' && "expression is not assignable");
   left->codeGen(binding, 2);
-  if (!((left_type == 'i') | (left_type == 'x')))
-    printf("lw $2,%d($fp)\n", left->getPos(binding));
 
-  printf("addiu $2,$2,-1\n");
-  printf("sw $2,%d($fp)\t# store result of pre_decrement\n", left->getPos(binding));
-  printf("sw $2,%d($fp)\t# store result of pre_decrement\n", pos);
-  return 0; }
-void Decrement_Pre::passFunctionName(std::string _name,int _pos){
-    function_name = _name;
-    pos = pos + _pos;
-    ((Program*)left)->passFunctionName(_name,_pos);
+  printf("\taddiu\t$2,$2,-1\n");
+  printf("\tsw\t$2,%d($fp)\t# store result of pre decrement\n",
+         left->getPos(binding));
+  printf("\tsw\t$2,%d($fp)\t# store result of pre decrement\n", pos);
+  return 0;
+}
+void Decrement_Pre::passFunctionName(std::string _name, int _pos) {
+  function_name = _name;
+  pos = pos + _pos;
+  ((Program *)left)->passFunctionName(_name, _pos);
 }
