@@ -45,6 +45,7 @@ std::string Array::getName() { return name; }
 ArrayElement::ArrayElement(ProgramPtr _left, std::string _name) {
   left = _left;
   name = _name;
+  node_type = 'a';
 }
 
 ArrayElement::ArrayElement(ProgramPtr _left, ProgramPtr _right,
@@ -52,6 +53,7 @@ ArrayElement::ArrayElement(ProgramPtr _left, ProgramPtr _right,
   left = _left;
   right = _right;
   name = _name;
+  node_type = 'a';
 }
 
 void ArrayElement::array_assignment(ProgramPtr _right) {
@@ -69,14 +71,16 @@ int ArrayElement::codeGen(const Binding &_binding, int reg) const {
     }
   }
   left->codeGen(binding, 2);
-  printf("\tsll $2,$2,2\n");
-  printf("\taddiu $3,$fp,8\n");
-  printf("\taddu $2,$3,$2\n");
+  printf("\tsll\t$2,$2,2\n");
+  printf("\taddiu\t$3,$fp,8\n");
+  printf("\taddu\t$2,$3,$2\n");
   if (call == 1) {
     right->codeGen(binding, 3);
-    printf("\tsw $3,%d($2)\n", start_location);
+    printf("\tnop\n");
+    printf("\tsw\t$3,%d($2)\t # store an element in an array\n", 4);
   } else {
-    printf("\tlw $2,%d($2)\n", start_location);
+    printf("\tnop\n");
+    printf("\tlw\t$%d,%d($2)\t# load an element in an array\n",reg, 4);
   }
 
   return 0;
