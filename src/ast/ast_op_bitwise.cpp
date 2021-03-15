@@ -34,11 +34,11 @@ int BitwiseAnd::codeGen(const Binding &_binding, int reg) const {
   }
 
   if (!((left_type == 'i') | (left_type == 'x')))
-    printf("lw $2,%d($fp)\n", left->getPos(binding));
+    printf("\tlw\t$2,%d($fp)\n", left->getPos(binding));
   if (!((right_type == 'i') | (right_type == 'x')))
-    printf("lw $3,%d($fp)\n", right->getPos(binding));
-  printf("and $2,$2,$3\n");
-  printf("sw $2,%d($fp)\t# store result of and bitwise operation\n", pos);
+    printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
+  printf("\tand\t$2,$2,$3\n");
+  printf("\tsw\t$2,%d($fp)\t# store result of and bitwise operation\n", pos);
 
   return 0;
 }
@@ -84,11 +84,11 @@ int BitwiseOr::codeGen(const Binding &_binding, int reg) const {
   }
 
   if (!((left_type == 'i') | (left_type == 'x')))
-    printf("lw $2,%d($fp)\n", left->getPos(binding));
+    printf("\tlw\t$2,%d($fp)\n", left->getPos(binding));
   if (!((right_type == 'i') | (right_type == 'x')))
-    printf("lw $3,%d($fp)\n", right->getPos(binding));
-  printf("or $2,$2,$3\n");
-  printf("sw $2,%d($fp)\t# store result of or bitwise operation\n", pos);
+    printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
+  printf("\tor\t$2,$2,$3\n");
+  printf("\tsw\t$2,%d($fp)\t# store result of or bitwise operation\n", pos);
 
   return 0;
 }
@@ -132,11 +132,11 @@ int BitwiseXor::codeGen(const Binding &_binding, int reg) const {
   }
 
   if (!((left_type == 'i') | (left_type == 'x')))
-    printf("lw $2,%d($fp)\n", left->getPos(binding));
+    printf("\tlw\t$2,%d($fp)\n", left->getPos(binding));
   if (!((right_type == 'i') | (right_type == 'x')))
-    printf("lw $3,%d($fp)\n", right->getPos(binding));
-  printf("xor $2,$2,$3\n");
-  printf("sw $2,%d($fp)\t# store result of xor bitwise operation\n", pos);
+    printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
+  printf("\txor\t$2,$2,$3\n");
+  printf("\tsw\t$2,%d($fp)\t# store result of xor bitwise operation\n", pos);
   return 0;
 }
 
@@ -180,11 +180,11 @@ int ShiftLeft::codeGen(const Binding &_binding, int reg) const {
   }
 
   if (!((left_type == 'i') | (left_type == 'x')))
-    printf("lw $2,%d($fp)\n", left->getPos(binding));
+    printf("\tlw\t$2,%d($fp)\n", left->getPos(binding));
   if (!((right_type == 'i') | (right_type == 'x')))
-    printf("lw $3,%d($fp)\n", right->getPos(binding));
-  printf("sll $2,$2,$3\n");
-  printf("sw $2,%d($fp)\t# store result of left shift operation\n", pos);
+    printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
+  printf("\tsll\t$2,$2,$3\n");
+  printf("\tsw\t$2,%d($fp)\t# store result of left shift operation\n", pos);
 
   return 0;
 }
@@ -229,12 +229,12 @@ int ShiftRight::codeGen(const Binding &_binding, int reg) const {
   }
 
   if (!((left_type == 'i') | (left_type == 'x')))
-    printf("lw $2,%d($fp)\n", left->getPos(binding));
+    printf("\tlw\t$2,%d($fp)\n", left->getPos(binding));
   if (!((right_type == 'i') | (right_type == 'x')))
-    printf("lw $3,%d($fp)\n", right->getPos(binding));
+    printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
 
-  printf("sra $2,$2,$3\n");
-  printf("sw $2,%d($fp)\t# store result of right shift operation\n", pos);
+  printf("\tsra\t$2,$2,$3\n");
+  printf("\tsw\t$2,%d($fp)\t# store result of right shift operation\n", pos);
 
   return 0;
 }

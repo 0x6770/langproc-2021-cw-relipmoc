@@ -9,7 +9,7 @@ Statement::Statement(ProgramPtr _expression) : expression(_expression) {}
 void Statement::print(std::ostream &dst, int indentation) const {
   printIndent(dst, indentation);
   if (expression) expression->print(dst, indentation);
-  dst << ";\n";
+  dst << ";";
 }
 
 int Statement::evaluate(const Binding &_binding) const {
@@ -48,7 +48,7 @@ void Return::print(std::ostream &dst, int indentation) const {
   printIndent(dst, indentation);
   dst << "return ";
   expression->print(dst, 0);
-  dst << ";\n";
+  dst << ";";
 }
 
 int Return::codeGen(const Binding &_binding, int reg) const {
@@ -97,7 +97,7 @@ void VarDeclare::print(std::ostream &dst, int indentation) const {
     dst << " = ";
     expression->print(dst, 0);
   }
-  dst << ";\n";
+  dst << ";";
 }
 
 int VarDeclare::codeGen(const Binding &_binding, int reg) const {
@@ -140,7 +140,7 @@ void VarAssign::print(std::ostream &dst, int indentation) const {
   printIndent(dst, indentation);
   dst << name << " = ";
   expression->print(dst, 0);
-  dst << ";\n";
+  dst << ";";
 }
 
 int VarAssign::codeGen(const Binding &_binding, int reg) const {
@@ -187,6 +187,7 @@ void StatementList::addStatement(ProgramPtr _statement) {
 void StatementList::print(std::ostream &dst, int indentation) const {
   for (auto it : statements) {
     it->print(dst, indentation);
+    dst << "\n";
     if (((Statement *)it)->getType() == 'r') break;
   }
 }
@@ -246,11 +247,9 @@ void StatementList::bind(const Binding &_binding) {
 
 void StatementList::passFunctionName(std::string _name, int _pos) {
   for (auto it : statements) {
-    // std::cout << "entered pass name in statemetlist" << std::endl;
     ((Program *)it)->passFunctionName(_name, _pos);
   }
   function_name = _name;
-  // std::cout << _name << std::endl;
 }
 
 ////////////////////////////////////////
@@ -282,7 +281,7 @@ void IfStatement::print(std::ostream &dst, int indentation) const {
     printIndent(dst, --indentation);
     dst << "}";
   }
-  dst << "\n";
+  dst << "";
 }
 
 int IfStatement::evaluate(const Binding &_binding) const { return 0; }
