@@ -44,29 +44,28 @@ int LessEqual::codeGen(const Binding &_binding, int reg) const {
   }
 
   if (!((left_type == 'i') | (left_type == 'x')))
-    printf("lw $2,%d($fp)\n", left->getPos(binding));
+    printf("\tlw\t$2,%d($fp)\n", left->getPos(binding));
   if (!((right_type == 'i') | (right_type == 'x')))
-    printf("lw $3,%d($fp)\n", right->getPos(binding));
-  
+    printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
 
   if (is_equal == 1) {
-    printf("slt $2,$3,$2\n");
-    printf("xori $2,$2,0x1\n");
+    printf("\tslt\t$2,$3,$2\n");
+    printf("\txori\t$2,$2,0x1\n");
+  } else {
+    printf("\tslt\t$2,$2,$3\n");
   }
-  else{
-    printf("slt $2,$2,$3\n");
-  }
-  printf("andi $2,$2,0x00ff\n");
-  // TODO: there is also a line " andi $2,$2,0x00ff" in the online converter.
-  printf("sw $2,%d($fp)\t# store result of logical less or less equal\n", pos);
+  printf("\tandi\t$2,$2,0x00ff\n");
+  //  TODO: there is also a line " andi $2,$2,0x00ff" in the online converter.
+  printf("\tsw\t$2,%d($fp)\t# store result of logical less or less equal\n",
+         pos);
 
   return 0;
 }
-void LessEqual::passFunctionName(std::string _name,int _pos){
-    function_name = _name;
-    pos = pos + _pos;
-    ((Program*)left)->passFunctionName(_name,_pos);
-    ((Program*)right)->passFunctionName(_name,_pos);
+void LessEqual::passFunctionName(std::string _name, int _pos) {
+  function_name = _name;
+  pos = pos + _pos;
+  ((Program *)left)->passFunctionName(_name, _pos);
+  ((Program *)right)->passFunctionName(_name, _pos);
 }
 
 ////////////////////////////////////////
@@ -113,25 +112,26 @@ int GreaterEqual::codeGen(const Binding &_binding, int reg) const {
   }
 
   if (!((left_type == 'i') | (left_type == 'x')))
-    printf("lw $2,%d($fp)\n", left->getPos(binding));
+    printf("\tlw\t$2,%d($fp)\n", left->getPos(binding));
   if (!((right_type == 'i') | (right_type == 'x')))
-    printf("lw $3,%d($fp)\n", right->getPos(binding));
+    printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
 
-  printf("slt $2,$3,$2\n");
+  printf("\tslt\t$2,$3,$2\n");
   if (is_equal == 1) {
-    printf("xori $2,$2,0x1\n");
+    printf("\txori\t$2,$2,0x1\n");
   }
-  printf("sw $2,%d($fp)\t# store result of logical greater or greater than\n",
-         pos);
+  printf(
+      "\tsw\t$2,%d($fp)\t# store result of logical greater or greater than\n",
+      pos);
 
   return 0;
 }
 
-void GreaterEqual::passFunctionName(std::string _name,int _pos){
-    function_name = _name;
-    pos = pos + _pos;
-    ((Program*)left)->passFunctionName(_name,_pos);
-    ((Program*)right)->passFunctionName(_name,_pos);
+void GreaterEqual::passFunctionName(std::string _name, int _pos) {
+  function_name = _name;
+  pos = pos + _pos;
+  ((Program *)left)->passFunctionName(_name, _pos);
+  ((Program *)right)->passFunctionName(_name, _pos);
 }
 ////////////////////////////////////////
 // Equal
@@ -176,15 +176,15 @@ int Equal::codeGen(const Binding &_binding, int reg) const {
   }
 
   if (!((left_type == 'i') | (left_type == 'x')))
-    printf("lw $2,%d($fp)\n", left->getPos(binding));
+    printf("\tlw\t$2,%d($fp)\n", left->getPos(binding));
   if (!((right_type == 'i') | (right_type == 'x')))
-    printf("lw $3,%d($fp)\n", right->getPos(binding));
+    printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
 
-  printf("xor $2,$2,$3\n");
+  printf("\txor\t$2,$2,$3\n");
   if (is_equal == 1) {
-    printf("sltu $2,$0,$2\n");
+    printf("\tsltu\t$2,$0,$2\n");
   } else {
-    printf("sltiu $2,$2,1\n");
+    printf("\tsltiu\t$2,$2,1\n");
   }
   printf(
       "sw $2,%d($fp)\t# store result of logical equal or logical not equal\n",
@@ -193,11 +193,11 @@ int Equal::codeGen(const Binding &_binding, int reg) const {
   return 0;
 }
 
-void Equal::passFunctionName(std::string _name,int _pos){
-    function_name = _name;
-    pos = pos + _pos;
-    ((Program*)left)->passFunctionName(_name,_pos);
-    ((Program*)right)->passFunctionName(_name,_pos);
+void Equal::passFunctionName(std::string _name, int _pos) {
+  function_name = _name;
+  pos = pos + _pos;
+  ((Program *)left)->passFunctionName(_name, _pos);
+  ((Program *)right)->passFunctionName(_name, _pos);
 }
 ////////////////////////////////////////
 // LogicalAnd
@@ -222,43 +222,44 @@ int LogicalAnd::evaluate(const Binding &_binding) const {
 
 int LogicalAnd::codeGen(const Binding &_binding, int reg) const {
   left->codeGen(binding, 2);
-  std::string labelL2 = "F" + function_name + "_2a_"  + std::to_string(pos); 
-  std::string labelL3 = "F" +  function_name + "_3a_"  + std::to_string(pos);
+  std::string labelL2 = "F" + function_name + "_2a_" + std::to_string(pos);
+  std::string labelL3 = "F" + function_name + "_3a_" + std::to_string(pos);
   printf("\tnop\n");
   // TODO： add counter to create unique label:
-  //std::cout << "\tbeq $0,$2,"
+  // std::cout << "\tbeq $0,$2,"
   //          << labelL2 << std::endl;
-  printf("\tbeq $0,$2,%s\n",labelL2.c_str());
+  printf("\tbeq\t$0,$2,%s\n", labelL2.c_str());
   printf("\tnop\n");  // Add empty delay slot
 
   right->codeGen(binding, 2);
   printf("\tnop\n");
   // TODO： add counter to create unique label:
-  //std::cout << "\tbeq $0,$2,"
+  // std::cout << "\tbeq $0,$2,"
   //          << labelL2 << std::endl;
-  printf("\tbeq $0,$2,%s\n",labelL2.c_str());
+  printf("\tbeq\t$0,$2,%s\n", labelL2.c_str());
   printf("\tnop\n");
 
   printf("\tli $2,1\n");
-  printf("b %s\n",labelL3.c_str());  // TODO： add counter to create unique label:
-  //std::cout << "\tb " << labelL3 << std::endl;
-  printf("\tnop\n");   // Add empty delay slot
-  printf("%s:\n",labelL2.c_str());
-  //std::cout <<  "\t"<<labelL2 <<":" << std::endl;
+  printf("b %s\n",
+         labelL3.c_str());  // TODO： add counter to create unique label:
+  // std::cout << "\tb " << labelL3 << std::endl;
+  printf("\tnop\n");  // Add empty delay slot
+  printf("%s:\n", labelL2.c_str());
+  // std::cout <<  "\t"<<labelL2 <<":" << std::endl;
   printf("\tmove $2,$0\n");
-  printf("%s:\n",labelL3.c_str());
-  //std::cout << "\t" <<labelL3 <<":" << std::endl;
-  printf("\tsw $2,%d($fp)\t# store result of logical and\n", pos);
-  printf("\tlw $2,%d($fp)\n", pos);
+  printf("%s:\n", labelL3.c_str());
+  // std::cout << "\t" <<labelL3 <<":" << std::endl;
+  printf("\tsw\t$2,%d($fp)\t# store result of logical and\n", pos);
+  printf("\tlw\t$2,%d($fp)\n", pos);
 
   return 0;
 }
 
-void LogicalAnd::passFunctionName(std::string _name,int _pos){
-     function_name = _name;
-     pos = pos + _pos;
-    ((Program*)left)->passFunctionName(_name,_pos);
-    ((Program*)right)->passFunctionName(_name,_pos);
+void LogicalAnd::passFunctionName(std::string _name, int _pos) {
+  function_name = _name;
+  pos = pos + _pos;
+  ((Program *)left)->passFunctionName(_name, _pos);
+  ((Program *)right)->passFunctionName(_name, _pos);
 }
 
 ////////////////////////////////////////
@@ -285,43 +286,44 @@ int LogicalOr::evaluate(const Binding &_binding) const {
 int LogicalOr::codeGen(const Binding &_binding, int reg) const {
   left->codeGen(binding, 2);
   printf("nop\n");
-  std::string labelL2 = "F" + function_name + "L2_or"  + std::to_string(pos); 
-  std::string labelL3 = "F" + function_name + "L3_or"  + std::to_string(pos);
-  std::string labelL4 = "F" + function_name + "L4_or"  + std::to_string(pos);
+  std::string labelL2 = "F" + function_name + "L2_or" + std::to_string(pos);
+  std::string labelL3 = "F" + function_name + "L3_or" + std::to_string(pos);
+  std::string labelL4 = "F" + function_name + "L4_or" + std::to_string(pos);
   // TODO： add counter to create unique label:
-  //std::cout << "bne $2,$0,"
+  // std::cout << "bne $2,$0,"
   //          << labelL2 << std::endl;
-  printf("\tbne $2,$0,%s\n",labelL2.c_str());
+  printf("\tbne\t$2,$0,%s\n", labelL2.c_str());
   printf("nop\n");  // Add empty delay slot
 
   right->codeGen(binding, 2);
   printf("nop\n");
   // TODO： add counter to create unique label:
-  //std::cout << "beq $2,$0,"
+  // std::cout << "beq $2,$0,"
   //          << labelL3 << std::endl;
-  printf("\tbeq $2,$0,%s\n",labelL3.c_str());
+  printf("\tbeq\t$2,$0,%s\n", labelL3.c_str());
   printf("\tnop\n");
 
-  printf("%s:\n",labelL2.c_str());
-  //std::cout << labelL2 << ":" << std::endl;
-  printf("li $2,1\n");
-  printf("b %s\n",labelL4.c_str());  // TODO： add counter to create unique label:
-  //std::cout << "b " << labelL4 << std::endl;
+  printf("%s:\n", labelL2.c_str());
+  // std::cout << labelL2 << ":" << std::endl;
+  printf("\tli\t$2,1\n");
+  printf("b %s\n",
+         labelL4.c_str());  // TODO： add counter to create unique label:
+  // std::cout << "b " << labelL4 << std::endl;
   printf("\tnop\n");
-  printf("%s:\n",labelL3.c_str());
- // std::cout << labelL3 << ":" << std::endl;
+  printf("%s:\n", labelL3.c_str());
+  // std::cout << labelL3 << ":" << std::endl;
   printf("\tmove $2,$0\n");
-  printf("%s:\n",labelL4.c_str());
-  //std::cout << labelL4 << ":" << std::endl;
-  printf("\tsw $2,%d($fp)\t #store the value of logical or", pos);
-  printf("\tlw $2,%d($fp)\n", pos);
+  printf("%s:\n", labelL4.c_str());
+  // std::cout << labelL4 << ":" << std::endl;
+  printf("\tsw\t$2,%d($fp)\t #store the value of logical or", pos);
+  printf("\tlw\t$2,%d($fp)\n", pos);
 
   return 0;
 }
 
-void LogicalOr::passFunctionName(std::string _name,int _pos){
-     function_name = _name;
-     pos = pos + _pos;
-    ((Program*)left)->passFunctionName(_name,_pos);
-    ((Program*)right)->passFunctionName(_name,_pos);
+void LogicalOr::passFunctionName(std::string _name, int _pos) {
+  function_name = _name;
+  pos = pos + _pos;
+  ((Program *)left)->passFunctionName(_name, _pos);
+  ((Program *)right)->passFunctionName(_name, _pos);
 }

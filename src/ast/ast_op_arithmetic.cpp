@@ -49,11 +49,11 @@ int Addition::codeGen(const Binding &_binding, int reg) const {
   return 0;
 }
 
-void Addition::passFunctionName(std::string _name,int _pos){
-    function_name = _name;
-    pos = pos + _pos;
-    ((Program*)left)->passFunctionName(_name,_pos);
-    ((Program*)right)->passFunctionName(_name,_pos);
+void Addition::passFunctionName(std::string _name, int _pos) {
+  function_name = _name;
+  pos = pos + _pos;
+  ((Program *)left)->passFunctionName(_name, _pos);
+  ((Program *)right)->passFunctionName(_name, _pos);
 }
 
 ////////////////////////////////////////
@@ -105,11 +105,11 @@ int Subtraction::codeGen(const Binding &_binding, int reg) const {
   return 0;
 }
 
-void Subtraction::passFunctionName(std::string _name,int _pos){
-    function_name = _name;
-    pos = pos + _pos;
-    ((Program*)left)->passFunctionName(_name,_pos);
-    ((Program*)right)->passFunctionName(_name,_pos);
+void Subtraction::passFunctionName(std::string _name, int _pos) {
+  function_name = _name;
+  pos = pos + _pos;
+  ((Program *)left)->passFunctionName(_name, _pos);
+  ((Program *)right)->passFunctionName(_name, _pos);
 }
 
 ////////////////////////////////////////
@@ -157,11 +157,11 @@ if (left_type == 'i' || left_type == 'x') {
   return 0;
 }
 
-void Multiplication::passFunctionName(std::string _name,int _pos){
-    function_name = _name;
-    pos = pos + _pos;
-    ((Program*)left)->passFunctionName(_name,_pos);
-    ((Program*)right)->passFunctionName(_name,_pos);
+void Multiplication::passFunctionName(std::string _name, int _pos) {
+  function_name = _name;
+  pos = pos + _pos;
+  ((Program *)left)->passFunctionName(_name, _pos);
+  ((Program *)right)->passFunctionName(_name, _pos);
 }
 
 ////////////////////////////////////////
@@ -209,12 +209,11 @@ if (left_type == 'i' || left_type == 'x') {
   return 0;
 }
 
-
-void Division::passFunctionName(std::string _name,int _pos){
-    function_name = _name;
-    pos = pos + _pos;
-    ((Program*)left)->passFunctionName(_name,_pos);
-    ((Program*)right)->passFunctionName(_name,_pos);
+void Division::passFunctionName(std::string _name, int _pos) {
+  function_name = _name;
+  pos = pos + _pos;
+  ((Program *)left)->passFunctionName(_name, _pos);
+  ((Program *)right)->passFunctionName(_name, _pos);
 }
 ////////////////////////////////////////
 // Modulus
@@ -261,11 +260,11 @@ if (left_type == 'i' || left_type == 'x') {
   return 0;
 }
 
-void Modulus::passFunctionName(std::string _name,int _pos){
-    function_name = _name;
-    pos = pos + _pos;
-    ((Program*)left)->passFunctionName(_name,_pos);
-    ((Program*)right)->passFunctionName(_name,_pos);
+void Modulus::passFunctionName(std::string _name, int _pos) {
+  function_name = _name;
+  pos = pos + _pos;
+  ((Program *)left)->passFunctionName(_name, _pos);
+  ((Program *)right)->passFunctionName(_name, _pos);
 }
 
 ////////////////////////////////////////
@@ -295,10 +294,9 @@ int Negation::codeGen(const Binding &_binding, int reg) const {
   return 0;
 }
 
-
-void Negation::passFunctionName(std::string _name,int _pos){
-    function_name = _name;
-    pos = pos + _pos;
-    //((Program*)left)->passFunctionName(_name);
-    ((Program*)right)->passFunctionName(_name,_pos);
+void Negation::passFunctionName(std::string _name, int _pos) {
+  function_name = _name;
+  pos = pos + _pos;
+  //((Program*)left)->passFunctionName(_name);
+  ((Program *)right)->passFunctionName(_name, _pos);
 }

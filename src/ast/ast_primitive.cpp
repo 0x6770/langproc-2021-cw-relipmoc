@@ -22,12 +22,10 @@ int Integer::codeGen(const Binding &_binding, int reg) const {
 }
 
 void Integer::bind(const Binding &_binding) {}
-void Integer::passFunctionName(std::string _name,int _pos){
-      function_name = _name;
-      pos = pos + _pos;
-
+void Integer::passFunctionName(std::string _name, int _pos) {
+  function_name = _name;
+  pos = pos + _pos;
 }
-
 
 ////////////////////////////////////////
 // Variable
@@ -72,7 +70,7 @@ void Variable::bind(const Binding &_binding) {
   logger->debug("binding...variable\n");
 }
 
-void Variable::passFunctionName(std::string _name,int _pos){
+void Variable::passFunctionName(std::string _name, int _pos) {
   pos = pos + _pos;
-      function_name = _name;
+  function_name = _name;
 }

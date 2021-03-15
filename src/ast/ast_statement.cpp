@@ -9,7 +9,7 @@ Statement::Statement(ProgramPtr _expression) : expression(_expression) {}
 void Statement::print(std::ostream &dst, int indentation) const {
   printIndent(dst, indentation);
   if (expression) expression->print(dst, indentation);
-  dst << ";\n";
+  dst << ";";
 }
 
 int Statement::evaluate(const Binding &_binding) const {
@@ -30,10 +30,11 @@ void Statement::bind(const Binding &_binding) {
   logger->info("binding...%c\n", node_type);
 }
 
-void Statement::passFunctionName(std::string _name,int _pos){
+void Statement::passFunctionName(std::string _name, int _pos) {
   function_name = _name;
-  ((Program*)expression)->passFunctionName(_name,_pos);
+  ((Program *)expression)->passFunctionName(_name, _pos);
 }
+
 ////////////////////////////////////////
 // Return
 ////////////////////////////////////////
@@ -47,15 +48,14 @@ void Return::print(std::ostream &dst, int indentation) const {
   printIndent(dst, indentation);
   dst << "return ";
   expression->print(dst, 0);
-  dst << ";\n";
+  dst << ";";
 }
 
 int Return::codeGen(const Binding &_binding, int reg) const {
   logger->info("generate code for Return\n");
   expression->codeGen(binding, 2);
   std::string return_end = "end" + function_name;
-  printf("\tb\t%s\n",return_end.c_str());
-  //std::cout << "\t" << "b" << "\t" << return_end;
+  printf("\tb\t%s", return_end.c_str());
   printf(
       "\t\t# \033[1;33m[RETURN]\033[0m jump to end of "
       "function\n");
@@ -68,11 +68,12 @@ void Return::bind(const Binding &_binding) {
   ((Program *)expression)->bind(binding);
 }
 
-void Return::passFunctionName(std::string _name,int _pos){
+void Return::passFunctionName(std::string _name, int _pos) {
   function_name = _name;
-  //std::cout << _name << std::endl;
-  ((Program*)expression)->passFunctionName(_name,_pos);
+  // std::cout << _name << std::endl;
+  ((Program *)expression)->passFunctionName(_name, _pos);
 }
+
 ////////////////////////////////////////
 // VarDeclare
 ////////////////////////////////////////
@@ -96,7 +97,7 @@ void VarDeclare::print(std::ostream &dst, int indentation) const {
     dst << " = ";
     expression->print(dst, 0);
   }
-  dst << ";\n";
+  dst << ";";
 }
 
 int VarDeclare::codeGen(const Binding &_binding, int reg) const {
@@ -120,11 +121,11 @@ void VarDeclare::bind(const Binding &_binding) {
   }
 }
 
-void VarDeclare::passFunctionName(std::string _name,int _pos){
+void VarDeclare::passFunctionName(std::string _name, int _pos) {
   pos = pos + _pos;
-      function_name = _name;
+  function_name = _name;
   if (expression) {
-    ((Program *)expression)->passFunctionName(_name,_pos);
+    ((Program *)expression)->passFunctionName(_name, _pos);
   }
 }
 
@@ -139,7 +140,7 @@ void VarAssign::print(std::ostream &dst, int indentation) const {
   printIndent(dst, indentation);
   dst << name << " = ";
   expression->print(dst, 0);
-  dst << ";\n";
+  dst << ";";
 }
 
 int VarAssign::codeGen(const Binding &_binding, int reg) const {
@@ -162,12 +163,13 @@ void VarAssign::bind(const Binding &_binding) {
   ((Program *)expression)->bind(binding);
 }
 
-void VarAssign::passFunctionName(std::string _name,int _pos){
+void VarAssign::passFunctionName(std::string _name, int _pos) {
   pos = pos + _pos;
-    if (expression) {
-    ((Program *)expression)->passFunctionName(_name,_pos);
+  if (expression) {
+    ((Program *)expression)->passFunctionName(_name, _pos);
   }
 }
+
 ////////////////////////////////////////
 // StatementList
 ////////////////////////////////////////
@@ -185,6 +187,7 @@ void StatementList::addStatement(ProgramPtr _statement) {
 void StatementList::print(std::ostream &dst, int indentation) const {
   for (auto it : statements) {
     it->print(dst, indentation);
+    dst << "\n";
     if (((Statement *)it)->getType() == 'r') break;
   }
 }
@@ -234,23 +237,20 @@ void StatementList::bind(const Binding &_binding) {
       print_map(local_binding, std::to_string(x));
       print_map(binding, std::to_string(x));
     }
-    if(it->getType() == 'A'){
-      ((Array*)it)->add_bind(binding);
+    if (it->getType() == 'A') {
+      ((Array *)it)->add_bind(binding);
     }
     ((Statement *)it)->bind(binding);
   }
   print_map(binding, std::to_string(x));
 }
 
-void StatementList::passFunctionName(std::string _name,int _pos){
-   for(auto it: statements){
-    //std::cout << "entered pass name in statemetlist" << std::endl;
-     ((Program*)it)->passFunctionName(_name,_pos);
-   }
-   function_name = _name;
-   //std::cout << _name << std::endl;
+void StatementList::passFunctionName(std::string _name, int _pos) {
+  for (auto it : statements) {
+    ((Program *)it)->passFunctionName(_name, _pos);
+  }
+  function_name = _name;
 }
-
 
 ////////////////////////////////////////
 // IfStatement
@@ -281,7 +281,7 @@ void IfStatement::print(std::ostream &dst, int indentation) const {
     printIndent(dst, --indentation);
     dst << "}";
   }
-  dst << "\n";
+  dst << "";
 }
 
 int IfStatement::evaluate(const Binding &_binding) const { return 0; }
@@ -290,8 +290,10 @@ int IfStatement::codeGen(const Binding &_binding, int reg) const {
   int random_id = rand() % 10000;
   int label_end = label * 2;
   int label_else_statement = label * 2 + 1;
-  std::string label_end_string = function_name + "_" + std::to_string(label_end); 
-  std::string label_else_string = function_name + "_" + std::to_string(label_else_statement); 
+  std::string label_end_string =
+      function_name + "_" + std::to_string(label_end);
+  std::string label_else_string =
+      function_name + "_" + std::to_string(label_else_statement);
   printf(
       "\t\t\t\t# \u001b[38;5;%dm#### BEGIN IF ELSE STATEMENT "
       "##### %d\u001b[0m\n",
@@ -343,95 +345,11 @@ void IfStatement::bind(const Binding &_binding) {
   if (else_statement) ((Program *)else_statement)->bind(binding);
 }
 
-void IfStatement::passFunctionName(std::string _name,int _pos){
+void IfStatement::passFunctionName(std::string _name, int _pos) {
   pos = pos + _pos;
   function_name = _name;
-  ((Program*)condition)->passFunctionName(_name,_pos);
-  ((Program*)if_statement)->passFunctionName(_name,_pos);
-  if (else_statement) ((Program *)else_statement)->passFunctionName(_name,_pos);
+  ((Program *)condition)->passFunctionName(_name, _pos);
+  ((Program *)if_statement)->passFunctionName(_name, _pos);
+  if (else_statement)
+    ((Program *)else_statement)->passFunctionName(_name, _pos);
 }
-
-////////////////////////////////////////
-// WhileLoop
-////////////////////////////////////////
-
-WhileLoop::WhileLoop(ProgramPtr _condition, ProgramPtr _statement_list)
-    : Statement(0), condition(_condition), statement_list(_statement_list) {
-  logger->info("construct WhileLoop\n");
-  node_type = 'w';
-}
-
-void WhileLoop::print(std::ostream &dst, int indentation) const {
-  printIndent(dst, indentation);
-  dst << "while (";
-  condition->print(dst, 0);
-  dst << ")";
-  if (statement_list) {
-    dst << " {\n";
-    statement_list->print(dst, indentation);
-    printIndent(dst, --indentation);
-    dst << "}";
-  }
-  dst << "\n";
-}
-
-int WhileLoop::evaluate(const Binding &_binding) const { return 0; }
-
-// TODO add support for return
-int WhileLoop::codeGen(const Binding &_binding, int reg) const {
-  int random_id = rand() % 10000;
-
-  printf(
-      "\t\t\t\t# \u001b[38;5;%dm#### BEGIN WHILE LOOP "
-      "##### %d\u001b[0m\n",
-      random_id % 256, random_id);
-
-  print_map(binding, "WhileLoop");
-  int label_condition = condition->getPos(binding) * 2;
-  int label_end = condition->getPos(binding) * 2 + 1;
-  std::string label_condtion_string = function_name + "_"+ std::to_string(label_condition);
-  std::string label_end_string = function_name + "_" + std::to_string(label_end);
-  logger->info("generate code for WhileLoop\n");
-
-  // condition for while loop
-  //std::cout << "$L" << label_condtion_string << ":";
-  printf("\t$L%s:\n",label_condtion_string.c_str());
-  printf("\t\t\t\t# \033[1;36m[LABEL]\033[0m WHILE condition\n"); 
-  condition->codeGen(binding, reg);
-  printf("\tbeq\t$2,$0,$L%s\n",label_end_string.c_str());
-  //std::cout << "\t" << "beq\t $2,$0,";
-  //std::cout << "$L" << label_end_string;  
-  printf("\t# jump to end of WHILE\n");  // check condition again
-
-  // body of while loop
-  statement_list->codeGen(binding, reg);
-  printf("\tb\t$L%s\n",label_condtion_string.c_str());
-  //std::cout << "\tb\t$L" << label_condtion_string;
-  printf("\t\t# jump to condition\n");  // check condition again
-  printf("\tnop\n\n");
-
-  printf("\t$L%s",label_end_string.c_str());
-  //std::cout << "$L" << label_end_string; 
-  printf(":\t\t\t\t# \033[1;36m[LABEL]\033[0m end of WHILE\n");
-
-  printf(
-      "\t\t\t\t# \u001b[38;5;%dm#### END   WHILE LOOP "
-      "##### %d\u001b[0m\n",
-      random_id % 256, random_id);
-
-  return 0;
-}
-
-void WhileLoop::bind(const Binding &_binding) {
-  binding = _binding;
-  ((Program *)condition)->bind(const_cast<Binding &>(binding));
-  ((Statement *)statement_list)->bind(binding);
-}
-
-void WhileLoop::passFunctionName(std::string _name,int _pos){
-  pos = pos + _pos;
-  function_name = _name;
-  ((Program*)condition)->passFunctionName(_name,_pos);
-  ((Statement*)statement_list)->passFunctionName(_name,_pos);
-}
-
