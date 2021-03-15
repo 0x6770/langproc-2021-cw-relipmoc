@@ -60,7 +60,7 @@ sizeof                            {fprintf(stderr, "T_SIZEOF ");   return T_SIZE
 \^                                {fprintf(stderr, "^");    return yytext[0];}
 \-                                {fprintf(stderr, "-");    return yytext[0];}
 \/                                {fprintf(stderr, "/");    return yytext[0];}
-\%                                {fprintf(stderr, "%%");    return yytext[0];}
+\%                                {fprintf(stderr, "%%");   return yytext[0];}
 \&                                {fprintf(stderr, "&");    return yytext[0];}
 \|                                {fprintf(stderr, "|");    return yytext[0];}
 \~                                {fprintf(stderr, "~");    return yytext[0];}

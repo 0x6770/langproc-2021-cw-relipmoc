@@ -46,6 +46,10 @@
 type : T_INT  { $$ = $1; }
      ;
 
+// pointer : '*' type  { }
+
+//declarator :
+
 program : multiple_function  { root = $1; }
         ;
 
@@ -170,7 +174,10 @@ term : unary                { $$ = $1; }
 
 unary : unary_prefix      { $$ = $1; }
       | '-' unary_prefix  { $$ = new Negation($2, getPos(4)); }
+     // | '&' unary_prefix  { $$ = new Addressof($2,gotPos(4)); }
+     // | '*' unary_prefix  { $$ = new Dereference($2,getPos(4));}
       ;
+
 
 unary_prefix : unary_postfix                   { $$ = $1;}
              | T_INCREMENT unary_prefix        { $$ = new Increment_Pre($2, getPos(4)); }
@@ -184,13 +191,12 @@ unary_postfix : factor                         { $$ = $1;}
 factor : T_INT_VALUE        { $$ = new Integer($1); }
        | '(' expr ')'       { $$ = $2;}
        | T_NAME             { $$ = new Variable(*$1);}
-       | T_NAME '[' expr ']'         { $$ = new ArrayElement($3,*$1);}
+       | T_NAME '[' expr ']'  { $$ = new ArrayElement($3,*$1);}
        | function_call      { $$ = $1; }
        ;
 
 function_call :  T_NAME '(' expression_list ')'    { $$ = new FunctionCall(*$1,$3,getPos(4)); call =1;}
               | T_NAME  '(' ')'                    { $$ = new FunctionCall(*$1,getPos(4)); call = 1;
-                                                     number_argu = 0;
                                                     }
 
 expression_list : expr                             { $$ = new ExpressionList($1); number_argu = number_argu +1;}
