@@ -15,7 +15,6 @@ typedef std::map<std::string, int> Binding;  // map<string name, int pos>
 
 void print_map(const Binding &_binding, std::string _name);
 
-
 // node_type
 //
 // integer        i
@@ -32,7 +31,7 @@ class Program {
   Binding binding;  // variables binding
   std::string function_name;
   // Every sub class should get the name the the function
-  // if the statement is declared globally: 
+  // if the statement is declared globally:
   // default value should be ~G;
 
  public:
@@ -50,6 +49,6 @@ class Program {
   virtual int getPos(const Binding &_binding) const;
   void printIndent(std::ostream &dst, int &indentation) const;
   virtual void bind(const Binding &_binding) = 0;
-  virtual void passFunctionName(std::string _name,int _pos) = 0;
+  virtual void passFunctionName(std::string _name, int _pos) = 0;
 };
 #endif

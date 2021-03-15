@@ -24,7 +24,12 @@ int AddEqual::evaluate(const Binding &_binding) const {
 int AddEqual::codeGen(const Binding &_binding, int reg) const {
   int right_type = right->getType();
   int left_type = left->getType();
-  assert(left_type == 'x' && "expression is not assignable");
+  if (left_type != 'x') {
+    printf("ERROR: expression is not assignable\t");
+    this->print(std::cout, 1);
+    printf("\n");
+    exit(1);
+  }
 
   right->codeGen(binding, 3);
   left->codeGen(binding, 2);
@@ -66,7 +71,12 @@ int SubEqual::evaluate(const Binding &_binding) const {
 int SubEqual::codeGen(const Binding &_binding, int reg) const {
   int right_type = right->getType();
   int left_type = left->getType();
-  assert(left_type == 'x' && "expression is not assignable");
+  if (left_type != 'x') {
+    printf("ERROR: expression is not assignable\t");
+    this->print(std::cout, 1);
+    printf("\n");
+    exit(1);
+  }
 
   right->codeGen(binding, 3);
   left->codeGen(binding, 2);
@@ -85,6 +95,7 @@ void SubEqual::passFunctionName(std::string _name, int _pos) {
   ((Program *)left)->passFunctionName(_name, _pos);
   ((Program *)right)->passFunctionName(_name, _pos);
 }
+
 ////////////////////////////////////////
 // Product assignment
 ////////////////////////////////////////
@@ -109,7 +120,12 @@ int MulEqual::evaluate(const Binding &_binding) const {
 int MulEqual::codeGen(const Binding &_binding, int reg) const {
   int right_type = right->getType();
   int left_type = left->getType();
-  assert(left_type == 'x' && "expression is not assignable");
+  if (left_type != 'x') {
+    printf("ERROR: expression is not assignable\t");
+    this->print(std::cout, 1);
+    printf("\n");
+    exit(1);
+  }
 
   right->codeGen(binding, 3);
   left->codeGen(binding, 2);
@@ -129,6 +145,7 @@ void MulEqual::passFunctionName(std::string _name, int _pos) {
   ((Program *)left)->passFunctionName(_name, _pos);
   ((Program *)right)->passFunctionName(_name, _pos);
 }
+
 ////////////////////////////////////////
 // Quotient assignment
 ////////////////////////////////////////
@@ -153,7 +170,12 @@ int QuoEqual::evaluate(const Binding &_binding) const {
 int QuoEqual::codeGen(const Binding &_binding, int reg) const {
   int right_type = right->getType();
   int left_type = left->getType();
-  assert(left_type == 'x' && "expression is not assignable");
+  if (left_type != 'x') {
+    printf("ERROR: expression is not assignable\t");
+    this->print(std::cout, 1);
+    printf("\n");
+    exit(1);
+  }
 
   right->codeGen(binding, 3);
   left->codeGen(binding, 2);
@@ -173,6 +195,7 @@ void QuoEqual::passFunctionName(std::string _name, int _pos) {
   ((Program *)left)->passFunctionName(_name, _pos);
   ((Program *)right)->passFunctionName(_name, _pos);
 }
+
 ////////////////////////////////////////
 // Modulus assignment
 ////////////////////////////////////////
@@ -196,7 +219,12 @@ int ModEqual::evaluate(const Binding &_binding) const {
 int ModEqual::codeGen(const Binding &_binding, int reg) const {
   int right_type = right->getType();
   int left_type = left->getType();
-  assert(left_type == 'x' && "expression is not assignable");
+  if (left_type != 'x') {
+    printf("ERROR: expression is not assignable\t");
+    this->print(std::cout, 1);
+    printf("\n");
+    exit(1);
+  }
 
   right->codeGen(binding, 3);
   left->codeGen(binding, 2);
@@ -241,7 +269,12 @@ int ShiftEqual_L::evaluate(const Binding &_binding) const {
 int ShiftEqual_L::codeGen(const Binding &_binding, int reg) const {
   int right_type = right->getType();
   int left_type = left->getType();
-  assert(left_type == 'x' && "expression is not assignable");
+  if (left_type != 'x') {
+    printf("ERROR: expression is not assignable\t");
+    this->print(std::cout, 1);
+    printf("\n");
+    exit(1);
+  }
 
   right->codeGen(binding, 3);
   left->codeGen(binding, 2);
@@ -285,7 +318,12 @@ int ShiftEqual_R::evaluate(const Binding &_binding) const {
 int ShiftEqual_R::codeGen(const Binding &_binding, int reg) const {
   int right_type = right->getType();
   int left_type = left->getType();
-  assert(left_type == 'x' && "expression is not assignable");
+  if (left_type != 'x') {
+    printf("ERROR: expression is not assignable\t");
+    this->print(std::cout, 1);
+    printf("\n");
+    exit(1);
+  }
 
   right->codeGen(binding, 3);
   left->codeGen(binding, 2);
@@ -329,7 +367,12 @@ int BitwiseEqual_AND::evaluate(const Binding &_binding) const {
 int BitwiseEqual_AND::codeGen(const Binding &_binding, int reg) const {
   int right_type = right->getType();
   int left_type = left->getType();
-  assert(left_type == 'x' && "expression is not assignable");
+  if (left_type != 'x') {
+    printf("ERROR: expression is not assignable\t");
+    this->print(std::cout, 1);
+    printf("\n");
+    exit(1);
+  }
 
   right->codeGen(binding, 3);
   left->codeGen(binding, 2);
@@ -372,7 +415,12 @@ int BitwiseEqual_OR::evaluate(const Binding &_binding) const {
 int BitwiseEqual_OR::codeGen(const Binding &_binding, int reg) const {
   int right_type = right->getType();
   int left_type = left->getType();
-  assert(left_type == 'x' && "expression is not assignable");
+  if (left_type != 'x') {
+    printf("ERROR: expression is not assignable\t");
+    this->print(std::cout, 1);
+    printf("\n");
+    exit(1);
+  }
 
   right->codeGen(binding, 3);
   left->codeGen(binding, 2);
@@ -416,7 +464,12 @@ int BitwiseEqual_XOR::evaluate(const Binding &_binding) const {
 int BitwiseEqual_XOR::codeGen(const Binding &_binding, int reg) const {
   int right_type = right->getType();
   int left_type = left->getType();
-  assert(left_type == 'x' && "expression is not assignable");
+  if (left_type != 'x') {
+    printf("ERROR: expression is not assignable\t");
+    this->print(std::cout, 1);
+    printf("\n");
+    exit(1);
+  }
 
   right->codeGen(binding, 3);
   left->codeGen(binding, 2);
@@ -458,13 +511,17 @@ int Increment_Post::evaluate(const Binding &_binding) const {
 
 int Increment_Post::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
-  assert(left_type == 'x' && "expression is not assignable");
+  if (left_type != 'x') {
+    printf("ERROR: expression is not assignable\t");
+    this->print(std::cout, 1);
+    printf("\n");
+    exit(1);
+  }
   left->codeGen(binding, 2);
 
   printf("\taddiu\t$3,$2,1\n");
-  printf("\tsw\t$2,%d($fp)\t# store result of post increment\n", pos);
-  printf("\tsw\t$3,%d($fp)\t# store result of post increment\n",
-         left->getPos(binding));
+  printf("\tsw\t$2,%d($fp)\t# initial value x0\n", pos);
+  printf("\tsw\t$3,%d($fp)\t# x0+1 \n", left->getPos(binding));
   return 0;
 }
 void Increment_Post::passFunctionName(std::string _name, int _pos) {
@@ -495,7 +552,12 @@ int Increment_Pre::evaluate(const Binding &_binding) const {
 
 int Increment_Pre::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
-  assert(left_type == 'x' && "expression is not assignable");
+  if (left_type != 'x') {
+    printf("ERROR: expression is not assignable\t");
+    this->print(std::cout, 1);
+    printf("\n");
+    exit(1);
+  }
   left->codeGen(binding, 2);
 
   printf("\taddiu\t$2,$2,1 # %d\n", pos);
@@ -509,6 +571,7 @@ void Increment_Pre::passFunctionName(std::string _name, int _pos) {
   pos = pos + _pos;
   ((Program *)left)->passFunctionName(_name, _pos);
 }
+
 ////////////////////////////////////////
 // Postfix decrement
 ////////////////////////////////////////
@@ -532,13 +595,17 @@ int Decrement_Post::evaluate(const Binding &_binding) const {
 
 int Decrement_Post::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
-  assert(left_type == 'x' && "expression is not assignable");
+  if (left_type != 'x') {
+    printf("ERROR: expression is not assignable\t");
+    this->print(std::cout, 1);
+    printf("\n");
+    exit(1);
+  }
   left->codeGen(binding, 2);
 
   printf("\taddiu\t$3,$2,-1\n");
-  printf("\tsw\t$2,%d($fp)\t# store result of post decrement\n", pos);
-  printf("\tsw\t$3,%d($fp)\t# store result of post decrement\n",
-         left->getPos(binding));
+  printf("\tsw\t$2,%d($fp)\t# initial value x0\n", pos);
+  printf("\tsw\t$3,%d($fp)\t# x0-1\n", left->getPos(binding));
   return 0;
 }
 
@@ -547,6 +614,7 @@ void Decrement_Post::passFunctionName(std::string _name, int _pos) {
   pos = pos + _pos;
   ((Program *)left)->passFunctionName(_name, _pos);
 }
+
 ////////////////////////////////////////
 // prefix increment
 ////////////////////////////////////////
@@ -569,7 +637,12 @@ int Decrement_Pre::evaluate(const Binding &_binding) const {
 
 int Decrement_Pre::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
-  assert(left_type == 'x' && "expression is not assignable");
+  if (left_type != 'x') {
+    printf("ERROR: expression is not assignable\t");
+    this->print(std::cout, 1);
+    printf("\n");
+    exit(1);
+  }
   left->codeGen(binding, 2);
 
   printf("\taddiu\t$2,$2,-1\n");

@@ -120,9 +120,10 @@ class WhileLoop : public Statement {
  private:
   ProgramPtr condition;
   ProgramPtr statement_list;
+  int label;
 
  public:
-  WhileLoop(ProgramPtr _condition, ProgramPtr _statement_list);
+  WhileLoop(ProgramPtr _condition, ProgramPtr _statement_list, int _label);
   int codeGen(const Binding &_binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
@@ -142,10 +143,11 @@ class ForLoop : public Statement {
   ProgramPtr test_expr;
   ProgramPtr update_expr;
   ProgramPtr statement_list;
+  int label;
 
  public:
   ForLoop(ProgramPtr _init_expr, ProgramPtr _test_expr, ProgramPtr _update_expr,
-          ProgramPtr _statement_list);
+          ProgramPtr _statement_list, int _label);
   int codeGen(const Binding &_binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;

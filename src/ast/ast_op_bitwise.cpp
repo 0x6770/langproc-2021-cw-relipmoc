@@ -25,30 +25,29 @@ int BitwiseAnd::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
-  if(left_type == 'i' && right_type != 'i'){
-        right->codeGen(binding, 3);
-        left->codeGen(binding, 2);
-  }
-  else{
+  if (left_type == 'i' && right_type != 'i') {
+    right->codeGen(binding, 3);
+    left->codeGen(binding, 2);
+  } else {
     left->codeGen(binding, 2);
     right->codeGen(binding, 3);
   }
 
   if (!((left_type == 'i') | (left_type == 'x')))
-    printf("lw $2,%d($fp)\n", left->getPos(binding));
+    printf("\tlw\t$2,%d($fp)\n", left->getPos(binding));
   if (!((right_type == 'i') | (right_type == 'x')))
-    printf("lw $3,%d($fp)\n", right->getPos(binding));
-  printf("and $2,$2,$3\n");
-  printf("sw $2,%d($fp)\t# store result of and bitwise operation\n", pos);
+    printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
+  printf("\tand\t$2,$2,$3\n");
+  printf("\tsw\t$2,%d($fp)\t# store result of and bitwise operation\n", pos);
 
   return 0;
 }
 
-void BitwiseAnd::passFunctionName(std::string _name,int _pos){
-    function_name = _name;
-    pos = pos + _pos;
-    ((Program*)left)->passFunctionName(_name,_pos);
-    ((Program*)right)->passFunctionName(_name,_pos);
+void BitwiseAnd::passFunctionName(std::string _name, int _pos) {
+  function_name = _name;
+  pos = pos + _pos;
+  ((Program *)left)->passFunctionName(_name, _pos);
+  ((Program *)right)->passFunctionName(_name, _pos);
 }
 
 ////////////////////////////////////////
@@ -76,29 +75,28 @@ int BitwiseOr::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
-  if(left_type == 'i' && right_type != 'i'){
-        right->codeGen(binding, 3);
-        left->codeGen(binding, 2);
-  }
-  else{
+  if (left_type == 'i' && right_type != 'i') {
+    right->codeGen(binding, 3);
+    left->codeGen(binding, 2);
+  } else {
     left->codeGen(binding, 2);
     right->codeGen(binding, 3);
   }
 
   if (!((left_type == 'i') | (left_type == 'x')))
-    printf("lw $2,%d($fp)\n", left->getPos(binding));
+    printf("\tlw\t$2,%d($fp)\n", left->getPos(binding));
   if (!((right_type == 'i') | (right_type == 'x')))
-    printf("lw $3,%d($fp)\n", right->getPos(binding));
-  printf("or $2,$2,$3\n");
-  printf("sw $2,%d($fp)\t# store result of or bitwise operation\n", pos);
+    printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
+  printf("\tor\t$2,$2,$3\n");
+  printf("\tsw\t$2,%d($fp)\t# store result of or bitwise operation\n", pos);
 
   return 0;
 }
-void BitwiseOr::passFunctionName(std::string _name,int _pos){
-    function_name = _name;
-    pos = pos + _pos;
-    ((Program*)left)->passFunctionName(_name,_pos);
-    ((Program*)right)->passFunctionName(_name,_pos);
+void BitwiseOr::passFunctionName(std::string _name, int _pos) {
+  function_name = _name;
+  pos = pos + _pos;
+  ((Program *)left)->passFunctionName(_name, _pos);
+  ((Program *)right)->passFunctionName(_name, _pos);
 }
 ////////////////////////////////////////
 // BitwiseXor
@@ -125,29 +123,28 @@ int BitwiseXor::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
-  if(left_type == 'i' && right_type != 'i'){
-        right->codeGen(binding, 3);
-        left->codeGen(binding, 2);
-  }
-  else{
+  if (left_type == 'i' && right_type != 'i') {
+    right->codeGen(binding, 3);
+    left->codeGen(binding, 2);
+  } else {
     left->codeGen(binding, 2);
     right->codeGen(binding, 3);
   }
 
   if (!((left_type == 'i') | (left_type == 'x')))
-    printf("lw $2,%d($fp)\n", left->getPos(binding));
+    printf("\tlw\t$2,%d($fp)\n", left->getPos(binding));
   if (!((right_type == 'i') | (right_type == 'x')))
-    printf("lw $3,%d($fp)\n", right->getPos(binding));
-  printf("xor $2,$2,$3\n");
-  printf("sw $2,%d($fp)\t# store result of xor bitwise operation\n", pos);
+    printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
+  printf("\txor\t$2,$2,$3\n");
+  printf("\tsw\t$2,%d($fp)\t# store result of xor bitwise operation\n", pos);
   return 0;
 }
 
-void BitwiseXor::passFunctionName(std::string _name,int _pos){
-    function_name = _name;
-    pos = pos + _pos;
-    ((Program*)left)->passFunctionName(_name,_pos);
-    ((Program*)right)->passFunctionName(_name,_pos);
+void BitwiseXor::passFunctionName(std::string _name, int _pos) {
+  function_name = _name;
+  pos = pos + _pos;
+  ((Program *)left)->passFunctionName(_name, _pos);
+  ((Program *)right)->passFunctionName(_name, _pos);
 }
 ////////////////////////////////////////
 // ShiftLeft
@@ -174,30 +171,29 @@ int ShiftLeft::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
-  if(left_type == 'i' && right_type != 'i'){
-        right->codeGen(binding, 3);
-        left->codeGen(binding, 2);
-  }
-  else{
+  if (left_type == 'i' && right_type != 'i') {
+    right->codeGen(binding, 3);
+    left->codeGen(binding, 2);
+  } else {
     left->codeGen(binding, 2);
     right->codeGen(binding, 3);
   }
 
   if (!((left_type == 'i') | (left_type == 'x')))
-    printf("lw $2,%d($fp)\n", left->getPos(binding));
+    printf("\tlw\t$2,%d($fp)\n", left->getPos(binding));
   if (!((right_type == 'i') | (right_type == 'x')))
-    printf("lw $3,%d($fp)\n", right->getPos(binding));
-  printf("sll $2,$2,$3\n");
-  printf("sw $2,%d($fp)\t# store result of left shift operation\n", pos);
+    printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
+  printf("\tsll\t$2,$2,$3\n");
+  printf("\tsw\t$2,%d($fp)\t# store result of left shift operation\n", pos);
 
   return 0;
 }
 
-void ShiftLeft::passFunctionName(std::string _name,int _pos){
-    function_name = _name;
-    pos = pos + _pos;
-    ((Program*)left)->passFunctionName(_name,_pos);
-    ((Program*)right)->passFunctionName(_name,_pos);
+void ShiftLeft::passFunctionName(std::string _name, int _pos) {
+  function_name = _name;
+  pos = pos + _pos;
+  ((Program *)left)->passFunctionName(_name, _pos);
+  ((Program *)right)->passFunctionName(_name, _pos);
 }
 ////////////////////////////////////////
 // ShiftRight
@@ -224,29 +220,28 @@ int ShiftRight::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
-  if(left_type == 'i' && right_type != 'i'){
-        right->codeGen(binding, 3);
-        left->codeGen(binding, 2);
-  }
-  else{
+  if (left_type == 'i' && right_type != 'i') {
+    right->codeGen(binding, 3);
+    left->codeGen(binding, 2);
+  } else {
     left->codeGen(binding, 2);
     right->codeGen(binding, 3);
   }
 
   if (!((left_type == 'i') | (left_type == 'x')))
-    printf("lw $2,%d($fp)\n", left->getPos(binding));
+    printf("\tlw\t$2,%d($fp)\n", left->getPos(binding));
   if (!((right_type == 'i') | (right_type == 'x')))
-    printf("lw $3,%d($fp)\n", right->getPos(binding));
+    printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
 
-  printf("sra $2,$2,$3\n");
-  printf("sw $2,%d($fp)\t# store result of right shift operation\n", pos);
+  printf("\tsra\t$2,$2,$3\n");
+  printf("\tsw\t$2,%d($fp)\t# store result of right shift operation\n", pos);
 
   return 0;
 }
 
-void ShiftRight::passFunctionName(std::string _name,int _pos){
-    function_name = _name;
-    pos = pos + _pos;
-    ((Program*)left)->passFunctionName(_name,_pos);
-    ((Program*)right)->passFunctionName(_name,_pos);
+void ShiftRight::passFunctionName(std::string _name, int _pos) {
+  function_name = _name;
+  pos = pos + _pos;
+  ((Program *)left)->passFunctionName(_name, _pos);
+  ((Program *)right)->passFunctionName(_name, _pos);
 }
