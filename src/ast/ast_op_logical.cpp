@@ -34,10 +34,11 @@ int LessEqual::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
-  if (left_type == 'i' && right_type != 'i') {
-    right->codeGen(binding, 3);
-    left->codeGen(binding, 2);
-  } else {
+  if (left_type == 'i' || left_type == 'x'){
+        right->codeGen(binding, 3);
+        left->codeGen(binding, 2);
+  }
+  else{
     left->codeGen(binding, 2);
     right->codeGen(binding, 3);
   }
@@ -101,10 +102,11 @@ int GreaterEqual::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
-  if (left_type == 'i' && right_type != 'i') {
-    right->codeGen(binding, 3);
-    left->codeGen(binding, 2);
-  } else {
+ if (left_type == 'i' || left_type == 'x'){
+        right->codeGen(binding, 3);
+        left->codeGen(binding, 2);
+  }
+  else{
     left->codeGen(binding, 2);
     right->codeGen(binding, 3);
   }
@@ -164,10 +166,11 @@ int Equal::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
-  if (left_type == 'i' && right_type != 'i') {
-    right->codeGen(binding, 3);
-    left->codeGen(binding, 2);
-  } else {
+  if (left_type == 'i' || left_type == 'x'){
+        right->codeGen(binding, 3);
+        left->codeGen(binding, 2);
+  }
+  else{
     left->codeGen(binding, 2);
     right->codeGen(binding, 3);
   }

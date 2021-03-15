@@ -22,6 +22,7 @@ void print_map(const Binding &_binding, std::string _name);
 // declaration    d
 // return         r
 // array          A
+// pointer        P
 
 class Program {
  protected:

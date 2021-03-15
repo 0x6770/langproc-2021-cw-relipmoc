@@ -47,6 +47,10 @@
 type : T_INT  { $$ = $1; }
      ;
 
+// pointer : '*' type  { }
+
+//declarator :
+
 program : multiple_function  { root = $1; }
         ;
 
@@ -174,6 +178,8 @@ term : unary           { $$ = $1; }
 
 unary : unary_prefix      { $$ = $1; }
       | '-' unary_prefix  { $$ = new Negation($2, getPos(4)); }
+     // | '&' unary_prefix  { $$ = new Addressof($2,gotPos(4)); }
+     // | '*' unary_prefix  { $$ = new Dereference($2,getPos(4));}
       ;
 
 unary_prefix : unary_postfix             { $$ = $1;}

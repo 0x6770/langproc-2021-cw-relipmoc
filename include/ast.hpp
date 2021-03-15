@@ -13,6 +13,7 @@
 #include "ast/ast_program.hpp"
 #include "ast/ast_statement.hpp"
 #include "ast/ast_array.hpp"
+#include "ast/ast_pointer.hpp"
 #include "log.hpp"
 
 extern const Program *parseAST(FILE *source_file);
