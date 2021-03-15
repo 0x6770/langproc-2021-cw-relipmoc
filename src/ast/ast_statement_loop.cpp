@@ -126,9 +126,10 @@ int ForLoop::codeGen(const Binding &_binding, int reg) const {
     printf("\tnop\n\n");
   }
 
-  if (update_expr) update_expr->codeGen(binding, reg);
+  //if (update_expr) update_expr->codeGen(binding, reg);
 
   if (statement_list) statement_list->codeGen(binding, reg);
+  if (update_expr) update_expr->codeGen(binding, reg);
 
   printf("\tb\t%s", label_test.c_str());
   printf("\t\t# jump to start of FOR\n");

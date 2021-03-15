@@ -25,18 +25,17 @@ int BitwiseAnd::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
-  if (left_type == 'i' || left_type == 'x'){
-        right->codeGen(binding, 3);
-        left->codeGen(binding, 2);
-  }
-  else{
+  if (left_type == 'i' || left_type == 'x' || left_type == 'a'){
+    right->codeGen(binding, 3);
+    left->codeGen(binding, 2);
+  } else {
     left->codeGen(binding, 2);
     right->codeGen(binding, 3);
   }
 
-  if (!((left_type == 'i') | (left_type == 'x')))
+  if (!((left_type == 'i') | (left_type == 'x') || (left_type == 'a')))
     printf("\tlw\t$2,%d($fp)\n", left->getPos(binding));
-  if (!((right_type == 'i') | (right_type == 'x')))
+  if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
     printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
   printf("\tand\t$2,$2,$3\n");
   printf("\tsw\t$2,%d($fp)\t# store result of and bitwise operation\n", pos);
@@ -76,19 +75,17 @@ int BitwiseOr::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
-  if (left_type == 'i' || left_type == 'x'){
-        right->codeGen(binding, 3);
-        left->codeGen(binding, 2);
-  }
-  else{
-
+  if (left_type == 'i' || left_type == 'x' || left_type == 'a'){
+    right->codeGen(binding, 3);
+    left->codeGen(binding, 2);
+  } else {
     left->codeGen(binding, 2);
     right->codeGen(binding, 3);
   }
 
-  if (!((left_type == 'i') | (left_type == 'x')))
+  if (!((left_type == 'i') | (left_type == 'x') || (left_type == 'a')))
     printf("\tlw\t$2,%d($fp)\n", left->getPos(binding));
-  if (!((right_type == 'i') | (right_type == 'x')))
+  if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
     printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
   printf("\tor\t$2,$2,$3\n");
   printf("\tsw\t$2,%d($fp)\t# store result of or bitwise operation\n", pos);
@@ -127,18 +124,17 @@ int BitwiseXor::codeGen(const Binding &_binding, int reg) const {
   int right_type = right->getType();
 
 
-  if (left_type == 'i' || left_type == 'x'){
-        right->codeGen(binding, 3);
-        left->codeGen(binding, 2);
-  }
-  else{
+  if (left_type == 'i' || left_type == 'x' || left_type == 'a'){
+    right->codeGen(binding, 3);
+    left->codeGen(binding, 2);
+  } else {
     left->codeGen(binding, 2);
     right->codeGen(binding, 3);
   }
 
-  if (!((left_type == 'i') | (left_type == 'x')))
+  if (!((left_type == 'i') | (left_type == 'x') || (left_type == 'a')))
     printf("\tlw\t$2,%d($fp)\n", left->getPos(binding));
-  if (!((right_type == 'i') | (right_type == 'x')))
+  if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
     printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
   printf("\txor\t$2,$2,$3\n");
   printf("\tsw\t$2,%d($fp)\t# store result of xor bitwise operation\n", pos);
@@ -177,19 +173,17 @@ int ShiftLeft::codeGen(const Binding &_binding, int reg) const {
   int right_type = right->getType();
 
 
-  if (left_type == 'i' || left_type == 'x'){
-        right->codeGen(binding, 3);
-        left->codeGen(binding, 2);
-  }
-  else{
-
+  if (left_type == 'i' || left_type == 'x' || left_type == 'a'){
+    right->codeGen(binding, 3);
+    left->codeGen(binding, 2);
+  } else {
     left->codeGen(binding, 2);
     right->codeGen(binding, 3);
   }
 
-  if (!((left_type == 'i') | (left_type == 'x')))
+  if (!((left_type == 'i') | (left_type == 'x') || (left_type == 'a')))
     printf("\tlw\t$2,%d($fp)\n", left->getPos(binding));
-  if (!((right_type == 'i') | (right_type == 'x')))
+  if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
     printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
   printf("\tsll\t$2,$2,$3\n");
   printf("\tsw\t$2,%d($fp)\t# store result of left shift operation\n", pos);
@@ -229,19 +223,17 @@ int ShiftRight::codeGen(const Binding &_binding, int reg) const {
   int right_type = right->getType();
 
 
- if (left_type == 'i' || left_type == 'x'){
-        right->codeGen(binding, 3);
-        left->codeGen(binding, 2);
-  }
-  else{
-
+  if (left_type == 'i' || left_type == 'x' || left_type == 'a'){
+    right->codeGen(binding, 3);
+    left->codeGen(binding, 2);
+  } else {
     left->codeGen(binding, 2);
     right->codeGen(binding, 3);
   }
 
-  if (!((left_type == 'i') | (left_type == 'x')))
+  if (!((left_type == 'i') | (left_type == 'x') || (left_type == 'a')))
     printf("\tlw\t$2,%d($fp)\n", left->getPos(binding));
-  if (!((right_type == 'i') | (right_type == 'x')))
+  if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
     printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
 
   printf("\tsra\t$2,$2,$3\n");

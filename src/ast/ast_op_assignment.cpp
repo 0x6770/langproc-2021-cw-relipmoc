@@ -31,9 +31,10 @@ int AddEqual::codeGen(const Binding &_binding, int reg) const {
     exit(1);
   }
 
+
   right->codeGen(binding, 3);
   left->codeGen(binding, 2);
-  if (!((right_type == 'i')))
+if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
     printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
   printf("\tadd\t$2,$2,$3\n");
   printf("\tsw\t$2,%d($fp)\n", left->getPos(binding));
@@ -80,7 +81,7 @@ int SubEqual::codeGen(const Binding &_binding, int reg) const {
 
   right->codeGen(binding, 3);
   left->codeGen(binding, 2);
-  if (!((right_type == 'i') | (right_type == 'x')))
+  if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
     printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
   printf("\tsub\t$2,$2,$3\n");
   printf("\tsw\t$2,%d($fp)\n", left->getPos(binding));
@@ -129,7 +130,7 @@ int MulEqual::codeGen(const Binding &_binding, int reg) const {
 
   right->codeGen(binding, 3);
   left->codeGen(binding, 2);
-  if (!((right_type == 'i') | (right_type == 'x')))
+  if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
     printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
   printf("\tmult\t$2,$3\n");
   printf("\tmflo\t$2\n");
@@ -179,7 +180,7 @@ int QuoEqual::codeGen(const Binding &_binding, int reg) const {
 
   right->codeGen(binding, 3);
   left->codeGen(binding, 2);
-  if (!((right_type == 'i') | (right_type == 'x')))
+  if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
     printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
   printf("\tdiv\t$2,$3\n");
   printf("\tmflo\t$2\n");
@@ -228,7 +229,7 @@ int ModEqual::codeGen(const Binding &_binding, int reg) const {
 
   right->codeGen(binding, 3);
   left->codeGen(binding, 2);
-  if (!((right_type == 'i') | (right_type == 'x')))
+  if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
     printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
   printf("\tdiv\t$2,$3\n");
   printf("\tmfhi\t$2\n");
@@ -278,7 +279,7 @@ int ShiftEqual_L::codeGen(const Binding &_binding, int reg) const {
 
   right->codeGen(binding, 3);
   left->codeGen(binding, 2);
-  if (!((right_type == 'i') | (right_type == 'x')))
+  if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
     printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
   printf("\tsll\t$2,$2,$3\n");
   printf("\tsw\t$2,%d($fp)\n", left->getPos(binding));
@@ -327,7 +328,7 @@ int ShiftEqual_R::codeGen(const Binding &_binding, int reg) const {
 
   right->codeGen(binding, 3);
   left->codeGen(binding, 2);
-  if (!((right_type == 'i') | (right_type == 'x')))
+  if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
     printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
   printf("\tsra\t$2,$2,$3\n");
   printf("\tsw\t$2,%d($fp)\n", left->getPos(binding));
@@ -376,7 +377,7 @@ int BitwiseEqual_AND::codeGen(const Binding &_binding, int reg) const {
 
   right->codeGen(binding, 3);
   left->codeGen(binding, 2);
-  if (!((right_type == 'i') | (right_type == 'x')))
+  if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
     printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
   printf("\tand\t$2,$2,$3\n");
   printf("\tsw\t$2,%d($fp)\n", left->getPos(binding));
@@ -424,7 +425,7 @@ int BitwiseEqual_OR::codeGen(const Binding &_binding, int reg) const {
 
   right->codeGen(binding, 3);
   left->codeGen(binding, 2);
-  if (!((right_type == 'i') | (right_type == 'x')))
+  if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
     printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
   printf("\tor\t$2,$2,$3\n");
   printf("\tsw\t$2,%d($fp)\n", left->getPos(binding));
@@ -473,7 +474,7 @@ int BitwiseEqual_XOR::codeGen(const Binding &_binding, int reg) const {
 
   right->codeGen(binding, 3);
   left->codeGen(binding, 2);
-  if (!((right_type == 'i') | (right_type == 'x')))
+  if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
     printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
   printf("\txor\t$2,$2,$3\n");
   printf("\tsw\t$2,%d($fp)\n", left->getPos(binding));

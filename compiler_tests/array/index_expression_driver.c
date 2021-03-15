@@ -3,5 +3,5 @@ int f();
 
 int main()
 {
-    return !(f()==92);
+    return !(f()==8);
 }

@@ -7,7 +7,6 @@
 Addition::Addition(ProgramPtr _left, ProgramPtr _right, int _pos)
     : Operation(_left, _right, _pos) {
   fprintf(stderr, "construct Addition\n");
-  node_type = 'a';
 }
 
 void Addition::print(std::ostream &dst, int indentation) const {
@@ -30,17 +29,20 @@ int Addition::evaluate(const Binding &_binding) const {
 int Addition::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
-  if (left_type == 'i' || left_type == 'x'){
+  if (left_type == 'i' || left_type == 'x' || left_type == 'a'){
     right->codeGen(binding, 3);
     left->codeGen(binding, 2);
+    //printf("\tmove $8\t&2\n");
+    //right->codeGen(binding, 3);
   } else {
     left->codeGen(binding, 2);
+    //printf("\tmove $8\t&2\n");
     right->codeGen(binding, 3);
   }
 
-  if (!((left_type == 'i') | (left_type == 'x')))
+  if (!((left_type == 'i') | (left_type == 'x') || (left_type == 'a')))
     printf("\tlw\t$2,%d($fp)\n", left->getPos(binding));
-  if (!((right_type == 'i') | (right_type == 'x')))
+  if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
     printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
 
   printf("\tadd\t$2,$2,$3\n");
@@ -86,7 +88,7 @@ int Subtraction::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
-  if(left_type == 'i' || left_type == 'x') {
+  if (left_type == 'i' || left_type == 'x' || left_type == 'a'){
     right->codeGen(binding, 3);
     left->codeGen(binding, 2);
   } else {
@@ -94,9 +96,9 @@ int Subtraction::codeGen(const Binding &_binding, int reg) const {
     right->codeGen(binding, 3);
   }
 
-  if (!((left_type == 'i') | (left_type == 'x')))
+  if (!((left_type == 'i') | (left_type == 'x') || (left_type == 'a')))
     printf("\tlw\t$2,%d($fp)\n", left->getPos(binding));
-  if (!((right_type == 'i') | (right_type == 'x')))
+  if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
     printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
 
   printf("\tsub\t$2,$2,$3\n");
@@ -137,7 +139,7 @@ int Multiplication::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
-if (left_type == 'i' || left_type == 'x') {
+  if (left_type == 'i' || left_type == 'x' || left_type == 'a'){
     right->codeGen(binding, 3);
     left->codeGen(binding, 2);
   } else {
@@ -145,9 +147,9 @@ if (left_type == 'i' || left_type == 'x') {
     right->codeGen(binding, 3);
   }
 
-  if (!((left_type == 'i') | (left_type == 'x')))
+  if (!((left_type == 'i') | (left_type == 'x') || (left_type == 'a')))
     printf("\tlw\t$2,%d($fp)\n", left->getPos(binding));
-  if (!((right_type == 'i') | (right_type == 'x')))
+  if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
     printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
 
   printf("\tmult\t$2,$3\n");
@@ -189,7 +191,7 @@ int Division::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
-if (left_type == 'i' || left_type == 'x') {
+  if (left_type == 'i' || left_type == 'x' || left_type == 'a'){
     right->codeGen(binding, 3);
     left->codeGen(binding, 2);
   } else {
@@ -197,9 +199,9 @@ if (left_type == 'i' || left_type == 'x') {
     right->codeGen(binding, 3);
   }
 
-  if (!((left_type == 'i') | (left_type == 'x')))
+  if (!((left_type == 'i') | (left_type == 'x') || (left_type == 'a')))
     printf("\tlw\t$2,%d($fp)\n", left->getPos(binding));
-  if (!((right_type == 'i') | (right_type == 'x')))
+  if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
     printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
 
   printf("\tdiv\t$2,$3\n");
@@ -240,7 +242,7 @@ int Modulus::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
-if (left_type == 'i' || left_type == 'x') {
+  if (left_type == 'i' || left_type == 'x' || left_type == 'a'){
     right->codeGen(binding, 3);
     left->codeGen(binding, 2);
   } else {
@@ -248,9 +250,9 @@ if (left_type == 'i' || left_type == 'x') {
     right->codeGen(binding, 3);
   }
 
-  if (!((left_type == 'i') | (left_type == 'x')))
+  if (!((left_type == 'i') | (left_type == 'x') || (left_type == 'a')))
     printf("\tlw\t$2,%d($fp)\n", left->getPos(binding));
-  if (!((right_type == 'i') | (right_type == 'x')))
+  if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
     printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
 
   printf("\tdiv\t$2,$3\n");
