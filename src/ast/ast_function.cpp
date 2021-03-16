@@ -84,8 +84,11 @@ int Function::codeGen(const Binding &_binding, int reg) const {
   } else {
     ((StatementList *)statements)->bind(binding);
   }
-  // make unique end label:
 
+  // set labels for key words: `continue` and `break`
+  ((StatementList *)statements)->passLabel(label);
+
+  // make unique end label:
   std::string function_end = "end" + name;
   logger->info("====================\n");
   logger->info("generate code for Function\n");
@@ -129,6 +132,9 @@ void Function::bind(const Binding &_binding) {}
 void Function::passFunctionName(std::string _name, int _pos) {
   ((Program *)statements)->passFunctionName(_name, _pos);
 }
+
+////////////////////////////////////////
+////////////////////////////////////////
 
 MultiFunction::MultiFunction(ProgramPtr _function) {
   logger->info("construct one function");
@@ -278,9 +284,11 @@ FunctionCall::FunctionCall(std::string _name, ProgramPtr _argument, int _pos) {
   expression_list = _argument;
   with_argument = 1;
 }
+
 void FunctionCall::add_Arguments(ProgramPtr _Argument) {
   // arguments.push_back(_Argument);
 }
+
 void FunctionCall::print(std::ostream &dst, int indentation) const {}
 
 // assuming all variable types are int for now
@@ -296,7 +304,9 @@ int FunctionCall::codeGen(const Binding &_binding, int reg) const {
   printf("\tsw\t$2,%d($fp)\t# store the value after function call\n", pos);
   return 0;
 }
+
 int FunctionCall::evaluate(const Binding &_binding) const { return 0; }
+
 void FunctionCall::bind(const Binding &_binding) {
   binding = _binding;
   if (with_argument == 1) {
@@ -312,15 +322,18 @@ ExpressionList::ExpressionList(ProgramPtr _argument) {
   logger->info("Build expression list\n");
   arguments.push_back(_argument);
 }
+
 void ExpressionList::add_argument_expression(ProgramPtr _expr) {
   logger->info("add more expr\n");
   arguments.push_back(_expr);
 }
+
 void ExpressionList::print(std::ostream &dst, int indentation) const {
   for (auto it : arguments) {
     it->print(dst, indentation);
   }
 }
+
 int ExpressionList::codeGen(const Binding &_binding, int reg) const {
   int reg_temp = 4;
   int temp_location = 16;
@@ -342,7 +355,9 @@ int ExpressionList::codeGen(const Binding &_binding, int reg) const {
   }
   return 0;
 }
+
 int ExpressionList::evaluate(const Binding &_binding) const { return 0; }
+
 void ExpressionList::bind(const Binding &_binding) {
   binding = _binding;
   for (auto it : arguments) {
@@ -360,11 +375,15 @@ FunctionDeclare::FunctionDeclare(std::string _name, ProgramPtr _param_list) {
   name = _name;
   parameters = _param_list;
 }
+
 void FunctionDeclare::print(std::ostream &dst, int indentation) const {}
+
 int FunctionDeclare::codeGen(const Binding &_binding, int reg) const {
   return 0;
 }
+
 int FunctionDeclare::evaluate(const Binding &_binding) const { return 0; }
+
 void FunctionDeclare::bind(const Binding &_binding) {}
 
 void FunctionDeclare::passFunctionName(std::string _name, int _pos) {}

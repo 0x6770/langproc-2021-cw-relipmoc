@@ -32,47 +32,11 @@ void Statement::bind(const Binding &_binding) {
 
 void Statement::passFunctionName(std::string _name, int _pos) {
   function_name = _name;
+  logger->info("passing function name...%c\n", node_type);
   ((Program *)expression)->passFunctionName(_name, _pos);
 }
 
-////////////////////////////////////////
-// Return
-////////////////////////////////////////
-
-Return::Return(ProgramPtr _expression) : Statement(_expression) {
-  logger->info("construct Return\n");
-  node_type = 'r';
-}
-
-void Return::print(std::ostream &dst, int indentation) const {
-  printIndent(dst, indentation);
-  dst << "return ";
-  expression->print(dst, 0);
-  dst << ";";
-}
-
-int Return::codeGen(const Binding &_binding, int reg) const {
-  logger->info("generate code for Return\n");
-  expression->codeGen(binding, 2);
-  std::string return_end = "end" + function_name;
-  printf("\tb\t%s", return_end.c_str());
-  printf(
-      "\t\t# \033[1;33m[RETURN]\033[0m jump to end of "
-      "function\n");
-  printf("\tnop\n\n");
-  return 0;
-}
-
-void Return::bind(const Binding &_binding) {
-  binding = _binding;
-  ((Program *)expression)->bind(binding);
-}
-
-void Return::passFunctionName(std::string _name, int _pos) {
-  function_name = _name;
-  // std::cout << _name << std::endl;
-  ((Program *)expression)->passFunctionName(_name, _pos);
-}
+void Statement::passLabel(int _label) {}
 
 ////////////////////////////////////////
 // VarDeclare
@@ -203,9 +167,6 @@ int StatementList::evaluate(const Binding &_binding) const {
 
 int StatementList::codeGen(const Binding &_binding, int reg) const {
   print_map(binding, "StatementList");
-  for (auto it : binding) {
-    logger->info("%10s|%10d\n", it.first.c_str(), it.second);
-  }
   for (auto it : statements) {
     it->codeGen(binding, 2);
     // generate mips assembly code using its own binding, and
@@ -252,6 +213,12 @@ void StatementList::passFunctionName(std::string _name, int _pos) {
   function_name = _name;
 }
 
+void StatementList::passLabel(int _label) {
+  for (auto it : statements) {
+    ((Program *)it)->passLabel(_label);  // pass give label to children
+  }
+};
+
 ////////////////////////////////////////
 // IfStatement
 ////////////////////////////////////////
@@ -261,8 +228,14 @@ IfStatement::IfStatement(ProgramPtr _condition, ProgramPtr _if_statement,
     : Statement(0),
       condition(_condition),
       if_statement(_if_statement),
-      else_statement(_else_statement),
-      label(_label) {}
+      else_statement(_else_statement) {
+  setLabel(_label);
+  if (!condition) {
+    logger->error("expected expression\t");
+    print(std::cerr, 1);
+    exit(1);
+  }
+}
 
 void IfStatement::print(std::ostream &dst, int indentation) const {
   printIndent(dst, indentation);
@@ -294,19 +267,16 @@ int IfStatement::codeGen(const Binding &_binding, int reg) const {
       function_name + "_" + std::to_string(label_end);
   std::string label_else_string =
       function_name + "_" + std::to_string(label_else_statement);
-  printf(
-      "\t\t\t\t# \u001b[38;5;%dm#### BEGIN IF ELSE STATEMENT "
-      "##### %d\u001b[0m\n",
-      random_id % 256, random_id);
+
+  printf("\t\t\t\t# \u001b[38;5;%dm", random_id % 256);
+  printf("#### BEGIN IF ELSE STATEMENT ##### %d\u001b[0m\n", random_id);
 
   condition->codeGen(binding, 2);
 
   if (else_statement) {
     printf("\tnop\n");
-    printf(
-        "\tbeq\t$2,$0,$L%s\t# jump to \"else "
-        "statement\" if !condition\n",
-        label_else_string.c_str());
+    printf("\tbeq\t$2,$0,$L%s\t# jump to \"else statement\" if !condition\n",
+           label_else_string.c_str());
     printf("\tnop\n\n");
     if_statement->codeGen(binding, 2);
     // TODO: use return to generate the label code;
@@ -316,8 +286,8 @@ int IfStatement::codeGen(const Binding &_binding, int reg) const {
         "statement\"\n",
         label_end_string.c_str());
     printf("\tnop\n\n");
-    printf("$L%s:\t\t\t\t# \033[1;36m[LABEL]\033[0m else statement\n",
-           label_else_string.c_str());
+    printf("$L%s:", label_else_string.c_str());
+    printf("\t\t\t\t# \033[1;36m[LABEL]\033[0m else statement\n");
     else_statement->codeGen(binding, 2);
   } else {
     printf("\tnop\n");
@@ -327,13 +297,11 @@ int IfStatement::codeGen(const Binding &_binding, int reg) const {
     if_statement->codeGen(binding, 2);
   }
 
-  printf("$L%s:\t\t\t\t# \033[1;36m[LABEL]\033[0m end of IF ELSE\n",
-         label_end_string.c_str());  // next label
+  printf("$L%s:", label_end_string.c_str());  // next label
+  printf("\t\t\t\t# \033[1;36m[LABEL]\033[0m end of IF ELSE\n");
 
-  printf(
-      "\t\t\t\t# \u001b[38;5;%dm#### END   IF ELSE STATEMENT "
-      "##### %d\u001b[0m\n",
-      random_id % 256, random_id);
+  printf("\t\t\t\t# \u001b[38;5;%dm", random_id % 256);
+  printf("#### END   IF ELSE STATEMENT ##### %d\u001b[0m\n", random_id);
 
   return 0;
 }
@@ -353,3 +321,13 @@ void IfStatement::passFunctionName(std::string _name, int _pos) {
   if (else_statement)
     ((Program *)else_statement)->passFunctionName(_name, _pos);
 }
+
+void IfStatement::passLabel(int _label) {
+  // pass give label to children
+  if (if_statement) {
+    ((Program *)if_statement)->passLabel(_label);
+  }
+  if (else_statement) {
+    ((Program *)else_statement)->passLabel(_label);
+  }
+};

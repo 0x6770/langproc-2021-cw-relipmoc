@@ -6,10 +6,8 @@
 
 WhileLoop::WhileLoop(ProgramPtr _condition, ProgramPtr _statement_list,
                      int _label)
-    : Statement(0),
-      condition(_condition),
-      statement_list(_statement_list),
-      label(_label) {
+    : Statement(0), condition(_condition), statement_list(_statement_list) {
+  setLabel(_label);
   logger->info("construct WhileLoop\n");
   node_type = 'w';
   if (!condition) {
@@ -29,7 +27,6 @@ void WhileLoop::print(std::ostream &dst, int indentation) const {
     printIndent(dst, --indentation);
     dst << "}";
   }
-  dst << "\n";
 }
 
 int WhileLoop::evaluate(const Binding &_binding) const { return 0; }
@@ -86,6 +83,12 @@ void WhileLoop::passFunctionName(std::string _name, int _pos) {
     ((Statement *)statement_list)->passFunctionName(_name, _pos);
 }
 
+void WhileLoop::passLabel(int _label) {
+  if (statement_list) {
+    ((Program *)statement_list)->passLabel(label);  // pass own label
+  }
+}
+
 ////////////////////////////////////////
 // For Loop
 // init_expr → test_expr → body
@@ -99,9 +102,12 @@ ForLoop::ForLoop(ProgramPtr _init_expr, ProgramPtr _test_expr,
       init_expr(_init_expr),
       test_expr(_test_expr),
       update_expr(_update_expr),
-      statement_list(_statement_list),
-      label(_label) {
+      statement_list(_statement_list) {
+  setLabel(_label);
   logger->info("construct For Loop\n");
+  if (statement_list) {
+    ((StatementList *)statement_list)->setLabel(label);
+  }
 };
 
 int ForLoop::codeGen(const Binding &_binding, int reg) const {
@@ -125,8 +131,6 @@ int ForLoop::codeGen(const Binding &_binding, int reg) const {
     printf("\t# jump to end of FOR\n");
     printf("\tnop\n\n");
   }
-
-  //if (update_expr) update_expr->codeGen(binding, reg);
 
   if (statement_list) statement_list->codeGen(binding, reg);
   if (update_expr) update_expr->codeGen(binding, reg);
@@ -159,7 +163,6 @@ void ForLoop::print(std::ostream &dst, int indentation) const {
     printIndent(dst, --indentation);
     dst << "}";
   }
-  dst << "\n";
 };
 
 int ForLoop::evaluate(const Binding &_binding) const { return 0; };
@@ -187,3 +190,9 @@ void ForLoop::passFunctionName(std::string _name, int _pos) {
   if (statement_list)
     ((Statement *)statement_list)->passFunctionName(_name, _pos);
 };
+
+void ForLoop::passLabel(int _label) {
+  if (statement_list) {
+    ((Program *)statement_list)->passLabel(label);  // pass own label
+  }
+}

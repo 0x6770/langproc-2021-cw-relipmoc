@@ -29,14 +29,15 @@
 %token T_CHAR T_STRING
 %token T_UNSIGNED T_STRUCT T_TYPEDEF T_SIZEOF T_ENUM
 %token T_INT_VALUE T_FLOAT_VALUE T_DOUBLE_VALUE T_CHAR_VALUE
-%token T_WHILE T_FOR T_SWITCH T_IF T_ELSE T_BREAK T_CONTINUE
+%token T_WHILE T_FOR T_SWITCH T_IF T_ELSE T_BREAK T_CONTINUE T_CASE
 %token T_COMMA
 
 %type <program> program function term unary factor expr add_sub shift_operator relational
 %type <program> relational_equal bitwise_and bitwise_xor bitwise_or logical_and param_list param
-%type <program> stmt stmt_list loop assignment control_flow_if multiple_function
-%type <program> update_expression test_expression init_expresssion
-%type <program> unary_postfix unary_prefix array_declare expression_list function_call function_define
+%type <program> stmt stmt_list loop assignment control_flow_if multiple_function keyword
+%type <program> update_expr test_expr init_expr
+%type <program> unary_postfix prefix_increment prefix_decrement unary_plus unary_minus
+%type <program> array_declare expression_list function_call function_define
 %type <integer> T_INT_VALUE
 %type <string> type T_NAME T_INT
 
@@ -46,10 +47,6 @@
 
 type : T_INT  { $$ = $1; }
      ;
-
-// pointer : '*' type  { }
-
-//declarator :
 
 program : multiple_function  { root = $1; }
         ;
@@ -75,6 +72,12 @@ param_list : param                     { $$ = new Paramlist($1); }
 param : type T_NAME  { $$ = new Param("int",*$2); }
       ;
 
+  /*switch : T_SWITCH '('  ')'*/
+
+  /*case : T_CASE T_INT ':' stmt_list  { $$ = new Case($2, $4); }*/
+       /*| T_DEFAULT ':' stmt_list     { $$ = new Case(0, $3); }*/
+       /*;*/
+
 stmt_list : %empty          { $$ = new StatementList(); }
           | stmt_list stmt  { ((StatementList *)$1)->addStatement($2); $$ = $1; }
           ;
@@ -83,31 +86,35 @@ stmt : control_flow_if                 { $$ = $1; }
      | assignment ';'                  { $$ = $1; }
      | type T_NAME ';'                 { $$ = new VarDeclare(*$1, *$2, 0, getPos(4)); delete $1; delete $2; }
      | type T_NAME '=' assignment ';'  { $$ = new VarDeclare(*$1, *$2, $4, getPos(4)); delete $1; delete $2; }
-     | T_RETURN expr ';'               { $$ = new Return($2); }
+     | keyword                         { $$ = $1; }
      | loop                            { $$ = $1; }
      | '{' stmt_list '}'               { $$ = $2; }
      | array_declare                   { $$ = $1; }
-     /*| function_call                   { $$ = $1; }*/
      ;
 
 array_declare : type T_NAME '[' T_INT_VALUE ']' ';'  { $$ = new Array(*$1, $4, *$2, getPos(4)); pos+=(4*($4-1)); delete $1; delete $2; }
               ;
 
-loop : T_WHILE '(' assignment ')' stmt  { $$ = new WhileLoop($3, $5, label++); }
-     | T_FOR '(' init_expresssion test_expression update_expression ')' stmt  { $$ = new ForLoop($3, $4, $5, $7, label++); }
+keyword : T_CONTINUE ';'     { $$ = new Continue(); }
+        | T_BREAK ';'        { $$ = new Break(); }
+        | T_RETURN expr ';'  { $$ = new Return($2); }
+        ;
+
+loop : T_WHILE '(' assignment ')' '{' stmt_list '}'                     { $$ = new WhileLoop($3, $6, label++); }
+     | T_FOR '(' init_expr test_expr update_expr ')' '{' stmt_list '}'  { $$ = new ForLoop($3, $4, $5, $8, label++); }
      ;
 
-init_expresssion : test_expression                 { $$ = $1; }
-                 | type T_NAME ';'                 { $$ = new VarDeclare(*$1, *$2, 0, getPos(4)); delete $1; delete $2; }
-                 | type T_NAME '=' assignment ';'  { $$ = new VarDeclare(*$1, *$2, $4, getPos(4)); delete $1; delete $2; }
-                 ;
+init_expr : test_expr                       { $$ = $1; }
+          | type T_NAME ';'                 { $$ = new VarDeclare(*$1, *$2, 0, getPos(4)); delete $1; delete $2; }
+          | type T_NAME '=' assignment ';'  { $$ = new VarDeclare(*$1, *$2, $4, getPos(4)); delete $1; delete $2; }
+          ;
 
-test_expression : update_expression ';'  { $$ = $1; }
-                ;
+test_expr : update_expr ';'  { $$ = $1; }
+          ;
 
-update_expression : %empty      { $$ = 0; }
-                  | assignment  { $$ = $1; }
-                  ;
+update_expr : %empty      { $$ = 0; }
+            | assignment  { $$ = $1; }
+            ;
 
 control_flow_if : T_IF '(' expr ')' stmt              { $$ = new IfStatement($3, $5, 0, label++); }
                 | T_IF '(' expr ')' stmt T_ELSE stmt  { $$ = new IfStatement($3, $5, $7, label++); }
@@ -176,21 +183,35 @@ term : unary           { $$ = $1; }
      | term '%' unary  { $$ = new Modulus($1, $3, getPos(4)); }
      ;
 
-unary : unary_prefix      { $$ = $1; }
-      | '-' unary_prefix  { $$ = new Negation($2, getPos(4)); }
-     // | '&' unary_prefix  { $$ = new Addressof($2,gotPos(4)); }
-     // | '*' unary_prefix  { $$ = new Dereference($2,getPos(4));}
+unary : prefix_increment      { $$ = $1; }
+      | prefix_decrement      { $$ = $1; }
+      | unary_postfix         { $$ = $1; }
+      | unary_minus           { $$ = $1; }
+      | unary_plus            { $$ = $1; }
+      /*| '&' unary_prefix  { $$ = new Addressof($2,gotPos(4)); }*/
+      /*| '*' unary_prefix  { $$ = new Dereference($2,getPos(4));}*/
       ;
 
-unary_prefix : unary_postfix             { $$ = $1;}
-             | T_INCREMENT unary_prefix  { $$ = new Increment_Pre($2, getPos(4)); }
-             | T_DECREMENT unary_prefix  { $$ = new Decrement_Pre($2, getPos(4)); }
-             ;
+unary_minus : '-' unary_postfix     { $$ = new Negation($2, getPos(4)); }
+            | '-' prefix_increment  { $$ = new Negation($2, getPos(4)); }
+            | '-' unary_plus        { $$ = new Negation($2, getPos(4)); }
+            ;
 
-unary_postfix : factor                     { $$ = $1;}
-              | unary_postfix T_INCREMENT  { $$ = new Increment_Post($1, getPos(4)); }
-              | unary_postfix T_DECREMENT  { $$ = new Decrement_Post($1, getPos(4)); }
+unary_plus : '+' unary_postfix     { $$ = $2; }
+           | '+' prefix_decrement  { $$ = $2; }
+           | '+' unary_minus       { $$ = $2; }
+           ;
+
+unary_postfix : factor              { $$ = $1; }
+              | factor T_INCREMENT  { $$ = new Increment_Post($1, getPos(4)); }
+              | factor T_DECREMENT  { $$ = new Decrement_Post($1, getPos(4)); }
               ;
+
+prefix_decrement : T_DECREMENT factor  { $$ = new Decrement_Pre($2, getPos(4)); }
+                 ;
+
+prefix_increment : T_INCREMENT factor  { $$ = new Increment_Pre($2, getPos(4)); }
+                 ;
 
 factor : T_INT_VALUE          { $$ = new Integer($1); }
        | '(' expr ')'         { $$ = $2; }
