@@ -22,6 +22,7 @@ class Statement : public Program {
   virtual void bind(const Binding &_binding) override;
   ProgramPtr getExpression() const;
   virtual void passFunctionName(std::string _name, int _pos) override;
+  virtual void passLabel(int _label) override;
 };
 
 ////////////////////////////////////////
@@ -35,6 +36,34 @@ class Return : public Statement {
   void print(std::ostream &dst, int indentation) const override;
   void bind(const Binding &_binding) override;
   void passFunctionName(std::string _name, int _pos) override;
+};
+
+////////////////////////////////////////
+// Continue
+////////////////////////////////////////
+
+class Continue : public Statement {
+ public:
+  Continue();
+  int codeGen(const Binding &_binding, int reg) const override;
+  void print(std::ostream &dst, int indentation) const override;
+  void bind(const Binding &_binding) override;
+  void passFunctionName(std::string _name, int _pos) override;
+  void passLabel(int _label) override;
+};
+
+////////////////////////////////////////
+// Break
+////////////////////////////////////////
+
+class Break : public Statement {
+ public:
+  Break();
+  int codeGen(const Binding &_binding, int reg) const override;
+  void print(std::ostream &dst, int indentation) const override;
+  void bind(const Binding &_binding) override;
+  void passFunctionName(std::string _name, int _pos) override;
+  void passLabel(int _label) override;
 };
 
 ////////////////////////////////////////
@@ -89,6 +118,7 @@ class StatementList : public Statement {
   int evaluate(const Binding &_binding) const override;
   void bind(const Binding &_binding) override;
   void passFunctionName(std::string _name, int _pos) override;
+  void passLabel(int _label) override;
 };
 
 ////////////////////////////////////////
@@ -100,7 +130,6 @@ class IfStatement : public Statement {
   ProgramPtr condition;
   ProgramPtr if_statement;
   ProgramPtr else_statement;
-  int label;
 
  public:
   IfStatement(ProgramPtr _condition, ProgramPtr _if_statement,
@@ -110,6 +139,7 @@ class IfStatement : public Statement {
   int evaluate(const Binding &_binding) const override;
   void bind(const Binding &_binding) override;
   void passFunctionName(std::string _name, int _pos) override;
+  void passLabel(int _label) override;
 };
 
 ////////////////////////////////////////
@@ -120,7 +150,6 @@ class WhileLoop : public Statement {
  private:
   ProgramPtr condition;
   ProgramPtr statement_list;
-  int label;
 
  public:
   WhileLoop(ProgramPtr _condition, ProgramPtr _statement_list, int _label);
@@ -129,6 +158,7 @@ class WhileLoop : public Statement {
   int evaluate(const Binding &_binding) const override;
   void bind(const Binding &_binding) override;
   void passFunctionName(std::string _name, int _pos) override;
+  void passLabel(int _label) override;
 };
 
 ////////////////////////////////////////
@@ -143,7 +173,6 @@ class ForLoop : public Statement {
   ProgramPtr test_expr;
   ProgramPtr update_expr;
   ProgramPtr statement_list;
-  int label;
 
  public:
   ForLoop(ProgramPtr _init_expr, ProgramPtr _test_expr, ProgramPtr _update_expr,
@@ -153,6 +182,7 @@ class ForLoop : public Statement {
   int evaluate(const Binding &_binding) const override;
   void bind(const Binding &_binding) override;
   void passFunctionName(std::string _name, int _pos) override;
+  void passLabel(int _label) override;
 };
 
 #endif

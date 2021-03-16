@@ -23,17 +23,19 @@ void print_map(const Binding &_binding, std::string _name);
 // return         r
 // array          A
 // pointer        P
+// break          b
+// continue       c
 
 class Program {
  protected:
   int node_type;
   int size;
   int pos;          // position of a variable or expression in stack frame
+  int label = -1;   // used to control flow
   Binding binding;  // variables binding
-  std::string function_name;
-  // Every sub class should get the name the the function
-  // if the statement is declared globally:
-  // default value should be ~G;
+  std::string function_name;  // Every sub class should get the name of the
+                              // function if the statement is declared globally:
+                              // default value should be ~G;
 
  public:
   virtual ~Program() {}
@@ -51,5 +53,8 @@ class Program {
   void printIndent(std::ostream &dst, int &indentation) const;
   virtual void bind(const Binding &_binding) = 0;
   virtual void passFunctionName(std::string _name, int _pos) = 0;
+  void setLabel(int _label);
+  virtual void passLabel(int _label);  // pass label to children so it could
+                                       // be used in `continue` and `break`
 };
 #endif

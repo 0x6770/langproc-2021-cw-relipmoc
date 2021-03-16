@@ -34,7 +34,7 @@ int LessEqual::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
-  if (left_type == 'i' || left_type == 'x' || left_type == 'a'){
+  if (left_type == 'i' || left_type == 'x' || left_type == 'a') {
     right->codeGen(binding, 3);
     left->codeGen(binding, 2);
   } else {
@@ -101,7 +101,7 @@ int GreaterEqual::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
-  if (left_type == 'i' || left_type == 'x' || left_type == 'a'){
+  if (left_type == 'i' || left_type == 'x' || left_type == 'a') {
     right->codeGen(binding, 3);
     left->codeGen(binding, 2);
   } else {
@@ -164,7 +164,7 @@ int Equal::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
-  if (left_type == 'i' || left_type == 'x' || left_type == 'a'){
+  if (left_type == 'i' || left_type == 'x' || left_type == 'a') {
     right->codeGen(binding, 3);
     left->codeGen(binding, 2);
   } else {
@@ -184,7 +184,8 @@ int Equal::codeGen(const Binding &_binding, int reg) const {
     printf("\tsltiu\t$2,$2,1\n");
   }
   printf(
-      "sw $2,%d($fp)\t# store result of logical equal or logical not equal\n",
+      "\tsw\t$2,%d($fp)\t# store result of logical equal or logical not "
+      "equal\n",
       pos);
 
   return 0;
@@ -236,14 +237,14 @@ int LogicalAnd::codeGen(const Binding &_binding, int reg) const {
   printf("\tbeq\t$0,$2,%s\n", labelL2.c_str());
   printf("\tnop\n");
 
-  printf("\tli $2,1\n");
+  printf("\tli\t$2,1\n");
   printf("b %s\n",
          labelL3.c_str());  // TODO： add counter to create unique label:
   // std::cout << "\tb " << labelL3 << std::endl;
   printf("\tnop\n");  // Add empty delay slot
   printf("%s:\n", labelL2.c_str());
   // std::cout <<  "\t"<<labelL2 <<":" << std::endl;
-  printf("\tmove $2,$0\n");
+  printf("\tmove\t$2,$0\n");
   printf("%s:\n", labelL3.c_str());
   // std::cout << "\t" <<labelL3 <<":" << std::endl;
   printf("\tsw\t$2,%d($fp)\t# store result of logical and\n", pos);
@@ -290,10 +291,10 @@ int LogicalOr::codeGen(const Binding &_binding, int reg) const {
   // std::cout << "bne $2,$0,"
   //          << labelL2 << std::endl;
   printf("\tbne\t$2,$0,%s\n", labelL2.c_str());
-  printf("nop\n");  // Add empty delay slot
+  printf("\tnop\n");  // Add empty delay slot
 
   right->codeGen(binding, 2);
-  printf("nop\n");
+  printf("\tnop\n");
   // TODO： add counter to create unique label:
   // std::cout << "beq $2,$0,"
   //          << labelL3 << std::endl;
@@ -303,13 +304,13 @@ int LogicalOr::codeGen(const Binding &_binding, int reg) const {
   printf("%s:\n", labelL2.c_str());
   // std::cout << labelL2 << ":" << std::endl;
   printf("\tli\t$2,1\n");
-  printf("b %s\n",
+  printf("\tb\t%s\n",
          labelL4.c_str());  // TODO： add counter to create unique label:
   // std::cout << "b " << labelL4 << std::endl;
   printf("\tnop\n");
   printf("%s:\n", labelL3.c_str());
   // std::cout << labelL3 << ":" << std::endl;
-  printf("\tmove $2,$0\n");
+  printf("\tmove\t$2,$0\n");
   printf("%s:\n", labelL4.c_str());
   // std::cout << labelL4 << ":" << std::endl;
   printf("\tsw\t$2,%d($fp)\t #store the value of logical or", pos);
