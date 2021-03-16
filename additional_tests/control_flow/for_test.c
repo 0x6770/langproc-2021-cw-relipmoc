@@ -3,4 +3,5 @@ int f() {
   for (int b = 11; b < a * 10;) {
     return b;
   }
+  return 123;
 }

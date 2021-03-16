@@ -34,8 +34,8 @@
 
 %type <program> program function term unary factor expr add_sub shift_operator relational
 %type <program> relational_equal bitwise_and bitwise_xor bitwise_or logical_and param_list param
-%type <program> stmt stmt_list loop assignment control_flow_if multiple_function
-%type <program> update_expression test_expression init_expresssion
+%type <program> stmt stmt_list loop assignment control_flow_if multiple_function keyword
+%type <program> update_expr test_expr init_expr
 %type <program> unary_postfix unary_prefix array_declare expression_list function_call function_define
 %type <integer> T_INT_VALUE
 %type <string> type T_NAME T_INT
@@ -83,31 +83,35 @@ stmt : control_flow_if                 { $$ = $1; }
      | assignment ';'                  { $$ = $1; }
      | type T_NAME ';'                 { $$ = new VarDeclare(*$1, *$2, 0, getPos(4)); delete $1; delete $2; }
      | type T_NAME '=' assignment ';'  { $$ = new VarDeclare(*$1, *$2, $4, getPos(4)); delete $1; delete $2; }
-     | T_RETURN expr ';'               { $$ = new Return($2); }
+     | keyword                         { $$ = $1; }
      | loop                            { $$ = $1; }
      | '{' stmt_list '}'               { $$ = $2; }
      | array_declare                   { $$ = $1; }
-     /*| function_call                   { $$ = $1; }*/
      ;
 
 array_declare : type T_NAME '[' T_INT_VALUE ']' ';'  { $$ = new Array(*$1, $4, *$2, getPos(4)); pos+=(4*($4-1)); delete $1; delete $2; }
               ;
 
-loop : T_WHILE '(' assignment ')' stmt  { $$ = new WhileLoop($3, $5, label++); }
-     | T_FOR '(' init_expresssion test_expression update_expression ')' stmt  { $$ = new ForLoop($3, $4, $5, $7, label++); }
+keyword : T_CONTINUE ';'     { $$ = new Continue(); }
+        | T_BREAK ';'        { $$ = new Break(); }
+        | T_RETURN expr ';'  { $$ = new Return($2); }
+        ;
+
+loop : T_WHILE '(' assignment ')' '{' stmt_list '}'                     { $$ = new WhileLoop($3, $6, label++); }
+     | T_FOR '(' init_expr test_expr update_expr ')' '{' stmt_list '}'  { $$ = new ForLoop($3, $4, $5, $8, label++); }
      ;
 
-init_expresssion : test_expression                 { $$ = $1; }
-                 | type T_NAME ';'                 { $$ = new VarDeclare(*$1, *$2, 0, getPos(4)); delete $1; delete $2; }
-                 | type T_NAME '=' assignment ';'  { $$ = new VarDeclare(*$1, *$2, $4, getPos(4)); delete $1; delete $2; }
-                 ;
+init_expr : test_expr                       { $$ = $1; }
+          | type T_NAME ';'                 { $$ = new VarDeclare(*$1, *$2, 0, getPos(4)); delete $1; delete $2; }
+          | type T_NAME '=' assignment ';'  { $$ = new VarDeclare(*$1, *$2, $4, getPos(4)); delete $1; delete $2; }
+          ;
 
-test_expression : update_expression ';'  { $$ = $1; }
-                ;
+test_expr : update_expr ';'  { $$ = $1; }
+          ;
 
-update_expression : %empty      { $$ = 0; }
-                  | assignment  { $$ = $1; }
-                  ;
+update_expr : %empty      { $$ = 0; }
+            | assignment  { $$ = $1; }
+            ;
 
 control_flow_if : T_IF '(' expr ')' stmt              { $$ = new IfStatement($3, $5, 0, label++); }
                 | T_IF '(' expr ')' stmt T_ELSE stmt  { $$ = new IfStatement($3, $5, $7, label++); }

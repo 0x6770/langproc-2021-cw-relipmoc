@@ -22,6 +22,17 @@ bin/c_compiler : src/main.o src/log.o src/c_lexer.yy.o src/c_parser.tab.o $(ast_
 	mkdir -p bin 
 	g++ $(CPPFLAGS) -o $@ $^
 
+test:
+	./run_tests.sh -r ./compiler_tests
+.PHONY: test
+
+clean_test:
+	find . -name \*.s -type f -delete
+	find . -name \*.o -type f -delete
+	find . -name \*.bin -type f -delete
+	find . -name \*.output -type f -delete
+.PHONY: clean_test
+
 clean: 
 	@echo Cleaning ... 
 	-rm -f src/*.o 

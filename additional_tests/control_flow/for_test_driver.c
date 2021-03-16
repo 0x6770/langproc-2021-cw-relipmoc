@@ -1,8 +1,3 @@
-#include <stdio.h>
-
 int f();
 
-int main() {
-  printf("%d\n", f());
-  return !(f() == 11);
-}
+int main() { return !(f() == 11); }

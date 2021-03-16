@@ -24,8 +24,8 @@ else                              {fprintf(stderr, "T_ELSE ");  return T_ELSE;}
 for                               {fprintf(stderr, "T_FOR ");      return T_FOR;}
 enum                              {fprintf(stderr, "T_ENUM ");     return T_ENUM;}
 switch                            {fprintf(stderr, "T_SWITCH ");   return T_SWITCH;}
-break                             {fprintf(stderr, "T_BREAK ");    return T_BREAK;}
-continue                          {fprintf(stderr, "T_CONTINUE "); return T_CONTINUE;}
+break                             {fprintf(stderr, "T_BREAK");     return T_BREAK;}
+continue                          {fprintf(stderr, "T_CONTINUE");  return T_CONTINUE;}
 
  /* keyword \nused for advanced features */
 double                            {fprintf(stderr, "T_DOUBLE ");   return T_DOUBLE;}
