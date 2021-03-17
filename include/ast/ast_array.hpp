@@ -21,6 +21,7 @@ class Array : public Program {
   uint32_t getSize();
   std::string getName();
   virtual void passFunctionName(std::string _name, int _pos) override;
+  virtual void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 // name[index] = value
@@ -41,6 +42,7 @@ class ArrayElement : public Program {
   int evaluate(const Binding &_binding) const override;
   virtual void bind(const Binding &_binding) override;
   virtual void passFunctionName(std::string _name, int _pos) override;
+  virtual void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 #endif

@@ -50,6 +50,12 @@ void BitwiseAnd::passFunctionName(std::string _name, int _pos) {
   ((Program *)right)->passFunctionName(_name, _pos);
 }
 
+void BitwiseAnd::passTypeBinding(TypeBinding &_typebind){
+    typebind = _typebind;
+  ((Program*)left)->passTypeBinding(typebind); 
+  ((Program*)right)->passTypeBinding(typebind); 
+}
+
 ////////////////////////////////////////
 // BitwiseOr
 ////////////////////////////////////////
@@ -98,6 +104,12 @@ void BitwiseOr::passFunctionName(std::string _name, int _pos) {
   ((Program *)left)->passFunctionName(_name, _pos);
   ((Program *)right)->passFunctionName(_name, _pos);
 }
+void BitwiseOr::passTypeBinding(TypeBinding &_typebind){
+    typebind = _typebind;
+  ((Program*)left)->passTypeBinding(typebind); 
+  ((Program*)right)->passTypeBinding(typebind); 
+}
+
 ////////////////////////////////////////
 // BitwiseXor
 ////////////////////////////////////////
@@ -146,6 +158,12 @@ void BitwiseXor::passFunctionName(std::string _name, int _pos) {
   pos = pos + _pos;
   ((Program *)left)->passFunctionName(_name, _pos);
   ((Program *)right)->passFunctionName(_name, _pos);
+}
+
+void BitwiseXor::passTypeBinding(TypeBinding &_typebind){
+    typebind = _typebind;
+  ((Program*)left)->passTypeBinding(typebind); 
+  ((Program*)right)->passTypeBinding(typebind); 
 }
 ////////////////////////////////////////
 // ShiftLeft
@@ -197,6 +215,12 @@ void ShiftLeft::passFunctionName(std::string _name, int _pos) {
   ((Program *)left)->passFunctionName(_name, _pos);
   ((Program *)right)->passFunctionName(_name, _pos);
 }
+
+void ShiftLeft::passTypeBinding(TypeBinding &_typebind){
+    typebind = _typebind;
+  ((Program*)left)->passTypeBinding(typebind); 
+  ((Program*)right)->passTypeBinding(typebind); 
+}
 ////////////////////////////////////////
 // ShiftRight
 ////////////////////////////////////////
@@ -247,4 +271,10 @@ void ShiftRight::passFunctionName(std::string _name, int _pos) {
   pos = pos + _pos;
   ((Program *)left)->passFunctionName(_name, _pos);
   ((Program *)right)->passFunctionName(_name, _pos);
+}
+
+void ShiftRight::passTypeBinding(TypeBinding &_typebind){
+    typebind = _typebind;
+  ((Program*)left)->passTypeBinding(typebind); 
+  ((Program*)right)->passTypeBinding(typebind); 
 }

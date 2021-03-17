@@ -29,10 +29,10 @@ break                             {fprintf(stderr, "T_BREAK");     return T_BREA
 continue                          {fprintf(stderr, "T_CONTINUE");  return T_CONTINUE;}
 
  /* keyword \nused for advanced features */
-double                            {fprintf(stderr, "T_DOUBLE ");   return T_DOUBLE;}
-float                             {fprintf(stderr, "T_FLOAT ");    return T_FLOAT;}
-char                              {fprintf(stderr, "T_CHAR ");     return T_CHAR;}
-unsigned                          {fprintf(stderr, "T_UNSIGNED "); return T_UNSIGNED;}
+double                            {fprintf(stderr, "T_DOUBLE "); yylval.string=new std::string("double"); return T_DOUBLE;}
+float                             {fprintf(stderr, "T_FLOAT "); yylval.string=new std::string("float"); return T_FLOAT;}
+char                              {fprintf(stderr, "T_CHAR "); yylval.string=new std::string("char"); return T_CHAR;}
+unsigned                          {fprintf(stderr, "T_UNSIGNED "); yylval.string=new std::string("unsigned"); return T_UNSIGNED;}
 struct                            {fprintf(stderr, "T_STRUCT ");   return T_STRUCT;}
 typedef                           {fprintf(stderr, "T_TYPEDEF ");  return T_TYPEDEF;}
 sizeof                            {fprintf(stderr, "T_SIZEOF ");   return T_SIZEOF;}

@@ -29,14 +29,34 @@ int Addition::evaluate(const Binding &_binding) const {
 int Addition::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
+    //for(auto it: typebind ){
+    //std::cout << it.first << " " << it.second << std::endl;
+  //}
+  TypeBinding temp = typebind;
   if (left_type == 'i' || left_type == 'x' || left_type == 'a'){
     right->codeGen(binding, 3);
+    // only shift for point arithemetic
+    if(left_type == 'x'){
+      if((((Variable*)left)->gettype(temp)) == "pointer"){
+        printf("\tsll\t$3,$3,2\n");
+      }
+    }
     left->codeGen(binding, 2);
-    //printf("\tmove $8\t&2\n");
-    //right->codeGen(binding, 3);
+    // only shift for point arithemetic
+    if(right_type == 'x'){
+    if((((Variable*)right)->gettype(temp)) == "pointer"){
+        printf("\tsll\t$2,$2,2\n");
+      }
+    
+    }
   } else {
     left->codeGen(binding, 2);
-    //printf("\tmove $8\t&2\n");
+    // only shift for point arithemetic
+    if(right_type == 'x'){
+    if((((Variable*)right)->gettype(temp)) == "pointer"){
+        printf("\tsll\t$2,$2,2\n");
+      }
+    }
     right->codeGen(binding, 3);
   }
 
@@ -56,6 +76,12 @@ void Addition::passFunctionName(std::string _name, int _pos) {
   pos = pos + _pos;
   ((Program *)left)->passFunctionName(_name, _pos);
   ((Program *)right)->passFunctionName(_name, _pos);
+}
+
+void Addition::passTypeBinding(TypeBinding &_typebind){
+  typebind = _typebind;
+  ((Program*)left)->passTypeBinding(typebind); 
+  ((Program*)right)->passTypeBinding(typebind); 
 }
 
 ////////////////////////////////////////
@@ -87,12 +113,30 @@ int Subtraction::evaluate(const Binding &_binding) const {
 int Subtraction::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
-
+  TypeBinding temp = typebind;
   if (left_type == 'i' || left_type == 'x' || left_type == 'a'){
-    right->codeGen(binding, 3);
+    right->codeGen(binding,3);
+    // only shift for point arithemetic
+    if(left_type == 'x'){
+      if((((Variable*)left)->gettype(temp)) == "pointer"){
+        printf("\tsll\t$3,$3,2\n");
+      }
+    }
     left->codeGen(binding, 2);
+    // only shift for point arithemetic
+    if(right_type == 'x'){
+    if((((Variable*)right)->gettype(temp)) == "pointer"){
+        printf("\tsll\t$2,$2,2\n");
+      }
+    }
   } else {
     left->codeGen(binding, 2);
+    // only shift for point arithemetic
+    if(right_type == 'x'){
+    if((((Variable*)right)->gettype(temp)) == "pointer"){
+        printf("\tsll\t$2,$2,2\n");
+      }
+    }
     right->codeGen(binding, 3);
   }
 
@@ -112,6 +156,12 @@ void Subtraction::passFunctionName(std::string _name, int _pos) {
   pos = pos + _pos;
   ((Program *)left)->passFunctionName(_name, _pos);
   ((Program *)right)->passFunctionName(_name, _pos);
+}
+
+void Subtraction::passTypeBinding(TypeBinding &_typebind){
+    typebind = _typebind;
+  ((Program*)left)->passTypeBinding(typebind); 
+  ((Program*)right)->passTypeBinding(typebind); 
 }
 
 ////////////////////////////////////////
@@ -166,6 +216,12 @@ void Multiplication::passFunctionName(std::string _name, int _pos) {
   ((Program *)right)->passFunctionName(_name, _pos);
 }
 
+void Multiplication::passTypeBinding(TypeBinding &_typebind){
+    typebind = _typebind;
+  ((Program*)left)->passTypeBinding(typebind); 
+  ((Program*)right)->passTypeBinding(typebind); 
+}
+
 ////////////////////////////////////////
 // Division
 ////////////////////////////////////////
@@ -216,6 +272,12 @@ void Division::passFunctionName(std::string _name, int _pos) {
   pos = pos + _pos;
   ((Program *)left)->passFunctionName(_name, _pos);
   ((Program *)right)->passFunctionName(_name, _pos);
+}
+
+void Division::passTypeBinding(TypeBinding &_typebind){
+    typebind = _typebind;
+  ((Program*)left)->passTypeBinding(typebind); 
+  ((Program*)right)->passTypeBinding(typebind); 
 }
 ////////////////////////////////////////
 // Modulus
@@ -269,6 +331,12 @@ void Modulus::passFunctionName(std::string _name, int _pos) {
   ((Program *)right)->passFunctionName(_name, _pos);
 }
 
+void Modulus::passTypeBinding(TypeBinding &_typebind){
+    typebind = _typebind;
+  ((Program*)left)->passTypeBinding(typebind); 
+  ((Program*)right)->passTypeBinding(typebind); 
+}
+
 ////////////////////////////////////////
 // Negation
 ////////////////////////////////////////
@@ -299,6 +367,11 @@ int Negation::codeGen(const Binding &_binding, int reg) const {
 void Negation::passFunctionName(std::string _name, int _pos) {
   function_name = _name;
   pos = pos + _pos;
-  //((Program*)left)->passFunctionName(_name);
   ((Program *)right)->passFunctionName(_name, _pos);
+}
+
+
+void Negation::passTypeBinding(TypeBinding &_typebind){
+    typebind = _typebind; 
+  ((Program*)right)->passTypeBinding(typebind); 
 }

@@ -89,6 +89,13 @@ void WhileLoop::passLabel(int _label) {
   }
 }
 
+void WhileLoop::passTypeBinding(TypeBinding &_typebind){
+  typebind = _typebind;
+    ((Program *)condition)->passTypeBinding(_typebind);
+  if (statement_list)
+    ((Statement *)statement_list)->passTypeBinding(_typebind);
+}
+
 ////////////////////////////////////////
 // For Loop
 // init_expr → test_expr → body
@@ -169,6 +176,7 @@ int ForLoop::evaluate(const Binding &_binding) const { return 0; };
 
 void ForLoop::bind(const Binding &_binding) {
   binding = _binding;
+  //std::cout << "entre bind for For loop" << std::endl;
   // add variable declaration in initialization expression to binding
   if (init_expr && init_expr->getType() == 'd') {
     std::string id = ((VarDeclare *)init_expr)->getId();
@@ -182,6 +190,7 @@ void ForLoop::bind(const Binding &_binding) {
   if (update_expr)
     ((Program *)update_expr)->bind(const_cast<Binding &>(binding));
   if (statement_list) ((Statement *)statement_list)->bind(binding);
+  //std::cout << "finish binding for FOR " << std::endl;
 };
 
 void ForLoop::passFunctionName(std::string _name, int _pos) {
@@ -195,4 +204,16 @@ void ForLoop::passLabel(int _label) {
   if (statement_list) {
     ((Program *)statement_list)->passLabel(label);  // pass own label
   }
+}
+
+void ForLoop::passTypeBinding(TypeBinding &_typebind){
+    typebind = _typebind;
+    if(init_expr)
+    ((Program*)init_expr)->passTypeBinding(_typebind);
+    if(test_expr)
+    ((Program*)test_expr)->passTypeBinding(_typebind);
+    if(update_expr)
+    ((Program*)update_expr)->passTypeBinding(_typebind);
+    if (statement_list)
+    ((Statement *)statement_list)->passTypeBinding(_typebind);
 }

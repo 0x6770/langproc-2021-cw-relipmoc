@@ -67,6 +67,11 @@ void LessEqual::passFunctionName(std::string _name, int _pos) {
   ((Program *)right)->passFunctionName(_name, _pos);
 }
 
+void LessEqual::passTypeBinding(TypeBinding &_typebind){
+    typebind = _typebind;
+  ((Program*)left)->passTypeBinding(typebind); 
+  ((Program*)right)->passTypeBinding(typebind); 
+}
 ////////////////////////////////////////
 // GreaterEqual
 ////////////////////////////////////////
@@ -130,6 +135,12 @@ void GreaterEqual::passFunctionName(std::string _name, int _pos) {
   pos = pos + _pos;
   ((Program *)left)->passFunctionName(_name, _pos);
   ((Program *)right)->passFunctionName(_name, _pos);
+}
+
+void GreaterEqual::passTypeBinding(TypeBinding &_typebind){
+    typebind = _typebind;
+  ((Program*)left)->passTypeBinding(typebind); 
+  ((Program*)right)->passTypeBinding(typebind); 
 }
 ////////////////////////////////////////
 // Equal
@@ -197,6 +208,12 @@ void Equal::passFunctionName(std::string _name, int _pos) {
   ((Program *)left)->passFunctionName(_name, _pos);
   ((Program *)right)->passFunctionName(_name, _pos);
 }
+
+void Equal::passTypeBinding(TypeBinding &_typebind){
+    typebind = _typebind;
+  ((Program*)left)->passTypeBinding(typebind); 
+  ((Program*)right)->passTypeBinding(typebind); 
+}
 ////////////////////////////////////////
 // LogicalAnd
 ////////////////////////////////////////
@@ -259,7 +276,11 @@ void LogicalAnd::passFunctionName(std::string _name, int _pos) {
   ((Program *)left)->passFunctionName(_name, _pos);
   ((Program *)right)->passFunctionName(_name, _pos);
 }
-
+void LogicalAnd::passTypeBinding(TypeBinding &_typebind){
+    typebind = _typebind;
+  ((Program*)left)->passTypeBinding(typebind); 
+  ((Program*)right)->passTypeBinding(typebind); 
+}
 ////////////////////////////////////////
 // LogicalOr
 ////////////////////////////////////////
@@ -324,4 +345,10 @@ void LogicalOr::passFunctionName(std::string _name, int _pos) {
   pos = pos + _pos;
   ((Program *)left)->passFunctionName(_name, _pos);
   ((Program *)right)->passFunctionName(_name, _pos);
+}
+
+void LogicalOr::passTypeBinding(TypeBinding &_typebind){
+    typebind = _typebind;
+  ((Program*)left)->passTypeBinding(typebind); 
+  ((Program*)right)->passTypeBinding(typebind); 
 }

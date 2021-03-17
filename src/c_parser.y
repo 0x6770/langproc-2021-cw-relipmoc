@@ -39,13 +39,15 @@
 %type <program> unary_postfix prefix_increment prefix_decrement unary_plus unary_minus
 %type <program> array_declare expression_list function_call function_define
 %type <integer> T_INT_VALUE
-%type <string> type T_NAME T_INT
+%type <string> type T_NAME T_INT T_CHAR T_DOUBLE T_UNSIGNED T_FLOAT
 
 %start program
 
 %%
 
 type : T_INT  { $$ = $1; }
+     | T_CHAR { $$ = $1; }
+     | T_FLOAT { $$ = $1; }
      ;
 
 program : multiple_function  { root = $1; }
@@ -69,7 +71,8 @@ param_list : param                     { $$ = new Paramlist($1); }
            | param_list T_COMMA param  { ((Paramlist*)$$)->add_argument($3); }
            ;
 
-param : type T_NAME  { $$ = new Param("int",*$2); }
+param : type T_NAME       { $$ = new Param("int",*$2,0); }
+      | type '*' T_NAME   { $$ = new Param("pointer",*$3,1);}
       ;
 
   /*switch : T_SWITCH '('  ')'*/
@@ -86,6 +89,8 @@ stmt : control_flow_if                 { $$ = $1; }
      | assignment ';'                  { $$ = $1; }
      | type T_NAME ';'                 { $$ = new VarDeclare(*$1, *$2, 0, getPos(4)); delete $1; delete $2; }
      | type T_NAME '=' assignment ';'  { $$ = new VarDeclare(*$1, *$2, $4, getPos(4)); delete $1; delete $2; }
+     | type '*' T_NAME ';'             { $$ = new VarDeclare("pointer", *$3, 0, getPos(4)); delete $1; delete $3; }
+     | type '*' T_NAME '=' assignment ';'  { $$ = new VarDeclare("pointer", *$3, $5, getPos(4)); delete $1; delete $3; }
      | keyword                         { $$ = $1; }
      | loop                            { $$ = $1; }
      | '{' stmt_list '}'               { $$ = $2; }
@@ -107,6 +112,8 @@ loop : T_WHILE '(' assignment ')' '{' stmt_list '}'                     { $$ = n
 init_expr : test_expr                       { $$ = $1; }
           | type T_NAME ';'                 { $$ = new VarDeclare(*$1, *$2, 0, getPos(4)); delete $1; delete $2; }
           | type T_NAME '=' assignment ';'  { $$ = new VarDeclare(*$1, *$2, $4, getPos(4)); delete $1; delete $2; }
+          | type '*' T_NAME ';'             { $$ = new VarDeclare(*$1, *$3, 0, getPos(4)); delete $1; delete $3; }
+          | type '*' T_NAME '=' assignment ';'  { $$ = new VarDeclare(*$1, *$3, $5, getPos(4)); delete $1; delete $3; }
           ;
 
 test_expr : update_expr ';'  { $$ = $1; }
@@ -122,6 +129,9 @@ control_flow_if : T_IF '(' expr ')' stmt              { $$ = new IfStatement($3,
 
 assignment : expr                                  { $$ = $1; }
            | T_NAME '=' assignment                 { $$ = new VarAssign(*$1, $3); }
+           | '*' factor '=' assignment             { Program *temp = new Dereference($2,getPos(4)); 
+                                                     $$ = new VarAssign(temp,$4);                                     
+                                                     }
            | unary_postfix '=' assignment          { ((ArrayElement*)$1)->array_assignment($3); $$ = $1;}
            | factor T_ADDEQUAL assignment          { $$ = new AddEqual($1, $3, getPos(4)); }
            | factor T_SUBEQUAL assignment          { $$ = new SubEqual($1, $3, getPos(4)); }
@@ -188,8 +198,10 @@ unary : prefix_increment      { $$ = $1; }
       | unary_postfix         { $$ = $1; }
       | unary_minus           { $$ = $1; }
       | unary_plus            { $$ = $1; }
-      /*| '&' unary_prefix  { $$ = new Addressof($2,gotPos(4)); }*/
-      /*| '*' unary_prefix  { $$ = new Dereference($2,getPos(4));}*/
+      | '&' factor          { $$ = new AddressOf($2,getPos(4)); }
+      | '*' factor         { $$ = new Dereference($2,getPos(4));}
+      | T_SIZEOF '(' expr ')'   { $$ = new SizeOf($3);}
+      | T_SIZEOF '(' type ')'   { $$ = new SizeOf(*$3); }
       ;
 
 unary_minus : '-' unary_postfix     { $$ = new Negation($2, getPos(4)); }

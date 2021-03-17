@@ -20,6 +20,25 @@ class Integer : public Program {
   int evaluate(const Binding &_binding) const override;
   void bind(const Binding &_binding) override;
   void passFunctionName(std::string _name, int _pos) override;
+  virtual void passTypeBinding(TypeBinding &_typebind) override;
+};
+
+///////////////////////////////////////////
+// Char
+//////////////////////////////////////////
+
+class Char : public Program {
+ private:
+  char value;
+
+ public:
+  Char(char _value);
+  int codeGen(const Binding &_binding, int reg) const override;
+  void print(std::ostream &dst, int indentation) const override;
+  int evaluate(const Binding &_binding) const override;
+  void bind(const Binding &_binding) override;
+  void passFunctionName(std::string _name, int _pos) override;
+  virtual void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 ////////////////////////////////////////
@@ -40,6 +59,8 @@ class Variable : public Program {
   int getPos(const Binding &_binding) const override;
   void bind(const Binding &_binding) override;
   void passFunctionName(std::string _name, int _pos) override;
+  virtual void passTypeBinding(TypeBinding &_typebind) override;
+  std::string gettype(TypeBinding &_typebind) const;
 };
 
 #endif

@@ -19,6 +19,7 @@ class Operation : public Program {
   virtual int evaluate(const Binding &_binding) const override;
   virtual void bind(const Binding &_binding) override;
   virtual void passFunctionName(std::string _name, int _pos) override;
+  virtual void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 #endif

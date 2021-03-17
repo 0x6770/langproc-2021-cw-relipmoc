@@ -36,6 +36,11 @@ void Return::passFunctionName(std::string _name, int _pos) {
   ((Program *)expression)->passFunctionName(_name, _pos);
 }
 
+void Return::passTypeBinding(TypeBinding &_typebind){
+  typebind = _typebind;
+  ((Program *)expression)->passTypeBinding(_typebind);
+}
+
 ////////////////////////////////////////
 // Continue
 ////////////////////////////////////////
@@ -74,6 +79,9 @@ void Continue::passLabel(int _label) {
   label = _label;
 }
 
+void Continue::passTypeBinding(TypeBinding &_typebind){
+  
+}
 ////////////////////////////////////////
 // Break
 ////////////////////////////////////////
@@ -110,4 +118,8 @@ void Break::passLabel(int _label) {
     exit(1);
   }
   label = _label;
+}
+
+void Break::passTypeBinding(TypeBinding &_typebind){
+  
 }

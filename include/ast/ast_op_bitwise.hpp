@@ -14,6 +14,8 @@ class BitwiseAnd : public Operation {
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void passFunctionName(std::string _name, int _pos) override;
+  void passTypeBinding(TypeBinding &_typebind) override;
+  
 };
 
 ////////////////////////////////////////
@@ -27,6 +29,7 @@ class BitwiseOr : public Operation {
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void passFunctionName(std::string _name, int _pos) override;
+  void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 ////////////////////////////////////////
@@ -40,6 +43,7 @@ class ShiftLeft : public Operation {
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void passFunctionName(std::string _name, int _pos) override;
+  void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 ////////////////////////////////////////
@@ -53,6 +57,7 @@ class ShiftRight : public Operation {
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void passFunctionName(std::string _name, int _pos) override;
+  void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 ////////////////////////////////////////
@@ -66,6 +71,7 @@ class BitwiseXor : public Operation {
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void passFunctionName(std::string _name, int _pos) override;
+  void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 #endif

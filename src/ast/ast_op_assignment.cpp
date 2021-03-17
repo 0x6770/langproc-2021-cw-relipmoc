@@ -48,6 +48,12 @@ void AddEqual::passFunctionName(std::string _name, int _pos) {
   ((Program *)right)->passFunctionName(_name, _pos);
 }
 
+void AddEqual::passTypeBinding(TypeBinding &_typebind){
+    typebind = _typebind;
+  ((Program*)left)->passTypeBinding(typebind); 
+  ((Program*)right)->passTypeBinding(typebind); 
+}
+
 ////////////////////////////////////////
 // Subtraction Equal
 ////////////////////////////////////////
@@ -95,6 +101,11 @@ void SubEqual::passFunctionName(std::string _name, int _pos) {
   pos = pos + _pos;
   ((Program *)left)->passFunctionName(_name, _pos);
   ((Program *)right)->passFunctionName(_name, _pos);
+}
+void SubEqual::passTypeBinding(TypeBinding &_typebind){
+    typebind = _typebind;
+  ((Program*)left)->passTypeBinding(typebind); 
+  ((Program*)right)->passTypeBinding(typebind); 
 }
 
 ////////////////////////////////////////
@@ -147,6 +158,12 @@ void MulEqual::passFunctionName(std::string _name, int _pos) {
   ((Program *)right)->passFunctionName(_name, _pos);
 }
 
+void MulEqual::passTypeBinding(TypeBinding &_typebind){
+    typebind = _typebind;
+  ((Program*)left)->passTypeBinding(typebind); 
+  ((Program*)right)->passTypeBinding(typebind); 
+}
+
 ////////////////////////////////////////
 // Quotient assignment
 ////////////////////////////////////////
@@ -197,6 +214,11 @@ void QuoEqual::passFunctionName(std::string _name, int _pos) {
   ((Program *)right)->passFunctionName(_name, _pos);
 }
 
+void QuoEqual::passTypeBinding(TypeBinding &_typebind){
+    typebind = _typebind;
+  ((Program*)left)->passTypeBinding(typebind); 
+  ((Program*)right)->passTypeBinding(typebind); 
+}
 ////////////////////////////////////////
 // Modulus assignment
 ////////////////////////////////////////
@@ -244,6 +266,11 @@ void ModEqual::passFunctionName(std::string _name, int _pos) {
   pos = pos + _pos;
   ((Program *)left)->passFunctionName(_name, _pos);
   ((Program *)right)->passFunctionName(_name, _pos);
+}
+void ModEqual::passTypeBinding(TypeBinding &_typebind){
+    typebind = _typebind;
+  ((Program*)left)->passTypeBinding(typebind); 
+  ((Program*)right)->passTypeBinding(typebind); 
 }
 
 ////////////////////////////////////////
@@ -295,6 +322,12 @@ void ShiftEqual_L::passFunctionName(std::string _name, int _pos) {
   ((Program *)right)->passFunctionName(_name, _pos);
 }
 
+void ShiftEqual_L::passTypeBinding(TypeBinding &_typebind){
+    typebind = _typebind;
+  ((Program*)left)->passTypeBinding(typebind); 
+  ((Program*)right)->passTypeBinding(typebind); 
+}
+
 ////////////////////////////////////////
 // shift right assignment
 ////////////////////////////////////////
@@ -341,6 +374,12 @@ void ShiftEqual_R::passFunctionName(std::string _name, int _pos) {
   pos = pos + _pos;
   ((Program *)left)->passFunctionName(_name, _pos);
   ((Program *)right)->passFunctionName(_name, _pos);
+}
+
+void ShiftEqual_R::passTypeBinding(TypeBinding &_typebind){
+    typebind = _typebind;
+  ((Program*)left)->passTypeBinding(typebind); 
+  ((Program*)right)->passTypeBinding(typebind); 
 }
 
 ////////////////////////////////////////
@@ -392,6 +431,12 @@ void BitwiseEqual_AND::passFunctionName(std::string _name, int _pos) {
   ((Program *)right)->passFunctionName(_name, _pos);
 }
 
+void BitwiseEqual_AND::passTypeBinding(TypeBinding &_typebind){
+    typebind = _typebind;
+  ((Program*)left)->passTypeBinding(typebind); 
+  ((Program*)right)->passTypeBinding(typebind); 
+}
+
 ////////////////////////////////////////
 // bitwise OR assignment
 ////////////////////////////////////////
@@ -438,6 +483,12 @@ void BitwiseEqual_OR::passFunctionName(std::string _name, int _pos) {
   pos = pos + _pos;
   ((Program *)left)->passFunctionName(_name, _pos);
   ((Program *)right)->passFunctionName(_name, _pos);
+}
+
+void BitwiseEqual_OR::passTypeBinding(TypeBinding &_typebind){
+    typebind = _typebind;
+  ((Program*)left)->passTypeBinding(typebind); 
+  ((Program*)right)->passTypeBinding(typebind); 
 }
 
 ////////////////////////////////////////
@@ -489,6 +540,12 @@ void BitwiseEqual_XOR::passFunctionName(std::string _name, int _pos) {
   ((Program *)right)->passFunctionName(_name, _pos);
 }
 
+void BitwiseEqual_XOR::passTypeBinding(TypeBinding &_typebind){
+    typebind = _typebind;
+  ((Program*)left)->passTypeBinding(typebind); 
+  ((Program*)right)->passTypeBinding(typebind); 
+}
+
 ////////////////////////////////////////
 // Postfix increment
 ////////////////////////////////////////
@@ -496,6 +553,7 @@ void BitwiseEqual_XOR::passFunctionName(std::string _name, int _pos) {
 Increment_Post::Increment_Post(ProgramPtr _left, int _pos)
     : Operation(_left, 0, _pos) {
   logger->info("construct post increment\n");
+  node_type = '1';
 }
 
 void Increment_Post::print(std::ostream &dst, int indentation) const {
@@ -520,7 +578,14 @@ int Increment_Post::codeGen(const Binding &_binding, int reg) const {
   }
   left->codeGen(binding, 2);
 
-  printf("\taddiu\t$3,$2,1\n");
+  TypeBinding temp = typebind;
+  if(((Variable*)left)->gettype(temp) == "pointer"){
+    printf("\taddiu\t$3,$2,4 \t\t #%d\n", pos);
+  }
+  else{
+    printf("\taddiu\t$3,$2,1 # %d\n", pos);
+  }
+
   printf("\tsw\t$2,%d($fp)\t# initial value x0\n", pos);
   printf("\tsw\t$3,%d($fp)\t# x0+1 \n", left->getPos(binding));
   return 0;
@@ -531,6 +596,11 @@ void Increment_Post::passFunctionName(std::string _name, int _pos) {
   ((Program *)left)->passFunctionName(_name, _pos);
 }
 
+void Increment_Post::passTypeBinding(TypeBinding &_typebind){
+    typebind = _typebind;
+  ((Program*)left)->passTypeBinding(typebind); 
+}
+
 ////////////////////////////////////////
 // prefix increment
 ////////////////////////////////////////
@@ -538,6 +608,7 @@ void Increment_Post::passFunctionName(std::string _name, int _pos) {
 Increment_Pre::Increment_Pre(ProgramPtr _left, int _pos)
     : Operation(_left, 0, _pos) {
   logger->info("construct pre increment\n");
+  node_type = '2';
 }
 
 void Increment_Pre::print(std::ostream &dst, int indentation) const {
@@ -560,8 +631,13 @@ int Increment_Pre::codeGen(const Binding &_binding, int reg) const {
     exit(1);
   }
   left->codeGen(binding, 2);
-
-  printf("\taddiu\t$2,$2,1 # %d\n", pos);
+  TypeBinding temp = typebind;
+  if(((Variable*)left)->gettype(temp) == "pointer"){
+    printf("\taddiu\t$2,$2,4 \t\t #%d\n", pos);
+  }
+  else{
+    printf("\taddiu\t$2,$2,1 # %d\n", pos);
+  }
   printf("\tsw\t$2,%d($fp)\t# store result of pre increment\n", pos);
   printf("\tsw\t$2,%d($fp)\t# store result of pre increment\n",
          left->getPos(binding));
@@ -573,6 +649,11 @@ void Increment_Pre::passFunctionName(std::string _name, int _pos) {
   ((Program *)left)->passFunctionName(_name, _pos);
 }
 
+void Increment_Pre::passTypeBinding(TypeBinding &_typebind){
+    typebind = _typebind;
+  ((Program*)left)->passTypeBinding(typebind); 
+}
+
 ////////////////////////////////////////
 // Postfix decrement
 ////////////////////////////////////////
@@ -580,6 +661,7 @@ void Increment_Pre::passFunctionName(std::string _name, int _pos) {
 Decrement_Post::Decrement_Post(ProgramPtr _left, int _pos)
     : Operation(_left, 0, _pos) {
   logger->info("construct post increment\n");
+  node_type = '3';
 }
 
 void Decrement_Post::print(std::ostream &dst, int indentation) const {
@@ -604,7 +686,14 @@ int Decrement_Post::codeGen(const Binding &_binding, int reg) const {
   }
   left->codeGen(binding, 2);
 
-  printf("\taddiu\t$3,$2,-1\n");
+  TypeBinding temp = typebind;
+  if(((Variable*)left)->gettype(temp) == "pointer"){
+    printf("\taddiu\t$3,$2,-4 \t\t #%d\n", pos);
+  }
+  else{
+    printf("\taddiu\t$3,$2,-1 # %d\n", pos);
+  }
+
   printf("\tsw\t$2,%d($fp)\t# initial value x0\n", pos);
   printf("\tsw\t$3,%d($fp)\t# x0-1\n", left->getPos(binding));
   return 0;
@@ -616,6 +705,12 @@ void Decrement_Post::passFunctionName(std::string _name, int _pos) {
   ((Program *)left)->passFunctionName(_name, _pos);
 }
 
+void Decrement_Post::passTypeBinding(TypeBinding &_typebind){
+    typebind = _typebind;
+  ((Program*)left)->passTypeBinding(typebind); 
+  //((Program*)right)->passTypeBinding(typebind); 
+}
+
 ////////////////////////////////////////
 // prefix increment
 ////////////////////////////////////////
@@ -623,6 +718,7 @@ void Decrement_Post::passFunctionName(std::string _name, int _pos) {
 Decrement_Pre::Decrement_Pre(ProgramPtr _left, int _pos)
     : Operation(_left, 0, _pos) {
   logger->info("construct pre decrement\n");
+  node_type = '3';
 }
 
 void Decrement_Pre::print(std::ostream &dst, int indentation) const {
@@ -646,7 +742,14 @@ int Decrement_Pre::codeGen(const Binding &_binding, int reg) const {
   }
   left->codeGen(binding, 2);
 
-  printf("\taddiu\t$2,$2,-1\n");
+  TypeBinding temp = typebind;
+  if(((Variable*)left)->gettype(temp) == "pointer"){
+    printf("\taddiu\t$2,$2,-4 \t\t #%d\n", pos);
+  }
+  else{
+    printf("\taddiu\t$2,$2,-1 # %d\n", pos);
+  }
+
   printf("\tsw\t$2,%d($fp)\t# store result of pre decrement\n",
          left->getPos(binding));
   printf("\tsw\t$2,%d($fp)\t# store result of pre decrement\n", pos);
@@ -656,4 +759,10 @@ void Decrement_Pre::passFunctionName(std::string _name, int _pos) {
   function_name = _name;
   pos = pos + _pos;
   ((Program *)left)->passFunctionName(_name, _pos);
+}
+
+void Decrement_Pre::passTypeBinding(TypeBinding &_typebind){
+    typebind = _typebind;
+  ((Program*)left)->passTypeBinding(typebind); 
+  //((Program*)right)->passTypeBinding(typebind); 
 }
