@@ -84,6 +84,7 @@ void Variable::passTypeBinding(TypeBinding &_typebind){
   typebind = _typebind;
 }
 
+// get the variable type
 std::string Variable::gettype(TypeBinding &_typebind) const{
   return _typebind[id];
 }

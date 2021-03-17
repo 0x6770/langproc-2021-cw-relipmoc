@@ -10,19 +10,23 @@
       is_type = 1;
   }
   int SizeOf::codeGen(const Binding &_binding, int reg) const{
+      std::string local_type;
       if(is_type == 1){
-          if(const_type == "int") 
-          printf("\tli\t$%d,%d\n",reg,4);
-          if(const_type == "double") 
-          printf("\tli\t$%d,%d\n",reg,8);
-          if(const_type == "char") 
-          printf("\tli\t$%d,%d\n",reg,1);
-          if(const_type == "float") 
-          printf("\tli\t$%d,%d\n",reg,4);
-          if(const_type == "unsigned") 
-          printf("\tli\t$%d,%d\n",reg,4);
+          local_type = const_type;
       }
-      return 0;
+      else{
+          // only support single variable now
+          if(((Program*)expression)->getType() == 'x'){
+              TypeBinding local_bind = typebind;
+              local_type = ((Variable*)expression)->gettype(local_bind);
+        }
+      }
+    if(local_type == "int")          printf("\tli\t$%d,%d\n",reg,4);
+    if(local_type == "double")       printf("\tli\t$%d,%d\n",reg,8);
+    if(local_type == "char")         printf("\tli\t$%d,%d\n",reg,1);
+    if(local_type == "float")        printf("\tli\t$%d,%d\n",reg,4);
+    if(local_type == "unsigned")     printf("\tli\t$%d,%d\n",reg,4);
+    return 0;
   }
   void SizeOf::print(std::ostream &dst, int indentation) const{
 

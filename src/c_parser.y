@@ -39,15 +39,17 @@
 %type <program> unary_postfix prefix_increment prefix_decrement unary_plus unary_minus
 %type <program> array_declare expression_list function_call function_define
 %type <integer> T_INT_VALUE
-%type <string> type T_NAME T_INT T_CHAR T_DOUBLE T_UNSIGNED T_FLOAT
+%type <string> type T_NAME T_INT T_CHAR T_UNSIGNED
 
 %start program
 
 %%
 
-type : T_INT  { $$ = $1; }
-     | T_CHAR { $$ = $1; }
-     | T_FLOAT { $$ = $1; }
+type : T_INT         { $$ = $1; }
+     | T_CHAR        { $$ = $1; }
+    // | T_FLOAT       { $$ = $1; }
+     | T_UNSIGNED    { $$ = $1; }
+    // | T_DOUBLE      { $$ = $1;}
      ;
 
 program : multiple_function  { root = $1; }
