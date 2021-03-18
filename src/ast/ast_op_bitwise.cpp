@@ -25,7 +25,7 @@ int BitwiseAnd::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
-  if (left_type == 'i' || left_type == 'x' || left_type == 'a'){
+  if (left_type == 'i' || left_type == 'x' || left_type == 'a') {
     right->codeGen(binding, 3);
     left->codeGen(binding, 2);
   } else {
@@ -81,7 +81,7 @@ int BitwiseOr::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
-  if (left_type == 'i' || left_type == 'x' || left_type == 'a'){
+  if (left_type == 'i' || left_type == 'x' || left_type == 'a') {
     right->codeGen(binding, 3);
     left->codeGen(binding, 2);
   } else {
@@ -135,8 +135,7 @@ int BitwiseXor::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
-
-  if (left_type == 'i' || left_type == 'x' || left_type == 'a'){
+  if (left_type == 'i' || left_type == 'x' || left_type == 'a') {
     right->codeGen(binding, 3);
     left->codeGen(binding, 2);
   } else {
@@ -190,8 +189,7 @@ int ShiftLeft::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
-
-  if (left_type == 'i' || left_type == 'x' || left_type == 'a'){
+  if (left_type == 'i' || left_type == 'x' || left_type == 'a') {
     right->codeGen(binding, 3);
     left->codeGen(binding, 2);
   } else {
@@ -246,8 +244,7 @@ int ShiftRight::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
-
-  if (left_type == 'i' || left_type == 'x' || left_type == 'a'){
+  if (left_type == 'i' || left_type == 'x' || left_type == 'a') {
     right->codeGen(binding, 3);
     left->codeGen(binding, 2);
   } else {

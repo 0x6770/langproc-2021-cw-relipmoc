@@ -14,7 +14,6 @@ void AddEqual::print(std::ostream &dst, int indentation) const {
   left->print(dst, indentation);
   dst << "+=";
   right->print(dst, indentation);
-  dst << ";\n";
 }
 
 int AddEqual::evaluate(const Binding &_binding) const {
@@ -31,10 +30,9 @@ int AddEqual::codeGen(const Binding &_binding, int reg) const {
     exit(1);
   }
 
-
   right->codeGen(binding, 3);
   left->codeGen(binding, 2);
-if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
+  if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
     printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
   printf("\tadd\t$2,$2,$3\n");
   printf("\tsw\t$2,%d($fp)\n", left->getPos(binding));
@@ -68,7 +66,6 @@ void SubEqual::print(std::ostream &dst, int indentation) const {
   left->print(dst, indentation);
   dst << "-=";
   right->print(dst, indentation);
-  dst << ";\n";
 }
 
 int SubEqual::evaluate(const Binding &_binding) const {
@@ -122,7 +119,6 @@ void MulEqual::print(std::ostream &dst, int indentation) const {
   left->print(dst, indentation);
   dst << "*=";
   right->print(dst, indentation);
-  dst << ";\n";
 }
 
 int MulEqual::evaluate(const Binding &_binding) const {
@@ -178,7 +174,6 @@ void QuoEqual::print(std::ostream &dst, int indentation) const {
   left->print(dst, indentation);
   dst << "/=";
   right->print(dst, indentation);
-  dst << ";\n";
 }
 
 int QuoEqual::evaluate(const Binding &_binding) const {
@@ -233,7 +228,6 @@ void ModEqual::print(std::ostream &dst, int indentation) const {
   left->print(dst, indentation);
   dst << "%=";
   right->print(dst, indentation);
-  dst << ";\n";
 }
 
 int ModEqual::evaluate(const Binding &_binding) const {
@@ -287,7 +281,6 @@ void ShiftEqual_L::print(std::ostream &dst, int indentation) const {
   left->print(dst, indentation);
   dst << "<<=";
   right->print(dst, indentation);
-  dst << ";\n";
 }
 
 int ShiftEqual_L::evaluate(const Binding &_binding) const {
@@ -342,7 +335,6 @@ void ShiftEqual_R::print(std::ostream &dst, int indentation) const {
   left->print(dst, indentation);
   dst << ">>=";
   right->print(dst, indentation);
-  dst << ";\n";
 }
 
 int ShiftEqual_R::evaluate(const Binding &_binding) const {
@@ -397,7 +389,6 @@ void BitwiseEqual_AND::print(std::ostream &dst, int indentation) const {
   left->print(dst, indentation);
   dst << "&=";
   right->print(dst, indentation);
-  dst << ";\n";
 }
 
 int BitwiseEqual_AND::evaluate(const Binding &_binding) const {
@@ -451,7 +442,6 @@ void BitwiseEqual_OR::print(std::ostream &dst, int indentation) const {
   left->print(dst, indentation);
   dst << "|=";
   right->print(dst, indentation);
-  dst << ";\n";
 }
 
 int BitwiseEqual_OR::evaluate(const Binding &_binding) const {
@@ -506,7 +496,6 @@ void BitwiseEqual_XOR::print(std::ostream &dst, int indentation) const {
   left->print(dst, indentation);
   dst << "^=";
   right->print(dst, indentation);
-  dst << ";\n";
 }
 
 int BitwiseEqual_XOR::evaluate(const Binding &_binding) const {
