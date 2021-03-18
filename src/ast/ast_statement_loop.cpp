@@ -7,7 +7,7 @@
 WhileLoop::WhileLoop(ProgramPtr _condition, ProgramPtr _statement_list,
                      int _label)
     : Statement(0), condition(_condition), statement_list(_statement_list) {
-  setLabel(_label);
+  label = _label;
   logger->info("construct WhileLoop\n");
   node_type = 'w';
   if (!condition) {
@@ -31,14 +31,11 @@ void WhileLoop::print(std::ostream &dst, int indentation) const {
 
 int WhileLoop::evaluate(const Binding &_binding) const { return 0; }
 
-// TODO add support for return
 int WhileLoop::codeGen(const Binding &_binding, int reg) const {
   int random_id = rand() % 10000;
 
-  std::string label_condition =
-      "$L" + function_name + "_" + std::to_string(label * 2);
-  std::string label_end =
-      "$L" + function_name + "_" + std::to_string(label * 2 + 1);
+  int label_condition = label * 2;
+  int label_end = label * 2 + 1;
 
   printf("\t\t\t\t# \u001b[38;5;%dm", random_id % 256);
   printf("#### BEGIN WHILE LOOP ##### %d\u001b[0m\n", random_id);
@@ -48,19 +45,19 @@ int WhileLoop::codeGen(const Binding &_binding, int reg) const {
   logger->info("generate code for WhileLoop\n");
 
   // condition for while loop
-  printf("%s:", label_condition.c_str());
+  printf("$L%d:", label_condition);
   printf("\t\t\t\t# \033[1;36m[LABEL]\033[0m WHILE condition\n");
   condition->codeGen(binding, reg);
-  printf("\tbeq\t$2,$0,%s", label_end.c_str());
+  printf("\tbeq\t$2,$0,$L%d", label_end);
   printf("\t# jump to end of WHILE\n");  // check condition again
 
   // body of while loop
   if (statement_list) statement_list->codeGen(binding, reg);
-  printf("\tb\t%s", label_condition.c_str());
+  printf("\tb\t$L%d", label_condition);
   printf("\t\t# jump to condition\n");  // check condition again
   printf("\tnop\n\n");
 
-  printf("%s:", label_end.c_str());
+  printf("$L%d:", label_end);
   printf("\t\t\t\t# \033[1;36m[LABEL]\033[0m end of WHILE\n");
 
   printf("\t\t\t\t# \u001b[38;5;%dm", random_id % 256);
@@ -89,11 +86,10 @@ void WhileLoop::passLabel(int _label) {
   }
 }
 
-void WhileLoop::passTypeBinding(TypeBinding &_typebind){
+void WhileLoop::passTypeBinding(TypeBinding &_typebind) {
   typebind = _typebind;
-    ((Program *)condition)->passTypeBinding(_typebind);
-  if (statement_list)
-    ((Statement *)statement_list)->passTypeBinding(_typebind);
+  ((Program *)condition)->passTypeBinding(_typebind);
+  if (statement_list) ((Statement *)statement_list)->passTypeBinding(_typebind);
 }
 
 ////////////////////////////////////////
@@ -110,31 +106,26 @@ ForLoop::ForLoop(ProgramPtr _init_expr, ProgramPtr _test_expr,
       test_expr(_test_expr),
       update_expr(_update_expr),
       statement_list(_statement_list) {
-  setLabel(_label);
+  label = _label;
   logger->info("construct For Loop\n");
-  if (statement_list) {
-    ((StatementList *)statement_list)->setLabel(label);
-  }
 };
 
 int ForLoop::codeGen(const Binding &_binding, int reg) const {
   int random_id = rand() % 10000;
-  std::string label_test =
-      "$L" + function_name + "_" + std::to_string(label * 2);
-  std::string label_end =
-      "$L" + function_name + "_" + std::to_string(label * 2 + 1);
+  int label_test = label * 2;
+  int label_end = label * 2 + 1;
 
   printf("\t\t\t\t# \u001b[38;5;%dm", random_id % 256);
   printf("#### BEGIN FOR LOOP ##### %d\u001b[0m\n", random_id);
 
   if (init_expr) init_expr->codeGen(binding, reg);
 
-  printf("%s:", label_test.c_str());
+  printf("$L%d:", label_test);
   printf("\t\t\t\t# \033[1;36m[LABEL]\033[0m FOR test expression\n");
 
   if (test_expr) {
     test_expr->codeGen(binding, reg);
-    printf("\tbeq\t$2,$0,%s", label_end.c_str());
+    printf("\tbeq\t$2,$0,$L%d", label_end);
     printf("\t# jump to end of FOR\n");
     printf("\tnop\n\n");
   }
@@ -142,11 +133,11 @@ int ForLoop::codeGen(const Binding &_binding, int reg) const {
   if (statement_list) statement_list->codeGen(binding, reg);
   if (update_expr) update_expr->codeGen(binding, reg);
 
-  printf("\tb\t%s", label_test.c_str());
+  printf("\tb\t$L%d", label_test);
   printf("\t\t# jump to start of FOR\n");
   printf("\tnop\n\n");
 
-  printf("%s:", label_end.c_str());
+  printf("$L%d:", label_end);
   printf("\t\t\t\t# \033[1;36m[LABEL]\033[0m end of FOR\n");
 
   printf("\t\t\t\t# \u001b[38;5;%dm", random_id % 256);
@@ -176,8 +167,8 @@ int ForLoop::evaluate(const Binding &_binding) const { return 0; };
 
 void ForLoop::bind(const Binding &_binding) {
   binding = _binding;
-  //std::cout << "entre bind for For loop" << std::endl;
-  // add variable declaration in initialization expression to binding
+  // std::cout << "entre bind for For loop" << std::endl;
+  //  add variable declaration in initialization expression to binding
   if (init_expr && init_expr->getType() == 'd') {
     std::string id = ((VarDeclare *)init_expr)->getId();
     int pos = init_expr->getPos(binding);
@@ -190,7 +181,7 @@ void ForLoop::bind(const Binding &_binding) {
   if (update_expr)
     ((Program *)update_expr)->bind(const_cast<Binding &>(binding));
   if (statement_list) ((Statement *)statement_list)->bind(binding);
-  //std::cout << "finish binding for FOR " << std::endl;
+  // std::cout << "finish binding for FOR " << std::endl;
 };
 
 void ForLoop::passFunctionName(std::string _name, int _pos) {
@@ -206,14 +197,10 @@ void ForLoop::passLabel(int _label) {
   }
 }
 
-void ForLoop::passTypeBinding(TypeBinding &_typebind){
-    typebind = _typebind;
-    if(init_expr)
-    ((Program*)init_expr)->passTypeBinding(_typebind);
-    if(test_expr)
-    ((Program*)test_expr)->passTypeBinding(_typebind);
-    if(update_expr)
-    ((Program*)update_expr)->passTypeBinding(_typebind);
-    if (statement_list)
-    ((Statement *)statement_list)->passTypeBinding(_typebind);
+void ForLoop::passTypeBinding(TypeBinding &_typebind) {
+  typebind = _typebind;
+  if (init_expr) ((Program *)init_expr)->passTypeBinding(_typebind);
+  if (test_expr) ((Program *)test_expr)->passTypeBinding(_typebind);
+  if (update_expr) ((Program *)update_expr)->passTypeBinding(_typebind);
+  if (statement_list) ((Statement *)statement_list)->passTypeBinding(_typebind);
 }

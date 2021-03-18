@@ -13,7 +13,6 @@ void Return::print(std::ostream &dst, int indentation) const {
   printIndent(dst, indentation);
   dst << "return ";
   expression->print(dst, 0);
-  dst << ";";
 }
 
 int Return::codeGen(const Binding &_binding, int reg) const {
@@ -36,7 +35,7 @@ void Return::passFunctionName(std::string _name, int _pos) {
   ((Program *)expression)->passFunctionName(_name, _pos);
 }
 
-void Return::passTypeBinding(TypeBinding &_typebind){
+void Return::passTypeBinding(TypeBinding &_typebind) {
   typebind = _typebind;
   ((Program *)expression)->passTypeBinding(_typebind);
 }
@@ -52,14 +51,13 @@ Continue::Continue() : Statement(0) {
 
 void Continue::print(std::ostream &dst, int indentation) const {
   printIndent(dst, indentation);
-  dst << "continue;";
+  dst << "continue";
 }
 
 int Continue::codeGen(const Binding &_binding, int reg) const {
   logger->info("generate code for Continue\n");
-  std::string loop_start =
-      "$L" + function_name + "_" + std::to_string(label * 2);
-  printf("\tb\t%s", loop_start.c_str());
+  int loop_start = label * 2;
+  printf("\tb\t$L%d", loop_start);
   printf("\t\t# \033[1;33m[CONTINUE]\033[0m jump to the start\n");
   printf("\tnop\n\n");
   return 0;
@@ -79,9 +77,7 @@ void Continue::passLabel(int _label) {
   label = _label;
 }
 
-void Continue::passTypeBinding(TypeBinding &_typebind){
-  
-}
+void Continue::passTypeBinding(TypeBinding &_typebind) {}
 ////////////////////////////////////////
 // Break
 ////////////////////////////////////////
@@ -93,14 +89,13 @@ Break::Break() : Statement(0) {
 
 void Break::print(std::ostream &dst, int indentation) const {
   printIndent(dst, indentation);
-  dst << "break;";
+  dst << "break";
 }
 
 int Break::codeGen(const Binding &_binding, int reg) const {
   logger->info("generate code for Break\n");
-  std::string loop_end =
-      "$L" + function_name + "_" + std::to_string(label * 2 + 1);
-  printf("\tb\t%s", loop_end.c_str());
+  int loop_end = label * 2 + 1;
+  printf("\tb\t$L%d", loop_end);
   printf("\t\t# \033[1;33m[BREAK]\033[0m jump to the end\n");
   printf("\tnop\n\n");
   return 0;
@@ -120,6 +115,4 @@ void Break::passLabel(int _label) {
   label = _label;
 }
 
-void Break::passTypeBinding(TypeBinding &_typebind){
-  
-}
+void Break::passTypeBinding(TypeBinding &_typebind) {}

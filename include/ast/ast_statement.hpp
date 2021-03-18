@@ -1,8 +1,6 @@
 #ifndef ast_statement_hpp
 #define ast_statement_hpp
 
-#include <map>
-
 #include "ast_program.hpp"
 
 ////////////////////////////////////////
@@ -198,6 +196,69 @@ class ForLoop : public Statement {
   void passFunctionName(std::string _name, int _pos) override;
   void passLabel(int _label) override;
   void passTypeBinding(TypeBinding &_typebind) override;
+};
+
+////////////////////////////////////////
+// Switch
+////////////////////////////////////////
+
+class Switch : public Statement {
+ private:
+  ProgramPtr cases;
+
+ public:
+  Switch(ProgramPtr _expression, ProgramPtr _cases, int _label);
+  int codeGen(const Binding &_binding, int reg) const override;
+  void print(std::ostream &dst, int indentation) const override;
+  int evaluate(const Binding &_binding) const override;
+  void bind(const Binding &_binding) override;
+  void passFunctionName(std::string _name, int _pos) override;
+  void passLabel(int _label) override;
+};
+
+////////////////////////////////////////
+// Case in Switch
+////////////////////////////////////////
+
+class Case : public Statement {
+ private:
+  int constant;
+  int isDefault = 0;
+  ProgramPtr statements;
+
+ public:
+  Case(ProgramPtr _statements);
+  Case(int _constant, ProgramPtr _statements);
+  int codeGen(const Binding &_binding, int reg) const override;
+  void print(std::ostream &dst, int indentation) const override;
+  int evaluate(const Binding &_binding) const override;
+  void bind(const Binding &_binding) override;
+  void passFunctionName(std::string _name, int _pos) override;
+  void passLabel(int _label) override;
+  int getConstant() const;
+  int getDefault() const;
+};
+
+////////////////////////////////////////
+// Cases in Switch
+////////////////////////////////////////
+
+class Cases : public Statement {
+ private:
+  int hasDefault = 0;
+  std::set<int> constants;
+  std::vector<ProgramPtr> cases;
+
+ public:
+  Cases();
+  void addCase(ProgramPtr _cases);
+  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(const Binding &_binding, int reg, int switch_expr_res) const;
+  void print(std::ostream &dst, int indentation) const override;
+  int evaluate(const Binding &_binding) const override;
+  void bind(const Binding &_binding) override;
+  void passFunctionName(std::string _name, int _pos) override;
+  void passLabel(int _label) override;
 };
 
 #endif
