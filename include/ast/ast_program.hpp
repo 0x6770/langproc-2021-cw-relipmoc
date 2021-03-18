@@ -12,6 +12,7 @@ class Program;
 
 typedef const Program *ProgramPtr;
 typedef std::map<std::string, int> Binding;  // map<string name, int pos>
+typedef std::map<std::string,std::string> TypeBinding; //  map<variable name, variable type>;
 
 void print_map(const Binding &_binding, std::string _name);
 
@@ -25,6 +26,14 @@ void print_map(const Binding &_binding, std::string _name);
 // pointer        P
 // break          b
 // continue       c
+// arrayelement   a
+// address of     *
+// increment post  1
+// increment pre 2
+// decrement post  3;
+// decrement pre  4
+
+
 
 class Program {
  protected:
@@ -32,7 +41,8 @@ class Program {
   int size;
   int pos;          // position of a variable or expression in stack frame
   int label = -1;   // used to control flow
-  Binding binding;  // variables binding
+  Binding binding;  // variables binding -- for position
+  TypeBinding typebind; // variables and type binding;
   std::string function_name;  // Every sub class should get the name of the
                               // function if the statement is declared globally:
                               // default value should be ~G;
@@ -56,5 +66,6 @@ class Program {
   void setLabel(int _label);
   virtual void passLabel(int _label);  // pass label to children so it could
                                        // be used in `continue` and `break`
+  virtual void passTypeBinding(TypeBinding &_typebind) = 0;
 };
 #endif

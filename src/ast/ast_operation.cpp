@@ -27,3 +27,9 @@ void Operation::passFunctionName(std::string _name, int _pos) {
   ((Program *)left)->passFunctionName(_name, _pos);
   ((Program *)right)->passFunctionName(_name, _pos);
 }
+
+void Operation::passTypeBinding(TypeBinding &_typebind){
+    typebind = _typebind;
+  ((Program*)left)->passTypeBinding(typebind); 
+  ((Program*)right)->passTypeBinding(typebind); 
+}

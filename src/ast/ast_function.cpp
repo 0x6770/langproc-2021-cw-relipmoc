@@ -77,14 +77,17 @@ int Function::codeGen(const Binding &_binding, int reg) const {
   logger->info("Build variable mapping in Function\n");
   Binding container;
   Binding temp;
+  TypeBinding variable_bind;
   // when the function has arguments up-to four
   if (with_param == 1) {
     temp = ((Paramlist *)Arguments)->return_bind(container, size);
     ((StatementList *)statements)->bind(temp);
+    ((Paramlist*)Arguments)->passTypeBinding(variable_bind);
   } else {
     ((StatementList *)statements)->bind(binding);
   }
 
+   ((Program *)statements)->passTypeBinding(variable_bind);
   // set labels for key words: `continue` and `break`
   ((StatementList *)statements)->passLabel(label);
 
@@ -133,6 +136,10 @@ void Function::passFunctionName(std::string _name, int _pos) {
   ((Program *)statements)->passFunctionName(_name, _pos);
 }
 
+void Function::passTypeBinding(TypeBinding &_typebind){
+  //((Program *)statements)->passTypeBinding(_typebind);
+}
+
 ////////////////////////////////////////
 ////////////////////////////////////////
 
@@ -163,16 +170,27 @@ void MultiFunction::bind(const Binding &_binding) {}
 
 void MultiFunction::passFunctionName(std::string _name, int _pos) {}
 
+void MultiFunction::passTypeBinding(TypeBinding &_typebind){
+  typebind = _typebind;
+}
+
+
 Param::Param(std::string _type, std::string _name) {
   logger->info("construct one parameter\n");
   type = _type;
   name = _name;
+  is_pointer = 0;
 }
 
 void Param::print(std::ostream &dst, int indentation) const {
   dst << type << " " << name << " ";
 }
-
+Param::Param(std::string _type, std::string _name, int _is_pointer){
+  logger->info("construct one parameter [Pointer]\n");
+    type = _type;
+  name = _name;
+  is_pointer = _is_pointer;
+}
 int Param::codeGen(const Binding &_binding, int reg) const {
   Binding temp = binding;
   std::string variable_name = name;
@@ -189,12 +207,28 @@ void Param::passFunctionName(std::string _name, int _pos) {}
 std::string Param::getName() { return name; }
 
 Binding Param::return_bind(Binding &_binding, int pos) {
+  //std::string p_name;
+  if(is_pointer ==1){
+    //p_name = "*" + name;
+    _binding[name] = pos;
+  }
+  else{
   _binding[name] = pos;
+  }
   binding = _binding;
   return _binding;
 }
 
 std::string Param::getType() { return type; }
+
+void Param::passTypeBinding(TypeBinding &_typebind){
+  _typebind[name] = type;
+  typebind = _typebind;
+}
+
+
+
+
 
 Paramlist::Paramlist() {
   // do nothing;
@@ -270,6 +304,20 @@ void Paramlist::passFunctionName(std::string _name, int _pos) {
   pos = pos + _pos;
 }
 
+
+void Paramlist::passTypeBinding(TypeBinding &_typebind){
+  for(auto it : parameters){
+  ((Param*)it)->passTypeBinding(_typebind);
+  }
+  typebind = _typebind;
+  /*for(auto it: _typebind ){
+    std::cout << it.first << " " << it.second << std::endl;
+  }
+    for(auto it: typebind ){
+    std::cout << it.first << " " << it.second << std::endl;
+  }*/
+}
+
 FunctionCall::FunctionCall(std::string _name, int _pos) {
   name = _name;
   pos = _pos;
@@ -316,6 +364,10 @@ void FunctionCall::bind(const Binding &_binding) {
 
 void FunctionCall::passFunctionName(std::string _name, int _pos) {
   pos = pos + _pos;
+}
+
+void FunctionCall::passTypeBinding(TypeBinding &_typebind){
+  
 }
 
 ExpressionList::ExpressionList(ProgramPtr _argument) {
@@ -369,6 +421,11 @@ void ExpressionList::passFunctionName(std::string _name, int _pos) {
   pos = pos + _pos;
 }
 
+
+void ExpressionList::passTypeBinding(TypeBinding &_typebind){
+  
+}
+
 FunctionDeclare::FunctionDeclare(std::string _name) { name = _name; }
 
 FunctionDeclare::FunctionDeclare(std::string _name, ProgramPtr _param_list) {
@@ -387,3 +444,8 @@ int FunctionDeclare::evaluate(const Binding &_binding) const { return 0; }
 void FunctionDeclare::bind(const Binding &_binding) {}
 
 void FunctionDeclare::passFunctionName(std::string _name, int _pos) {}
+
+
+void FunctionDeclare::passTypeBinding(TypeBinding &_typebind){
+  
+}

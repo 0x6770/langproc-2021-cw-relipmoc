@@ -27,6 +27,10 @@ void Integer::passFunctionName(std::string _name, int _pos) {
   pos = pos + _pos;
 }
 
+void Integer::passTypeBinding(TypeBinding &_typebind){
+  typebind = _typebind;
+}
+
 ////////////////////////////////////////
 // Variable
 ////////////////////////////////////////
@@ -49,6 +53,7 @@ int Variable::evaluate(const Binding &_binding) const {
 
 int Variable::codeGen(const Binding &_binding, int reg) const {
   logger->info("generate code for variable\n");
+  print_map(binding,"variable");
   if (binding.find(id) == binding.end()) {
     logger->error("\"%s\" has not been declared\n", id.c_str());
     exit(1);
@@ -73,4 +78,13 @@ void Variable::bind(const Binding &_binding) {
 void Variable::passFunctionName(std::string _name, int _pos) {
   pos = pos + _pos;
   function_name = _name;
+}
+
+void Variable::passTypeBinding(TypeBinding &_typebind){
+  typebind = _typebind;
+}
+
+// get the variable type
+std::string Variable::gettype(TypeBinding &_typebind) const{
+  return _typebind[id];
 }

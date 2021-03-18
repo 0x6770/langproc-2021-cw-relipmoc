@@ -30,6 +30,7 @@ class Function : public Program {
   int evaluate(const Binding &_binding) const override;
   virtual void bind(const Binding &_binding) override;
   virtual void passFunctionName(std::string _name, int _pos) override;
+  virtual void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 ////////////////////////////////////////
@@ -39,9 +40,11 @@ class Param : public Program {
  private:
   std::string type;
   std::string name;
+  int is_pointer;
 
  public:
   Param(std::string _type, std::string _name);
+  Param(std::string _type, std::string _name, int _is_pointer);
   void print(std::ostream &dst, int indentation) const override;
   int codeGen(const Binding &_binding, int reg) const override;
   int evaluate(const Binding &_binding) const override;
@@ -50,6 +53,7 @@ class Param : public Program {
   std::string getType();
   std::string getName();
   virtual void passFunctionName(std::string _name, int _pos) override;
+  virtual void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 ////////////////////////////////////////
@@ -70,6 +74,7 @@ class Paramlist : public Program {
   void add_argument(ProgramPtr argument);
   std::string get_type_string();
   virtual void passFunctionName(std::string _name, int _pos) override;
+  virtual void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 ////////////////////////////////////////
@@ -87,6 +92,7 @@ class MultiFunction : public Program {
   int evaluate(const Binding &_binding) const override;
   virtual void bind(const Binding &_binding) override;
   virtual void passFunctionName(std::string _name, int _pos) override;
+  virtual void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 ////////////////////////////////////////
@@ -110,6 +116,7 @@ class FunctionCall : public Program {
   int evaluate(const Binding &_binding) const override;
   virtual void bind(const Binding &_binding) override;
   virtual void passFunctionName(std::string _name, int _pos) override;
+  virtual void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 ////////////////////////////////////////
@@ -127,6 +134,7 @@ class ExpressionList : public Program {
   int evaluate(const Binding &_binding) const override;
   virtual void bind(const Binding &_binding) override;
   virtual void passFunctionName(std::string _name, int _pos) override;
+  virtual void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 // Function definition:
@@ -144,6 +152,7 @@ class FunctionDeclare : public Program {
   FunctionDeclare(std::string _name, ProgramPtr _param_list);
   virtual void passFunctionName(std::string _name, int _pos) override;
   FunctionDeclare(std::string _name);
+  virtual void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 #endif

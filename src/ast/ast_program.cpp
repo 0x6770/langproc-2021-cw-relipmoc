@@ -28,3 +28,4 @@ void Program::printIndent(std::ostream &dst, int &indentation) const {
 void Program::setLabel(int _label) { label = _label; }
 
 void Program::passLabel(int _label) {}
+

@@ -40,7 +40,15 @@ void Array::passFunctionName(std::string _name, int _pos) {
 
 uint32_t Array::getSize() { return size * 4; }
 
+
+
 std::string Array::getName() { return name; }
+
+void Array::passTypeBinding(TypeBinding &_typebind) {
+_typebind[name] = "array";
+typebind = _typebind;
+}
+
 
 ArrayElement::ArrayElement(ProgramPtr _left, std::string _name) {
   left = _left;
@@ -59,17 +67,22 @@ ArrayElement::ArrayElement(ProgramPtr _left, ProgramPtr _right,
 void ArrayElement::array_assignment(ProgramPtr _right) {
   right = _right;
   call = 1;
+  logger->info("construct array_elment");
 }
 
 void ArrayElement::print(std::ostream &dst, int indentation) const {}
 int ArrayElement::codeGen(const Binding &_binding, int reg) const {
   std::string temp = name + "_" + std::to_string(0);
-  int start_location = 0;
-  for (auto it : binding) {
+  //int start_location = 0;
+  /*for (auto it : binding) {
     if (it.first == temp) {
       start_location = it.second;
     }
-  }
+  }*/
+  TypeBinding var_binding = typebind;
+  Binding pos_bind = binding;
+  std::string variable_type = var_binding[name];
+  if(variable_type == "array"){
   left->codeGen(binding, 2);
   printf("\tsll\t$2,$2,2\n");
   printf("\taddiu\t$3,$fp,8\n");
@@ -82,10 +95,20 @@ int ArrayElement::codeGen(const Binding &_binding, int reg) const {
     printf("\tnop\n");
     printf("\tlw\t$%d,%d($2)\t# load an element in an array\n",reg, 4);
   }
+  }
+  if(variable_type == "pointer"){
+    left->codeGen(binding,2);
+    printf("\tsll\t$2,$2,2\n");
+    printf("\tlw\t$3,%d($fp)\n",pos_bind[name]);
+    printf("\tnop\n");
+    printf("\taddu\t$2,$2,$3\n");
+    printf("\tlw\t$%d,0($2)\n",reg);
+  }
 
   return 0;
 }
 int ArrayElement::evaluate(const Binding &_binding) const { return 0; }
+
 void ArrayElement::bind(const Binding &_binding) {
   binding = _binding;
   ((Program *)left)->bind(binding);
@@ -99,5 +122,15 @@ void ArrayElement::passFunctionName(std::string _name, int _pos) {
   ((Program *)left)->passFunctionName(_name, _pos);
   if (call == 1) {
     ((Program *)right)->passFunctionName(_name, _pos);
+  }
+}
+
+
+void ArrayElement::passTypeBinding(TypeBinding &_typebind){
+typebind = _typebind;
+  typebind = _typebind;
+  ((Program *)left)->passTypeBinding(_typebind);
+  if (call == 1) {
+    ((Program *)right)->passTypeBinding(_typebind);
   }
 }

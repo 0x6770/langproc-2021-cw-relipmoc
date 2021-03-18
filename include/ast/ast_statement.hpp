@@ -23,6 +23,7 @@ class Statement : public Program {
   ProgramPtr getExpression() const;
   virtual void passFunctionName(std::string _name, int _pos) override;
   virtual void passLabel(int _label) override;
+  virtual void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 ////////////////////////////////////////
@@ -36,6 +37,7 @@ class Return : public Statement {
   void print(std::ostream &dst, int indentation) const override;
   void bind(const Binding &_binding) override;
   void passFunctionName(std::string _name, int _pos) override;
+  void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 ////////////////////////////////////////
@@ -50,6 +52,7 @@ class Continue : public Statement {
   void bind(const Binding &_binding) override;
   void passFunctionName(std::string _name, int _pos) override;
   void passLabel(int _label) override;
+  void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 ////////////////////////////////////////
@@ -64,6 +67,7 @@ class Break : public Statement {
   void bind(const Binding &_binding) override;
   void passFunctionName(std::string _name, int _pos) override;
   void passLabel(int _label) override;
+  void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 ////////////////////////////////////////
@@ -74,6 +78,8 @@ class VarDeclare : public Statement {
  private:
   std::string var_type;
   std::string id;
+  ProgramPtr left;
+  int is_pointer;
 
  public:
   VarDeclare(std::string _var_type, std::string _id, ProgramPtr _expression,
@@ -83,6 +89,7 @@ class VarDeclare : public Statement {
   void bind(const Binding &_binding) override;
   std::string getId() const;
   void passFunctionName(std::string _name, int _pos) override;
+  void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 ////////////////////////////////////////
@@ -92,13 +99,17 @@ class VarDeclare : public Statement {
 class VarAssign : public Statement {
  private:
   std::string name;
+  ProgramPtr assign_left;
+  int with_left;
 
  public:
   VarAssign(std::string _name, ProgramPtr _expression);
+  VarAssign(ProgramPtr _left, ProgramPtr _expression);
   int codeGen(const Binding &_binding, int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   void bind(const Binding &_binding) override;
   void passFunctionName(std::string _name, int _pos) override;
+  void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 ////////////////////////////////////////
@@ -119,6 +130,7 @@ class StatementList : public Statement {
   void bind(const Binding &_binding) override;
   void passFunctionName(std::string _name, int _pos) override;
   void passLabel(int _label) override;
+  void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 ////////////////////////////////////////
@@ -140,6 +152,7 @@ class IfStatement : public Statement {
   void bind(const Binding &_binding) override;
   void passFunctionName(std::string _name, int _pos) override;
   void passLabel(int _label) override;
+  void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 ////////////////////////////////////////
@@ -159,6 +172,7 @@ class WhileLoop : public Statement {
   void bind(const Binding &_binding) override;
   void passFunctionName(std::string _name, int _pos) override;
   void passLabel(int _label) override;
+  void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 ////////////////////////////////////////
@@ -183,6 +197,7 @@ class ForLoop : public Statement {
   void bind(const Binding &_binding) override;
   void passFunctionName(std::string _name, int _pos) override;
   void passLabel(int _label) override;
+  void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 #endif

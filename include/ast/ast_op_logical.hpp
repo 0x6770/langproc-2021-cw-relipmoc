@@ -17,6 +17,7 @@ class LessEqual : public Operation {
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void passFunctionName(std::string _name, int _pos) override;
+  void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 ////////////////////////////////////////
@@ -33,6 +34,7 @@ class GreaterEqual : public Operation {
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void passFunctionName(std::string _name, int _pos) override;
+  void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 ////////////////////////////////////////
@@ -49,6 +51,7 @@ class Equal : public Operation {
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void passFunctionName(std::string _name, int _pos) override;
+  void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 ////////////////////////////////////////
@@ -62,6 +65,8 @@ class LogicalAnd : public Operation {
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void passFunctionName(std::string _name, int _pos) override;
+  void passTypeBinding(TypeBinding &_typebind) override;
+
 };
 
 ////////////////////////////////////////
@@ -75,6 +80,7 @@ class LogicalOr : public Operation {
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void passFunctionName(std::string _name, int _pos) override;
+  void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 #endif

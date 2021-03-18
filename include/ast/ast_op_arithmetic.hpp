@@ -14,6 +14,7 @@ class Addition : public Operation {
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void passFunctionName(std::string _name, int _pos) override;
+  virtual void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 ////////////////////////////////////////
@@ -27,6 +28,7 @@ class Subtraction : public Operation {
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void passFunctionName(std::string _name, int _pos) override;
+  virtual void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 ////////////////////////////////////////
@@ -40,6 +42,7 @@ class Multiplication : public Operation {
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void passFunctionName(std::string _name, int _pos) override;
+  virtual void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 ////////////////////////////////////////
@@ -53,6 +56,7 @@ class Division : public Operation {
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void passFunctionName(std::string _name, int _pos) override;
+  virtual void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 ////////////////////////////////////////
@@ -66,6 +70,7 @@ class Modulus : public Operation {
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void passFunctionName(std::string _name, int _pos) override;
+  virtual void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 ////////////////////////////////////////
@@ -79,6 +84,10 @@ class Negation : public Operation {
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void passFunctionName(std::string _name, int _pos) override;
+  virtual void passTypeBinding(TypeBinding &_typebind) override;
 };
+
+
+
 
 #endif

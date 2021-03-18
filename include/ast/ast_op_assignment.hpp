@@ -14,6 +14,7 @@ class AddEqual : public Operation {
   int evaluate(const Binding &_binding) const override;
   int codeGen(const Binding &_binding, int reg) const override;
   void passFunctionName(std::string _name, int _pos) override;
+  void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 ////////////////////////////////////////
@@ -27,6 +28,7 @@ class SubEqual : public Operation {
   int evaluate(const Binding &_binding) const override;
   int codeGen(const Binding &_binding, int reg) const override;
   void passFunctionName(std::string _name, int _pos) override;
+  void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 ////////////////////////////////////////
@@ -40,6 +42,7 @@ class MulEqual : public Operation {
   int evaluate(const Binding &_binding) const override;
   int codeGen(const Binding &_binding, int reg) const override;
   void passFunctionName(std::string _name, int _pos) override;
+  void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 ////////////////////////////////////////
@@ -53,6 +56,7 @@ class QuoEqual : public Operation {
   int evaluate(const Binding &_binding) const override;
   int codeGen(const Binding &_binding, int reg) const override;
   void passFunctionName(std::string _name, int _pos) override;
+  void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 ////////////////////////////////////////
@@ -66,6 +70,7 @@ class ModEqual : public Operation {
   int evaluate(const Binding &_binding) const override;
   int codeGen(const Binding &_binding, int reg) const override;
   void passFunctionName(std::string _name, int _pos) override;
+  void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 ////////////////////////////////////////
@@ -79,6 +84,7 @@ class ShiftEqual_L : public Operation {
   int evaluate(const Binding &_binding) const override;
   int codeGen(const Binding &_binding, int reg) const override;
   void passFunctionName(std::string _name, int _pos) override;
+  void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 ////////////////////////////////////////
@@ -92,6 +98,7 @@ class ShiftEqual_R : public Operation {
   int evaluate(const Binding &_binding) const override;
   int codeGen(const Binding &_binding, int reg) const override;
   void passFunctionName(std::string _name, int _pos) override;
+  void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 ////////////////////////////////////////
@@ -105,6 +112,7 @@ class BitwiseEqual_AND : public Operation {
   int evaluate(const Binding &_binding) const override;
   int codeGen(const Binding &_binding, int reg) const override;
   void passFunctionName(std::string _name, int _pos) override;
+  void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 ////////////////////////////////////////
@@ -118,6 +126,7 @@ class BitwiseEqual_OR : public Operation {
   int evaluate(const Binding &_binding) const override;
   int codeGen(const Binding &_binding, int reg) const override;
   void passFunctionName(std::string _name, int _pos) override;
+  void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 ////////////////////////////////////////
@@ -131,6 +140,7 @@ class BitwiseEqual_XOR : public Operation {
   int evaluate(const Binding &_binding) const override;
   int codeGen(const Binding &_binding, int reg) const override;
   void passFunctionName(std::string _name, int _pos) override;
+  void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 ////////////////////////////////////////
@@ -143,6 +153,7 @@ class Increment_Post : public Operation {
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void passFunctionName(std::string _name, int _pos) override;
+  void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 ////////////////////////////////////////
@@ -156,6 +167,7 @@ class Increment_Pre : public Operation {
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void passFunctionName(std::string _name, int _pos) override;
+  void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 ////////////////////////////////////////
@@ -169,6 +181,7 @@ class Decrement_Post : public Operation {
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void passFunctionName(std::string _name, int _pos) override;
+  void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 ////////////////////////////////////////
@@ -182,6 +195,7 @@ class Decrement_Pre : public Operation {
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void passFunctionName(std::string _name, int _pos) override;
+  void passTypeBinding(TypeBinding &_typebind) override;
 };
 
 #endif
