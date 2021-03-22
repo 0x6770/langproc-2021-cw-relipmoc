@@ -4,24 +4,6 @@
 #include "ast_program.hpp"
 
 
-
-class Pointer : public Program{
-    private: 
-    std::string type;
-    std::string name;
-public: 
-  Pointer(std::string _name,std::string _type, int _pos);
-  // assuming only int type for now: 
-  Pointer(std::string _name,int _pos);
-  void print(std::ostream &dst, int indentation) const override;
-  int codeGen(const Binding &_binding, int reg) const override;
-  int evaluate(const Binding &_binding) const override;
-  virtual void bind(const Binding &_binding) override;
-  virtual void passFunctionName(std::string _name, int _pos) override;
-  void passTypeBinding(TypeBinding &_typebind) override;
-};
-
-
 class AddressOf : public Program{
  private: 
     ProgramPtr left;
@@ -33,6 +15,7 @@ class AddressOf : public Program{
   virtual void bind(const Binding &_binding) override;
   virtual void passFunctionName(std::string _name, int _pos) override;
   void passTypeBinding(TypeBinding &_typebind) override;
+  std::string getVariableType() override;
 };
 
 class Dereference : public Program{
@@ -48,6 +31,7 @@ class Dereference : public Program{
   virtual void passFunctionName(std::string _name, int _pos) override;
   void passTypeBinding(TypeBinding &_typebind) override;
   void read(int _read);
+  std::string getVariableType() override;
 };
 
 #endif

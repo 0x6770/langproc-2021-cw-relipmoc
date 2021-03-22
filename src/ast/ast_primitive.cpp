@@ -31,6 +31,10 @@ void Integer::passTypeBinding(TypeBinding &_typebind){
   typebind = _typebind;
 }
 
+std::string Integer::getVariableType(){
+  return "int";
+}
+
 ////////////////////////////////////////
 // Variable
 ////////////////////////////////////////
@@ -88,3 +92,7 @@ void Variable::passTypeBinding(TypeBinding &_typebind){
 std::string Variable::gettype(TypeBinding &_typebind) const{
   return _typebind[id];
 }
+
+std::string Variable::getVariableType(){
+  return typebind[id];
+ }

@@ -25,5 +25,7 @@ extern int pos;    // position of a variable or expression result in stack frame
 extern int label;  // used to generate labels
 extern int call; 
 extern int number_argu;
+extern std::string int_type;
+extern std::string pointer_type;
 
 #endif

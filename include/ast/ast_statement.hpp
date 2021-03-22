@@ -24,6 +24,7 @@ class Statement : public Program {
   virtual void passFunctionName(std::string _name, int _pos) override;
   virtual void passLabel(int _label) override;
   virtual void passTypeBinding(TypeBinding &_typebind) override;
+  virtual std::string getVariableType() override;
 };
 
 ////////////////////////////////////////
@@ -38,6 +39,7 @@ class Return : public Statement {
   void bind(const Binding &_binding) override;
   void passFunctionName(std::string _name, int _pos) override;
   void passTypeBinding(TypeBinding &_typebind) override;
+  std::string getVariableType() override;
 };
 
 ////////////////////////////////////////
@@ -53,6 +55,7 @@ class Continue : public Statement {
   void passFunctionName(std::string _name, int _pos) override;
   void passLabel(int _label) override;
   void passTypeBinding(TypeBinding &_typebind) override;
+  std::string getVariableType() override;
 };
 
 ////////////////////////////////////////
@@ -68,6 +71,7 @@ class Break : public Statement {
   void passFunctionName(std::string _name, int _pos) override;
   void passLabel(int _label) override;
   void passTypeBinding(TypeBinding &_typebind) override;
+  std::string getVariableType() override;
 };
 
 ////////////////////////////////////////
@@ -90,6 +94,7 @@ class VarDeclare : public Statement {
   std::string getId() const;
   void passFunctionName(std::string _name, int _pos) override;
   void passTypeBinding(TypeBinding &_typebind) override;
+  std::string getVariableType() override;
 };
 
 ////////////////////////////////////////
@@ -110,6 +115,7 @@ class VarAssign : public Statement {
   void bind(const Binding &_binding) override;
   void passFunctionName(std::string _name, int _pos) override;
   void passTypeBinding(TypeBinding &_typebind) override;
+  std::string getVariableType() override;
 };
 
 ////////////////////////////////////////
@@ -131,6 +137,7 @@ class StatementList : public Statement {
   void passFunctionName(std::string _name, int _pos) override;
   void passLabel(int _label) override;
   void passTypeBinding(TypeBinding &_typebind) override;
+  std::string getVariableType() override;
 };
 
 ////////////////////////////////////////
@@ -153,6 +160,7 @@ class IfStatement : public Statement {
   void passFunctionName(std::string _name, int _pos) override;
   void passLabel(int _label) override;
   void passTypeBinding(TypeBinding &_typebind) override;
+  std::string getVariableType() override;
 };
 
 ////////////////////////////////////////
@@ -173,6 +181,7 @@ class WhileLoop : public Statement {
   void passFunctionName(std::string _name, int _pos) override;
   void passLabel(int _label) override;
   void passTypeBinding(TypeBinding &_typebind) override;
+  std::string getVariableType() override;
 };
 
 ////////////////////////////////////////
@@ -198,6 +207,7 @@ class ForLoop : public Statement {
   void passFunctionName(std::string _name, int _pos) override;
   void passLabel(int _label) override;
   void passTypeBinding(TypeBinding &_typebind) override;
+  virtual std::string getVariableType() override;
 };
 
 #endif

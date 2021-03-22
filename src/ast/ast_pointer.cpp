@@ -2,68 +2,33 @@
 
 ///////////////////////
 // Pointer
-//////////////////////
-
-Pointer::Pointer(std::string _name,std::string _type, int _pos){
-    name = _name;
-    type = _type;
-    node_type = 'P';
-    logger->info("Construct a Pointer\n");
-}
-
-Pointer::Pointer(std::string _name,int _pos){
-    name = _name;
-    node_type = 'P';
-    logger->info("Construct a Pointer\n");
-}
-
-void Pointer::print(std::ostream &dst, int indentation) const{
-
-}
-int Pointer::codeGen(const Binding &_binding, int reg) const{
-    printf("\tlw\t$%d,%d($fp)\t # Pointer %s Load\n",reg,binding.at(name),name.c_str());
-    return 0;
-}
-int Pointer::evaluate(const Binding &_binding) const{
-    return 0;
-}
-void Pointer::bind(const Binding &_binding){
-    binding = _binding; 
-}
-
-void Pointer::passFunctionName(std::string _name, int _pos) {
-  pos = pos + _pos;
-  function_name = _name;
-}
-
-void Pointer::passTypeBinding(TypeBinding &_typebind){
-  
-}
+///////////////////  
+// delete pointer class -- no use for now
 
 
-  AddressOf::AddressOf(ProgramPtr _expression, int _pos){
+AddressOf::AddressOf(ProgramPtr _expression, int _pos){
       left = _expression;
       pos = _pos;
   }
-  void AddressOf::print(std::ostream &dst, int indentation) const{
+void AddressOf::print(std::ostream &dst, int indentation) const{
         dst << "-";
         dst << "(";
         left->print(dst, indentation);
         dst << ")";
   }
-  int AddressOf::codeGen(const Binding &_binding, int reg) const{
+int AddressOf::codeGen(const Binding &_binding, int reg) const{
       //std::cout << "enter addressof " << std::endl;
       printf("\taddiu\t$%d,$fp,%d\n",reg,((Variable*)left)->getPos(binding));
       return 0;
   }
-  int AddressOf::evaluate(const Binding &_binding) const {
+int AddressOf::evaluate(const Binding &_binding) const {
       return 0;
   }
-  void AddressOf::bind(const Binding &_binding) {
+void AddressOf::bind(const Binding &_binding) {
       binding = _binding;
       ((Program*)left)->bind(binding);
   }
-  void AddressOf::passFunctionName(std::string _name, int _pos){
+void AddressOf::passFunctionName(std::string _name, int _pos){
   pos = pos + _pos;
   function_name = _name;
   }
@@ -71,6 +36,14 @@ void Pointer::passTypeBinding(TypeBinding &_typebind){
   void AddressOf::passTypeBinding(TypeBinding &_typebind){
   typebind = _typebind;
   ((Program*)left)->passTypeBinding(_typebind);
+}
+
+std::string AddressOf::getVariableType(){
+  std::string var_1 = ((Program*)left)->getVariableType();
+  if((var_1 == "int")){
+    return "int";
+  }
+  return "no type";
 }
 
 
@@ -113,4 +86,12 @@ void Pointer::passTypeBinding(TypeBinding &_typebind){
 
 void Dereference::read(int _read){
     is_write = _read;
+}
+
+std::string Dereference::getVariableType(){
+  std::string var_1 = ((Program*)left)->getVariableType();
+  if((var_1 == "int")){
+    return "int";
+  }
+  return "no type";
 }

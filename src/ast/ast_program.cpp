@@ -29,3 +29,4 @@ void Program::setLabel(int _label) { label = _label; }
 
 void Program::passLabel(int _label) {}
 
+std::string getVariableType(){return "default int";}

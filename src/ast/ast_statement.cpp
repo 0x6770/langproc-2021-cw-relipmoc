@@ -42,6 +42,10 @@ void Statement::passTypeBinding(TypeBinding &_typebind){
   ((Program *)expression)->passTypeBinding(_typebind);
 }
 
+std::string Statement::getVariableType(){
+  return "none for statements";
+}
+
 ////////////////////////////////////////
 // VarDeclare
 ////////////////////////////////////////
@@ -106,6 +110,9 @@ void VarDeclare::passTypeBinding(TypeBinding &_typebind){
   }
 }
 
+std::string VarDeclare::getVariableType(){
+  return "none for statements";
+}
 ////////////////////////////////////////
 // VarAssign
 ////////////////////////////////////////
@@ -188,6 +195,10 @@ void VarAssign::passTypeBinding(TypeBinding &_typebind){
     ((Program*)assign_left)->passTypeBinding(_typebind);
   }
   //std::cout << "finish assign variable" << std::endl;
+}
+
+std::string VarAssign::getVariableType(){
+  return "none for statements";
 }
 
 ////////////////////////////////////////
@@ -285,6 +296,10 @@ void StatementList::passTypeBinding(TypeBinding &_typebind){
   //for(auto it: _typebind ){
    // std::cout << it.first << " " << it.second << std::endl;
   //}
+}
+
+std::string StatementList::getVariableType(){
+  return "none for statements";
 }
 
 ////////////////////////////////////////
@@ -407,4 +422,8 @@ void IfStatement::passTypeBinding(TypeBinding &_typebind){
   ((Program *)if_statement)->passTypeBinding(_typebind);
   if (else_statement)
     ((Program *)else_statement)->passTypeBinding(_typebind);
+}
+
+std::string IfStatement::getVariableType(){
+  return "none for statements";
 }

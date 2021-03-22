@@ -140,6 +140,9 @@ void Function::passTypeBinding(TypeBinding &_typebind){
   //((Program *)statements)->passTypeBinding(_typebind);
 }
 
+std::string Function::getVariableType(){
+  return "none for statements";
+}
 ////////////////////////////////////////
 ////////////////////////////////////////
 
@@ -174,6 +177,9 @@ void MultiFunction::passTypeBinding(TypeBinding &_typebind){
   typebind = _typebind;
 }
 
+std::string MultiFunction::getVariableType(){
+  return "none for statements";
+}
 
 Param::Param(std::string _type, std::string _name) {
   logger->info("construct one parameter\n");
@@ -226,7 +232,9 @@ void Param::passTypeBinding(TypeBinding &_typebind){
   typebind = _typebind;
 }
 
-
+std::string Param::getVariableType(){
+  return "none for statements";
+}
 
 
 
@@ -318,6 +326,10 @@ void Paramlist::passTypeBinding(TypeBinding &_typebind){
   }*/
 }
 
+std::string Paramlist::getVariableType(){
+  return "none for statements";
+}
+
 FunctionCall::FunctionCall(std::string _name, int _pos) {
   name = _name;
   pos = _pos;
@@ -368,6 +380,9 @@ void FunctionCall::passFunctionName(std::string _name, int _pos) {
 
 void FunctionCall::passTypeBinding(TypeBinding &_typebind){
   
+}
+std::string FunctionCall::getVariableType(){
+  return "none for statements";
 }
 
 ExpressionList::ExpressionList(ProgramPtr _argument) {
@@ -421,10 +436,16 @@ void ExpressionList::passFunctionName(std::string _name, int _pos) {
   pos = pos + _pos;
 }
 
+std::string ExpressionList::getVariableType(){
+  return "none for statements";
+}
 
 void ExpressionList::passTypeBinding(TypeBinding &_typebind){
   
 }
+
+//////////////////////////////////////////////////////////////////////////////////////////
+
 
 FunctionDeclare::FunctionDeclare(std::string _name) { name = _name; }
 
@@ -449,3 +470,8 @@ void FunctionDeclare::passFunctionName(std::string _name, int _pos) {}
 void FunctionDeclare::passTypeBinding(TypeBinding &_typebind){
   
 }
+
+std::string FunctionDeclare::getVariableType(){
+  return "none for statements";
+}
+

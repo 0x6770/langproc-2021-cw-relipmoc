@@ -15,6 +15,7 @@ class Addition : public Operation {
   int evaluate(const Binding &_binding) const override;
   void passFunctionName(std::string _name, int _pos) override;
   virtual void passTypeBinding(TypeBinding &_typebind) override;
+  virtual std::string getVariableType() override;
 };
 
 ////////////////////////////////////////
@@ -29,6 +30,7 @@ class Subtraction : public Operation {
   int evaluate(const Binding &_binding) const override;
   void passFunctionName(std::string _name, int _pos) override;
   virtual void passTypeBinding(TypeBinding &_typebind) override;
+  virtual std::string getVariableType() override;
 };
 
 ////////////////////////////////////////
@@ -43,6 +45,7 @@ class Multiplication : public Operation {
   int evaluate(const Binding &_binding) const override;
   void passFunctionName(std::string _name, int _pos) override;
   virtual void passTypeBinding(TypeBinding &_typebind) override;
+  virtual std::string getVariableType() override;
 };
 
 ////////////////////////////////////////
@@ -57,6 +60,7 @@ class Division : public Operation {
   int evaluate(const Binding &_binding) const override;
   void passFunctionName(std::string _name, int _pos) override;
   virtual void passTypeBinding(TypeBinding &_typebind) override;
+  virtual std::string getVariableType() override;
 };
 
 ////////////////////////////////////////
@@ -71,6 +75,7 @@ class Modulus : public Operation {
   int evaluate(const Binding &_binding) const override;
   void passFunctionName(std::string _name, int _pos) override;
   virtual void passTypeBinding(TypeBinding &_typebind) override;
+  virtual std::string getVariableType() override;
 };
 
 ////////////////////////////////////////
@@ -85,6 +90,7 @@ class Negation : public Operation {
   int evaluate(const Binding &_binding) const override;
   void passFunctionName(std::string _name, int _pos) override;
   virtual void passTypeBinding(TypeBinding &_typebind) override;
+  virtual std::string getVariableType() override;
 };
 
 

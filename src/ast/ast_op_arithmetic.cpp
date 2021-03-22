@@ -33,21 +33,18 @@ int Addition::codeGen(const Binding &_binding, int reg) const {
     //std::cout << it.first << " " << it.second << std::endl;
   //}
   TypeBinding temp = typebind;
+  std::string var_type_left = ((Program*)left)->getVariableType();
+  std::string var_type_right = ((Program*)left)->getVariableType();
   if (left_type == 'i' || left_type == 'x' || left_type == 'a'){
     right->codeGen(binding, 3);
     // only shift for point arithemetic
-    if(left_type == 'x'){
-      if((((Variable*)left)->gettype(temp)) == "pointer"){
+    if(var_type_left == "pointer"){
         printf("\tsll\t$3,$3,2\n");
-      }
     }
     left->codeGen(binding, 2);
     // only shift for point arithemetic
-    if(right_type == 'x'){
-    if((((Variable*)right)->gettype(temp)) == "pointer"){
+    if(var_type_right == "pointer"){
         printf("\tsll\t$2,$2,2\n");
-      }
-    
     }
   } else {
     left->codeGen(binding, 2);
@@ -82,6 +79,15 @@ void Addition::passTypeBinding(TypeBinding &_typebind){
   typebind = _typebind;
   ((Program*)left)->passTypeBinding(typebind); 
   ((Program*)right)->passTypeBinding(typebind); 
+}
+
+std::string Addition::getVariableType(){
+  std::string var_1 = ((Program*)left)->getVariableType();
+  std::string var_2 = ((Program*)right)->getVariableType();
+  if((var_1 == "int")&& (var_2 == "int")){
+    return "int";
+  }
+  return "no type";
 }
 
 ////////////////////////////////////////
@@ -164,6 +170,15 @@ void Subtraction::passTypeBinding(TypeBinding &_typebind){
   ((Program*)right)->passTypeBinding(typebind); 
 }
 
+std::string Subtraction::getVariableType(){
+  std::string var_1 = ((Program*)left)->getVariableType();
+  std::string var_2 = ((Program*)right)->getVariableType();
+  if((var_1 == "int")&& (var_2 == "int")){
+    return "int";
+  }
+  return "no type";
+}
+
 ////////////////////////////////////////
 // Multiplication
 ////////////////////////////////////////
@@ -222,6 +237,14 @@ void Multiplication::passTypeBinding(TypeBinding &_typebind){
   ((Program*)right)->passTypeBinding(typebind); 
 }
 
+std::string Multiplication::getVariableType(){
+  std::string var_1 = ((Program*)left)->getVariableType();
+  std::string var_2 = ((Program*)right)->getVariableType();
+  if((var_1 == "int")&& (var_2 == "int")){
+    return "int";
+  }
+  return "no type";
+}
 ////////////////////////////////////////
 // Division
 ////////////////////////////////////////
@@ -278,6 +301,15 @@ void Division::passTypeBinding(TypeBinding &_typebind){
     typebind = _typebind;
   ((Program*)left)->passTypeBinding(typebind); 
   ((Program*)right)->passTypeBinding(typebind); 
+}
+
+std::string Division::getVariableType(){
+  std::string var_1 = ((Program*)left)->getVariableType();
+  std::string var_2 = ((Program*)right)->getVariableType();
+  if((var_1 == "int")&& (var_2 == "int")){
+    return "int";
+  }
+  return "no type";
 }
 ////////////////////////////////////////
 // Modulus
@@ -337,6 +369,15 @@ void Modulus::passTypeBinding(TypeBinding &_typebind){
   ((Program*)right)->passTypeBinding(typebind); 
 }
 
+std::string Modulus::getVariableType(){
+  std::string var_1 = ((Program*)left)->getVariableType();
+  std::string var_2 = ((Program*)right)->getVariableType();
+  if((var_1 == "int")&& (var_2 == "int")){
+    return "int";
+  }
+  return "no type";
+}
+
 ////////////////////////////////////////
 // Negation
 ////////////////////////////////////////
@@ -374,4 +415,12 @@ void Negation::passFunctionName(std::string _name, int _pos) {
 void Negation::passTypeBinding(TypeBinding &_typebind){
     typebind = _typebind; 
   ((Program*)right)->passTypeBinding(typebind); 
+}
+
+std::string Negation::getVariableType(){
+  std::string var_2 = ((Program*)right)->getVariableType();
+  if(var_2 == "int"){
+    return "int";
+  }
+  return "no type";
 }

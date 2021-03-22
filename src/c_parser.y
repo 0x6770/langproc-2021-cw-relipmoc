@@ -255,3 +255,5 @@ int pos = 0;
 int label = 0;
 int call = 0; // used to determine if a function is a function caller
 int number_argu = 0;
+//std::string int_type = "";
+//std::string pointer_type = "";

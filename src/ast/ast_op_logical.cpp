@@ -72,6 +72,15 @@ void LessEqual::passTypeBinding(TypeBinding &_typebind){
   ((Program*)left)->passTypeBinding(typebind); 
   ((Program*)right)->passTypeBinding(typebind); 
 }
+
+std::string LessEqual::getVariableType(){
+  std::string var_1 = ((Program*)left)->getVariableType();
+  std::string var_2 = ((Program*)right)->getVariableType();
+  if((var_1 == "int")&& (var_2 == "int")){
+    return "int";
+  }
+  return "no type";
+}
 ////////////////////////////////////////
 // GreaterEqual
 ////////////////////////////////////////
@@ -141,6 +150,15 @@ void GreaterEqual::passTypeBinding(TypeBinding &_typebind){
     typebind = _typebind;
   ((Program*)left)->passTypeBinding(typebind); 
   ((Program*)right)->passTypeBinding(typebind); 
+}
+
+std::string GreaterEqual::getVariableType(){
+  std::string var_1 = ((Program*)left)->getVariableType();
+  std::string var_2 = ((Program*)right)->getVariableType();
+  if((var_1 == "int")&& (var_2 == "int")){
+    return "int";
+  }
+  return "no type";
 }
 ////////////////////////////////////////
 // Equal
@@ -214,6 +232,15 @@ void Equal::passTypeBinding(TypeBinding &_typebind){
   ((Program*)left)->passTypeBinding(typebind); 
   ((Program*)right)->passTypeBinding(typebind); 
 }
+
+std::string Equal::getVariableType(){
+  std::string var_1 = ((Program*)left)->getVariableType();
+  std::string var_2 = ((Program*)right)->getVariableType();
+  if((var_1 == "int")&& (var_2 == "int")){
+    return "int";
+  }
+  return "no type";
+}
 ////////////////////////////////////////
 // LogicalAnd
 ////////////////////////////////////////
@@ -280,6 +307,15 @@ void LogicalAnd::passTypeBinding(TypeBinding &_typebind){
     typebind = _typebind;
   ((Program*)left)->passTypeBinding(typebind); 
   ((Program*)right)->passTypeBinding(typebind); 
+}
+
+std::string LogicalAnd::getVariableType(){
+  std::string var_1 = ((Program*)left)->getVariableType();
+  std::string var_2 = ((Program*)right)->getVariableType();
+  if((var_1 == "int")&& (var_2 == "int")){
+    return "int";
+  }
+  return "no type";
 }
 ////////////////////////////////////////
 // LogicalOr
@@ -351,4 +387,13 @@ void LogicalOr::passTypeBinding(TypeBinding &_typebind){
     typebind = _typebind;
   ((Program*)left)->passTypeBinding(typebind); 
   ((Program*)right)->passTypeBinding(typebind); 
+}
+
+std::string LogicalOr::getVariableType(){
+  std::string var_1 = ((Program*)left)->getVariableType();
+  std::string var_2 = ((Program*)right)->getVariableType();
+  if((var_1 == "int")&& (var_2 == "int")){
+    return "int";
+  }
+  return "no type";
 }

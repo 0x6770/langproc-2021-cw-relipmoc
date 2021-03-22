@@ -17,6 +17,7 @@ public:
   void passFunctionName(std::string _name, int _pos) override;
   virtual void passTypeBinding(TypeBinding &_typebind) override;
   virtual void bind(const Binding &_binding) override;
+  virtual std::string getVariableType() override;
 };
 
 #endif

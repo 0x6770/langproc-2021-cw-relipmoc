@@ -19,7 +19,10 @@
           if(((Program*)expression)->getType() == 'x'){
               TypeBinding local_bind = typebind;
               local_type = ((Variable*)expression)->gettype(local_bind);
-        }
+          }
+          else{
+              local_type = ((Program*)expression)->getVariableType();
+          }
       }
     if(local_type == "int")          printf("\tli\t$%d,%d\n",reg,4);
     if(local_type == "double")       printf("\tli\t$%d,%d\n",reg,8);
@@ -55,3 +58,9 @@
       }
   }
 
+std::string SizeOf::getVariableType(){
+    if(is_type == 0){
+        return ((Program*)expression)->getVariableType();
+    }
+    return "can't recognize type";
+}
