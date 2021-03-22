@@ -69,12 +69,42 @@ they are more complicated to handle when they appeared in the expression.
 | Milestone                                                    | Time(planed) | Time(Spent) | Contributor |
 | ------------------------------------------------------------ | ------------ | ----------- | ----------- |
 | Support locally declared arrays, reading and writing to an array element(local) | 3            | 4           | 2           |
-| Add For loop features                                        | 2            |             |             |
-| Add functions with more than five arguments                  | 2            |             |             |
-| Support multiple functions in the file                       | 2            |             |             |
-| Add `codeGen` for functions which call each other            | 5            |             |             |
-| Implement switch statements                                  | 4            |             |             |
-| Implement break and continue keywords                        | 4            |             |             |
-|                                                              |              |             |             |
-|                                                              |              |             |             |
+| Add For loop features                                        | 2            |     4        |      1       |
+| Add functions with more than five arguments                  | 2            |     2        |      1        |
+| Support multiple functions in the file                       | 2            |     3        |      2       |
+| Add `codeGen` for functions which call each other            | 5            |     5        |      2       |
+| Implement switch statements                                  | 4            |    progress to next week         |             |
+| Implement break and continue keywords                        | 4            |    progress to next week        |             |
 
+Conclusion: 
+Start working on multiple function in the inputs and locally declared arrays: the program now is able to pass: 
+
+* four tests in `array`
+* All tests in `funcitons`
+* All tests in `control_flow`
+
+The main taks for thie week is to deal with function calls within the functoin, and arguments in the functions. 
+More time spent on this because a lot of new classes are introduced, eg Param, Paramlist, FuncionCall etc. Therefore, it requires more time to debug.
+The plans for `switch`, `break`, `continue` are delayed to next week. 
+
+
+## Week 3 (March 15th to March 21th)
+
+| Milestone                                                    | Time(planed) | Time(Spent) | Contributor |
+| ------------------------------------------------------------ | ------------ | ----------- | ----------- |
+| Implement switch statements                                  | 4            |      5       |        1     |
+| Implement break and continue keywords                        | 4            |      7       |        1     |
+| Support  `pointer` arithmetics                                 | 5           |      6       |        2    |
+| Implement Dereferencing                                 | 3            |      3       |        2     |
+| Implement AddressOf                                | 3            |      3       |        2     |
+| Implement simple Sizeof                                 | 2           |      3       |        2     |
+
+Conclusion: 
+
+Most intermediate requirements are met, and part of the advanced features are able to work well, the program now is able to pass: 
+
+* All tests in `pointer`
+* All tests in `type`
+* switch tests in `misc
+
+`
