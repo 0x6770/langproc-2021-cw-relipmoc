@@ -691,9 +691,12 @@ void Increment_Post::passTypeBinding(TypeBinding &_typebind){
 }
 
 std::string Increment_Post::getVariableType(){
-  std::string var_2 = ((Program*)right)->getVariableType();
+  std::string var_2 = ((Program*)left)->getVariableType();
   if((var_2 == "int")){
     return "int";
+  }
+  else if(var_2 == "pointer"){
+    return "pointer";
   }
   return "no type";
 }
@@ -751,9 +754,12 @@ void Increment_Pre::passTypeBinding(TypeBinding &_typebind){
 }
 
 std::string Increment_Pre::getVariableType(){
-  std::string var_2 = ((Program*)right)->getVariableType();
+  std::string var_2 = ((Program*)left)->getVariableType();
   if((var_2 == "int")){
     return "int";
+  }
+    else if(var_2 == "pointer"){
+    return "pointer";
   }
   return "no type";
 }
@@ -814,9 +820,12 @@ void Decrement_Post::passTypeBinding(TypeBinding &_typebind){
   //((Program*)right)->passTypeBinding(typebind); 
 }
 std::string Decrement_Post::getVariableType(){
-  std::string var_2 = ((Program*)right)->getVariableType();
+  std::string var_2 = ((Program*)left)->getVariableType();
   if((var_2 == "int")){
     return "int";
+  }
+    else if(var_2 == "pointer"){
+    return "pointer";
   }
   return "no type";
 }
@@ -877,9 +886,12 @@ void Decrement_Pre::passTypeBinding(TypeBinding &_typebind){
 }
 
 std::string Decrement_Pre::getVariableType(){
-  std::string var_2 = ((Program*)right)->getVariableType();
+  std::string var_2 = ((Program*)left)->getVariableType();
   if((var_2 == "int")){
     return "int";
+  }
+    else if(var_2 == "pointer"){
+    return "pointer";
   }
   return "no type";
 }

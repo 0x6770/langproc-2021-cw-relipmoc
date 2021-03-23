@@ -34,9 +34,13 @@ int Addition::codeGen(const Binding &_binding, int reg) const {
   //}
   TypeBinding temp = typebind;
   std::string var_type_left = ((Program*)left)->getVariableType();
-  std::string var_type_right = ((Program*)left)->getVariableType();
+  std::string var_type_right = ((Program*)right)->getVariableType();
+  //std::cout << "the variable type in addition" << var_type_left << " " << var_type_right << std::endl;
   if (left_type == 'i' || left_type == 'x' || left_type == 'a'){
-    right->codeGen(binding, 3);
+    if(var_type_right == "float") { right->codeGen(binding, 0); }
+    else{
+      right->codeGen(binding, 3);
+    }
     // only shift for point arithemetic
     if(var_type_left == "pointer"){
         printf("\tsll\t$3,$3,2\n");
@@ -49,12 +53,16 @@ int Addition::codeGen(const Binding &_binding, int reg) const {
   } else {
     left->codeGen(binding, 2);
     // only shift for point arithemetic
-    if(right_type == 'x'){
-    if((((Variable*)right)->gettype(temp)) == "pointer"){
+    if(var_type_right == "pointer"){
         printf("\tsll\t$2,$2,2\n");
-      }
     }
-    right->codeGen(binding, 3);
+    if(var_type_right == "float") { right->codeGen(binding, 0); }
+    else{
+      right->codeGen(binding, 3);
+    }
+    if(var_type_left == "pointer"){
+        printf("\tsll\t$3,$3,2\n");
+    }
   }
 
   if (!((left_type == 'i') | (left_type == 'x') || (left_type == 'a')))
@@ -62,8 +70,15 @@ int Addition::codeGen(const Binding &_binding, int reg) const {
   if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
     printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
 
-  printf("\tadd\t$2,$2,$3\n");
-  printf("\tsw\t$2,%d($fp)\t# store result of addition\n", pos);
+
+  if(var_type_left == "float" && var_type_right == "float"){
+    printf("\tadd.s\t$f0,$f2,$f0\n");
+    printf("\tswc1\t$f0,%d($fp)\t# store result of addition\n", pos);
+  }
+  else{ 
+    printf("\tadd\t$2,$2,$3\n");
+    printf("\tsw\t$2,%d($fp)\t# store result of addition\n", pos);
+  }
 
   return 0;
 }
@@ -86,6 +101,8 @@ std::string Addition::getVariableType(){
   std::string var_2 = ((Program*)right)->getVariableType();
   if((var_1 == "int")&& (var_2 == "int")){
     return "int";
+  }else if((var_1 == "pointer") || (var_2 == "pointer")){
+    return "pointer";
   }
   return "no type";
 }
@@ -120,30 +137,35 @@ int Subtraction::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
   TypeBinding temp = typebind;
+  std::string var_type_left = ((Program*)left)->getVariableType();
+  std::string var_type_right = ((Program*)right)->getVariableType();
   if (left_type == 'i' || left_type == 'x' || left_type == 'a'){
-    right->codeGen(binding,3);
+    if(var_type_right == "float") { right->codeGen(binding, 0); }
+    else{
+      right->codeGen(binding, 3);
+    }
     // only shift for point arithemetic
-    if(left_type == 'x'){
-      if((((Variable*)left)->gettype(temp)) == "pointer"){
+    if(var_type_left == "pointer"){
         printf("\tsll\t$3,$3,2\n");
-      }
     }
     left->codeGen(binding, 2);
     // only shift for point arithemetic
-    if(right_type == 'x'){
-    if((((Variable*)right)->gettype(temp)) == "pointer"){
+    if(var_type_right == "pointer"){
         printf("\tsll\t$2,$2,2\n");
-      }
     }
   } else {
     left->codeGen(binding, 2);
     // only shift for point arithemetic
-    if(right_type == 'x'){
-    if((((Variable*)right)->gettype(temp)) == "pointer"){
+    if(var_type_right == "pointer"){
         printf("\tsll\t$2,$2,2\n");
-      }
     }
-    right->codeGen(binding, 3);
+    if(var_type_right == "float") { right->codeGen(binding, 0); }
+    else{
+      right->codeGen(binding, 3);
+    }
+    if(var_type_left == "pointer"){
+        printf("\tsll\t$3,$3,2\n");
+    }
   }
 
   if (!((left_type == 'i') | (left_type == 'x') || (left_type == 'a')))
@@ -151,8 +173,14 @@ int Subtraction::codeGen(const Binding &_binding, int reg) const {
   if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
     printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
 
-  printf("\tsub\t$2,$2,$3\n");
-  printf("\tsw\t$2,%d($fp)\t# store result of subtraction\n", pos);
+  if(var_type_left == "float" && var_type_right == "float"){
+    printf("\tsub.s\t$f0,$f2,$f0\n");
+    printf("\tswc1\t$f0,%d($fp)\t# store result of addition\n", pos);
+  }
+  else{ 
+    printf("\tsub\t$2,$2,$3\n");
+    printf("\tsw\t$2,%d($fp)\t# store result of addition\n", pos);
+  }
 
   return 0;
 }

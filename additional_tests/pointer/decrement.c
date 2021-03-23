@@ -1,6 +1,7 @@
 int f(int *p)
 {   
     p--;
-    p = p+2;
+    p++;
+    p++;
     return *p;
 }

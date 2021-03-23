@@ -185,6 +185,7 @@ Param::Param(std::string _type, std::string _name) {
   logger->info("construct one parameter\n");
   type = _type;
   name = _name;
+  //std::cout << "the variable type in Param" << var_1 << " " << var_2 << std::endl;
   is_pointer = 0;
 }
 
@@ -200,7 +201,13 @@ Param::Param(std::string _type, std::string _name, int _is_pointer){
 int Param::codeGen(const Binding &_binding, int reg) const {
   Binding temp = binding;
   std::string variable_name = name;
-  printf("\tsw\t$%d,%d($fp)\n", reg, temp[variable_name]);
+  //std::cout << "entered here"<< std::endl;
+  if(type == "int"){
+    printf("\tsw\t$%d,%d($fp)\n", reg, temp[variable_name]);
+  }
+  else if(type == "float"){
+    printf("\tswc1\t$f%d,%d($fp)\n",reg*2+4,temp[variable_name]);
+  }
   return 0;
 }
 
