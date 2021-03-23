@@ -29,15 +29,16 @@
 %token T_CHAR T_STRING
 %token T_UNSIGNED T_STRUCT T_TYPEDEF T_SIZEOF T_ENUM
 %token T_INT_VALUE T_FLOAT_VALUE T_DOUBLE_VALUE T_CHAR_VALUE
-%token T_WHILE T_FOR T_SWITCH T_IF T_ELSE T_BREAK T_CONTINUE T_CASE
+%token T_WHILE T_FOR T_SWITCH T_IF T_ELSE T_BREAK T_CONTINUE T_CASE T_DEFAULT 
 %token T_COMMA
 
 %type <program> program function term unary factor expr add_sub shift_operator relational
 %type <program> relational_equal bitwise_and bitwise_xor bitwise_or logical_and param_list param
-%type <program> stmt stmt_list loop assignment control_flow_if multiple_function keyword
+%type <program> stmt stmt_list loop assignment if multiple_function keyword
 %type <program> update_expr test_expr init_expr
 %type <program> unary_postfix prefix_increment prefix_decrement unary_plus unary_minus
 %type <program> array_declare expression_list function_call function_define
+%type <program> case case_list switch
 %type <integer> T_INT_VALUE
 %type <string> type T_NAME T_INT T_CHAR T_UNSIGNED T_FLOAT
 
@@ -73,30 +74,37 @@ param_list : param                     { $$ = new Paramlist($1); }
            | param_list T_COMMA param  { ((Paramlist*)$$)->add_argument($3); }
            ;
 
+
 param : type T_NAME       { $$ = new Param(*$1,*$2,0); }
       | type '*' T_NAME   { $$ = new Param("pointer",*$3,1);}
       ;
 
-  /*switch : T_SWITCH '('  ')'*/
+switch : T_SWITCH '(' assignment ')' '{' case_list '}'  { $$ = new Switch($3, $6, label++); }
+       ;
 
-  /*case : T_CASE T_INT ':' stmt_list  { $$ = new Case($2, $4); }*/
-       /*| T_DEFAULT ':' stmt_list     { $$ = new Case(0, $3); }*/
-       /*;*/
+case : T_CASE T_INT_VALUE ':' stmt_list  { $$ = new Case($2, $4); }
+     | T_DEFAULT ':' stmt_list           { $$ = new Case($3); }
+     ;
+
+case_list : %empty          { $$ = new Cases(); }
+          | case_list case  { ((Cases *)$1)->addCase($2); $$ = $1; }
+          ;
 
 stmt_list : %empty          { $$ = new StatementList(); }
           | stmt_list stmt  { ((StatementList *)$1)->addStatement($2); $$ = $1; }
           ;
 
-stmt : control_flow_if                 { $$ = $1; }
-     | assignment ';'                  { $$ = $1; }
-     | type T_NAME ';'                 { $$ = new VarDeclare(*$1, *$2, 0, getPos(4)); delete $1; delete $2; }
-     | type T_NAME '=' assignment ';'  { $$ = new VarDeclare(*$1, *$2, $4, getPos(4)); delete $1; delete $2; }
-     | type '*' T_NAME ';'             { $$ = new VarDeclare("pointer", *$3, 0, getPos(4)); delete $1; delete $3; }
+stmt : if                                  { $$ = $1; }
+     | switch                              { $$ = $1; }
+     | assignment ';'                      { $$ = $1; }
+     | type T_NAME ';'                     { $$ = new VarDeclare(*$1, *$2, 0, getPos(4)); delete $1; delete $2; }
+     | type T_NAME '=' assignment ';'      { $$ = new VarDeclare(*$1, *$2, $4, getPos(4)); delete $1; delete $2; }
+     | type '*' T_NAME ';'                 { $$ = new VarDeclare("pointer", *$3, 0, getPos(4)); delete $1; delete $3; }
      | type '*' T_NAME '=' assignment ';'  { $$ = new VarDeclare("pointer", *$3, $5, getPos(4)); delete $1; delete $3; }
-     | keyword                         { $$ = $1; }
-     | loop                            { $$ = $1; }
-     | '{' stmt_list '}'               { $$ = $2; }
-     | array_declare                   { $$ = $1; }
+     | keyword                             { $$ = $1; }
+     | loop                                { $$ = $1; }
+     | '{' stmt_list '}'                   { $$ = $2; }
+     | array_declare                       { $$ = $1; }
      ;
 
 array_declare : type T_NAME '[' T_INT_VALUE ']' ';'  { $$ = new Array(*$1, $4, *$2, getPos(4)); pos+=(4*($4-1)); delete $1; delete $2; }
@@ -111,10 +119,10 @@ loop : T_WHILE '(' assignment ')' '{' stmt_list '}'                     { $$ = n
      | T_FOR '(' init_expr test_expr update_expr ')' '{' stmt_list '}'  { $$ = new ForLoop($3, $4, $5, $8, label++); }
      ;
 
-init_expr : test_expr                       { $$ = $1; }
-          | type T_NAME ';'                 { $$ = new VarDeclare(*$1, *$2, 0, getPos(4)); delete $1; delete $2; }
-          | type T_NAME '=' assignment ';'  { $$ = new VarDeclare(*$1, *$2, $4, getPos(4)); delete $1; delete $2; }
-          | type '*' T_NAME ';'             { $$ = new VarDeclare(*$1, *$3, 0, getPos(4)); delete $1; delete $3; }
+init_expr : test_expr                           { $$ = $1; }
+          | type T_NAME ';'                     { $$ = new VarDeclare(*$1, *$2, 0, getPos(4)); delete $1; delete $2; }
+          | type T_NAME '=' assignment ';'      { $$ = new VarDeclare(*$1, *$2, $4, getPos(4)); delete $1; delete $2; }
+          | type '*' T_NAME ';'                 { $$ = new VarDeclare(*$1, *$3, 0, getPos(4)); delete $1; delete $3; }
           | type '*' T_NAME '=' assignment ';'  { $$ = new VarDeclare(*$1, *$3, $5, getPos(4)); delete $1; delete $3; }
           ;
 
@@ -125,16 +133,14 @@ update_expr : %empty      { $$ = 0; }
             | assignment  { $$ = $1; }
             ;
 
-control_flow_if : T_IF '(' expr ')' stmt              { $$ = new IfStatement($3, $5, 0, label++); }
-                | T_IF '(' expr ')' stmt T_ELSE stmt  { $$ = new IfStatement($3, $5, $7, label++); }
-                ;
+if : T_IF '(' assignment ')' stmt              { $$ = new IfStatement($3, $5, 0, label++); }
+   | T_IF '(' assignment ')' stmt T_ELSE stmt  { $$ = new IfStatement($3, $5, $7, label++); }
+   ;
 
 assignment : expr                                  { $$ = $1; }
            | T_NAME '=' assignment                 { $$ = new VarAssign(*$1, $3); }
-           | '*' factor '=' assignment             { Program *temp = new Dereference($2,getPos(4)); 
-                                                     $$ = new VarAssign(temp,$4);                                     
-                                                     }
-           | unary_postfix '=' assignment          { ((ArrayElement*)$1)->array_assignment($3); $$ = $1;}
+           | '*' factor '=' assignment             { Program *temp = new Dereference($2, getPos(4)); $$ = new VarAssign(temp, $4); }
+           | unary_postfix '=' assignment          { ((ArrayElement*)$1)->array_assignment($3); $$ = $1; }
            | factor T_ADDEQUAL assignment          { $$ = new AddEqual($1, $3, getPos(4)); }
            | factor T_SUBEQUAL assignment          { $$ = new SubEqual($1, $3, getPos(4)); }
            | factor T_MULEQUAL assignment          { $$ = new MulEqual($1, $3, getPos(4)); }
@@ -163,7 +169,7 @@ bitwise_xor : bitwise_and                  { $$ = $1; }
             | bitwise_xor '^' bitwise_and  { $$ = new BitwiseXor($1, $3, getPos(4)); }
             ;
 
-bitwise_and : relational_equal                  { $$ = $1;}
+bitwise_and : relational_equal                  { $$ = $1; }
             | bitwise_and '&' relational_equal  { $$ = new BitwiseAnd($1, $3, getPos(4)); }
             ;
 
@@ -172,14 +178,14 @@ relational_equal : relational                                   { $$ = $1;}
                  | relational_equal T_NOT_EQUAL shift_operator  { $$ = new Equal($1, $3, getPos(4), 1); }
                  ;
 
-relational : shift_operator                             { $$ = $1;}
+relational : shift_operator                             { $$ = $1; }
            | shift_operator T_LESS_E shift_operator     { $$ = new LessEqual($1, $3, getPos(4), 1); }
            | shift_operator T_LESS shift_operator       { $$ = new LessEqual($1, $3, getPos(4), 0); }
            | shift_operator T_GREATER_E shift_operator  { $$ = new GreaterEqual($1, $3, getPos(4), 1); }
            | shift_operator T_GREATER shift_operator    { $$ = new GreaterEqual($1, $3, getPos(4), 0); }
            ;
 
-shift_operator : add_sub                           { $$ = $1;}
+shift_operator : add_sub                           { $$ = $1; }
                | shift_operator T_SHIFT_L add_sub  { $$ = new ShiftLeft($1, $3, getPos(4)); }
                | shift_operator T_SHIFT_R add_sub  { $$ = new ShiftRight($1, $3, getPos(4)); }
                ;
@@ -195,15 +201,15 @@ term : unary           { $$ = $1; }
      | term '%' unary  { $$ = new Modulus($1, $3, getPos(4)); }
      ;
 
-unary : prefix_increment      { $$ = $1; }
-      | prefix_decrement      { $$ = $1; }
-      | unary_postfix         { $$ = $1; }
-      | unary_minus           { $$ = $1; }
-      | unary_plus            { $$ = $1; }
-      | '&' factor          { $$ = new AddressOf($2,getPos(4)); }
-      | '*' factor         { $$ = new Dereference($2,getPos(4));}
-      | T_SIZEOF '(' expr ')'   { $$ = new SizeOf($3);}
-      | T_SIZEOF '(' type ')'   { $$ = new SizeOf(*$3); }
+unary : prefix_increment       { $$ = $1; }
+      | prefix_decrement       { $$ = $1; }
+      | unary_postfix          { $$ = $1; }
+      | unary_minus            { $$ = $1; }
+      | unary_plus             { $$ = $1; }
+      | '&' factor             { $$ = new AddressOf($2,getPos(4)); }
+      | '*' factor             { $$ = new Dereference($2,getPos(4)); }
+      | T_SIZEOF '(' expr ')'  { $$ = new SizeOf($3); }
+      | T_SIZEOF '(' type ')'  { $$ = new SizeOf(*$3); }
       ;
 
 unary_minus : '-' unary_postfix     { $$ = new Negation($2, getPos(4)); }

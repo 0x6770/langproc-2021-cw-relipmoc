@@ -14,17 +14,17 @@ class Function : public Program {
   std::string name;
   Binding binding;  // for parameters
   ProgramPtr statements;
-  ProgramPtr Arguments;
+  ProgramPtr arguments;
   int with_param;
   int with_function_call = 0;
   int is_define = 0;
-  int argu_size;
+  int arg_size;
 
  public:
   Function(std::string _type, std::string _name, ProgramPtr _statements,
-           int _pos, int _call, int _argu_number);
+           int _pos, int _call, int _arg_size);
   Function(std::string _type, std::string _name, ProgramPtr _statements,
-           ProgramPtr _Arguments, int _pos, int _call, int _argu_number);
+           ProgramPtr _arguments, int _pos, int _call, int _arg_size);
   void print(std::ostream &dst, int indentation) const override;
   int codeGen(const Binding &_binding, int reg) const override;
   int evaluate(const Binding &_binding) const override;
@@ -67,13 +67,13 @@ class Paramlist : public Program {
 
  public:
   Paramlist();
-  Paramlist(ProgramPtr argument);
+  Paramlist(ProgramPtr _argument);
   void print(std::ostream &dst, int indentation) const override;
   int codeGen(const Binding &_binding, int reg) const override;
   int evaluate(const Binding &_binding) const override;
   virtual void bind(const Binding &_binding) override;
   Binding return_bind(const Binding &_binding, int _pos);
-  void add_argument(ProgramPtr argument);
+  void add_argument(ProgramPtr _argument);
   std::string get_type_string();
   virtual void passFunctionName(std::string _name, int _pos) override;
   virtual void passTypeBinding(TypeBinding &_typebind) override;
@@ -107,14 +107,14 @@ class MultiFunction : public Program {
 class FunctionCall : public Program {
  private:
   std::string name;
-  ProgramPtr expression_list;
+  ProgramPtr arguments;
   int with_argument = 0;
 
  public:
   // function calls without arguments:
   FunctionCall(std::string _name, int _pos);
   FunctionCall(std::string _name, ProgramPtr _argument, int _pos);
-  void add_Arguments(ProgramPtr _Argument);
+  void add_argument(ProgramPtr _argument);
   void print(std::ostream &dst, int indentation) const override;
   int codeGen(const Binding &_binding, int reg) const override;
   int evaluate(const Binding &_binding) const override;

@@ -25,8 +25,6 @@ void Program::printIndent(std::ostream &dst, int &indentation) const {
   dst << indent_space;
 }
 
-void Program::setLabel(int _label) { label = _label; }
-
 void Program::passLabel(int _label) {}
 
 std::string getVariableType(){return "default int";}
