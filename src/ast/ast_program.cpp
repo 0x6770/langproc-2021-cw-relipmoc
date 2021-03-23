@@ -27,3 +27,4 @@ void Program::printIndent(std::ostream &dst, int &indentation) const {
 
 void Program::passLabel(int _label) {}
 
+std::string getVariableType(){return "default int";}

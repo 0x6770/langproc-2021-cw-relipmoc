@@ -40,6 +40,10 @@ void Return::passTypeBinding(TypeBinding &_typebind) {
   ((Program *)expression)->passTypeBinding(_typebind);
 }
 
+std::string Return::getVariableType(){
+  return "none for statements";
+}
+
 ////////////////////////////////////////
 // Continue
 ////////////////////////////////////////
@@ -77,7 +81,14 @@ void Continue::passLabel(int _label) {
   label = _label;
 }
 
-void Continue::passTypeBinding(TypeBinding &_typebind) {}
+
+void Continue::passTypeBinding(TypeBinding &_typebind){
+  
+}
+
+std::string Continue::getVariableType(){
+  return "none for statements";
+}
 ////////////////////////////////////////
 // Break
 ////////////////////////////////////////
@@ -115,4 +126,11 @@ void Break::passLabel(int _label) {
   label = _label;
 }
 
-void Break::passTypeBinding(TypeBinding &_typebind) {}
+
+void Break::passTypeBinding(TypeBinding &_typebind){
+  
+}
+
+std::string Break::getVariableType(){
+  return "none for statements";
+}

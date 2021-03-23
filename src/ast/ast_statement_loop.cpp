@@ -92,6 +92,10 @@ void WhileLoop::passTypeBinding(TypeBinding &_typebind) {
   if (statement_list) ((Statement *)statement_list)->passTypeBinding(_typebind);
 }
 
+std::string WhileLoop::getVariableType(){
+  return "none for statements";
+}
+
 ////////////////////////////////////////
 // For Loop
 // init_expr → test_expr → body
@@ -197,6 +201,10 @@ void ForLoop::passLabel(int _label) {
   }
 }
 
+
+std::string ForLoop::getVariableType(){
+  return "none for statements";
+}
 void ForLoop::passTypeBinding(TypeBinding &_typebind) {
   typebind = _typebind;
   if (init_expr) ((Program *)init_expr)->passTypeBinding(_typebind);

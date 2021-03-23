@@ -21,6 +21,7 @@ class Integer : public Program {
   void bind(const Binding &_binding) override;
   void passFunctionName(std::string _name, int _pos) override;
   virtual void passTypeBinding(TypeBinding &_typebind) override;
+  virtual std::string getVariableType() override;
 };
 
 ///////////////////////////////////////////
@@ -39,6 +40,7 @@ class Char : public Program {
   void bind(const Binding &_binding) override;
   void passFunctionName(std::string _name, int _pos) override;
   virtual void passTypeBinding(TypeBinding &_typebind) override;
+  virtual std::string getVariableType() override;
 };
 
 ////////////////////////////////////////
@@ -61,6 +63,7 @@ class Variable : public Program {
   void passFunctionName(std::string _name, int _pos) override;
   virtual void passTypeBinding(TypeBinding &_typebind) override;
   std::string gettype(TypeBinding &_typebind) const;
+  virtual std::string getVariableType() override;
 };
 
 #endif

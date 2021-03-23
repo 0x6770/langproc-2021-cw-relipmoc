@@ -47,6 +47,7 @@ class Program {
   std::string function_name;  // Every sub class should get the name of the
                               // function if the statement is declared globally:
                               // default value should be ~G;
+  std::string variable_type;
 
  public:
   virtual ~Program() {}
@@ -67,5 +68,6 @@ class Program {
   virtual void passLabel(int _label);  // pass label to children so it could
                                        // be used in `continue` and `break`
   virtual void passTypeBinding(TypeBinding &_typebind) = 0;
+  virtual std::string getVariableType() = 0;
 };
 #endif

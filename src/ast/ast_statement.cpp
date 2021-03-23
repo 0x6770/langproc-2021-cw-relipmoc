@@ -41,6 +41,10 @@ void Statement::passTypeBinding(TypeBinding &_typebind) {
   ((Program *)expression)->passTypeBinding(_typebind);
 }
 
+std::string Statement::getVariableType(){
+  return "none for statements";
+}
+
 ////////////////////////////////////////
 // VarDeclare
 ////////////////////////////////////////
@@ -103,6 +107,9 @@ void VarDeclare::passTypeBinding(TypeBinding &_typebind) {
   }
 }
 
+std::string VarDeclare::getVariableType(){
+  return "none for statements";
+}
 ////////////////////////////////////////
 // VarAssign
 ////////////////////////////////////////
@@ -184,6 +191,10 @@ void VarAssign::passTypeBinding(TypeBinding &_typebind) {
     ((Program *)assign_left)->passTypeBinding(_typebind);
   }
   // std::cout << "finish assign variable" << std::endl;
+}
+
+std::string VarAssign::getVariableType(){
+  return "none for statements";
 }
 
 ////////////////////////////////////////
@@ -281,4 +292,135 @@ void StatementList::passTypeBinding(TypeBinding &_typebind) {
   // for(auto it: _typebind ){
   //  std::cout << it.first << " " << it.second << std::endl;
   //}
+}
+
+
+std::string StatementList::getVariableType(){
+  return "none for statements";
+}
+
+////////////////////////////////////////
+// IfStatement
+////////////////////////////////////////
+
+IfStatement::IfStatement(ProgramPtr _condition, ProgramPtr _if_statement,
+                         ProgramPtr _else_statement, int _label)
+    : Statement(0),
+      condition(_condition),
+      if_statement(_if_statement),
+      else_statement(_else_statement) {
+  setLabel(_label);
+  if (!condition) {
+    logger->error("expected expression\t");
+    print(std::cerr, 1);
+    exit(1);
+  }
+}
+
+void IfStatement::print(std::ostream &dst, int indentation) const {
+  printIndent(dst, indentation);
+  dst << "if (";
+  condition->print(dst, 0);
+  dst << ")";
+  if (if_statement) {
+    dst << " {\n";
+    if_statement->print(dst, indentation);
+    printIndent(dst, --indentation);
+    dst << "}";
+  }
+  if (else_statement) {
+    dst << " else {\n";
+    else_statement->print(dst, indentation);
+    printIndent(dst, --indentation);
+    dst << "}";
+  }
+  dst << "";
+}
+
+int IfStatement::evaluate(const Binding &_binding) const { return 0; }
+
+int IfStatement::codeGen(const Binding &_binding, int reg) const {
+  int random_id = rand() % 10000;
+  int label_end = label * 2;
+  int label_else_statement = label * 2 + 1;
+  std::string label_end_string =
+      function_name + "_" + std::to_string(label_end);
+  std::string label_else_string =
+      function_name + "_" + std::to_string(label_else_statement);
+
+  printf("\t\t\t\t# \u001b[38;5;%dm", random_id % 256);
+  printf("#### BEGIN IF ELSE STATEMENT ##### %d\u001b[0m\n", random_id);
+
+  condition->codeGen(binding, 2);
+
+  if (else_statement) {
+    printf("\tnop\n");
+    printf("\tbeq\t$2,$0,$L%s\t# jump to \"else statement\" if !condition\n",
+           label_else_string.c_str());
+    printf("\tnop\n\n");
+    if_statement->codeGen(binding, 2);
+    // TODO: use return to generate the label code;
+    printf("\tnop\n");
+    printf(
+        "\tb\t$L%s\t\t# jump to \"next "
+        "statement\"\n",
+        label_end_string.c_str());
+    printf("\tnop\n\n");
+    printf("$L%s:", label_else_string.c_str());
+    printf("\t\t\t\t# \033[1;36m[LABEL]\033[0m else statement\n");
+    else_statement->codeGen(binding, 2);
+  } else {
+    printf("\tnop\n");
+    printf("\tbeq\t$2,$0,$L%s\t# jump to \"end of IF ELSE\" if !condition\n",
+           label_end_string.c_str());
+    printf("\tnop\n\n");
+    if_statement->codeGen(binding, 2);
+  }
+
+  printf("$L%s:", label_end_string.c_str());  // next label
+  printf("\t\t\t\t# \033[1;36m[LABEL]\033[0m end of IF ELSE\n");
+
+  printf("\t\t\t\t# \u001b[38;5;%dm", random_id % 256);
+  printf("#### END   IF ELSE STATEMENT ##### %d\u001b[0m\n", random_id);
+
+  return 0;
+}
+
+void IfStatement::bind(const Binding &_binding) {
+  binding = _binding;
+  ((Program *)condition)->bind(binding);
+  ((Program *)if_statement)->bind(binding);
+  if (else_statement) ((Program *)else_statement)->bind(binding);
+}
+
+void IfStatement::passFunctionName(std::string _name, int _pos) {
+  pos = pos + _pos;
+  function_name = _name;
+  ((Program *)condition)->passFunctionName(_name, _pos);
+  ((Program *)if_statement)->passFunctionName(_name, _pos);
+  if (else_statement)
+    ((Program *)else_statement)->passFunctionName(_name, _pos);
+}
+
+void IfStatement::passLabel(int _label) {
+  // pass give label to children
+  if (if_statement) {
+    ((Program *)if_statement)->passLabel(_label);
+  }
+  if (else_statement) {
+    ((Program *)else_statement)->passLabel(_label);
+  }
+};
+
+
+void IfStatement::passTypeBinding(TypeBinding &_typebind){
+  typebind = _typebind;
+    ((Program *)condition)->passTypeBinding(_typebind);
+  ((Program *)if_statement)->passTypeBinding(_typebind);
+  if (else_statement)
+    ((Program *)else_statement)->passTypeBinding(_typebind);
+}
+
+std::string IfStatement::getVariableType(){
+  return "none for statements";
 }

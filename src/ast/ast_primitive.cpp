@@ -31,6 +31,10 @@ void Integer::passTypeBinding(TypeBinding &_typebind){
   typebind = _typebind;
 }
 
+std::string Integer::getVariableType(){
+  return "int";
+}
+
 ////////////////////////////////////////
 // Variable
 ////////////////////////////////////////
@@ -58,7 +62,14 @@ int Variable::codeGen(const Binding &_binding, int reg) const {
     logger->error("\"%s\" has not been declared\n", id.c_str());
     exit(1);
   }
-  printf("\tlw\t$%d,%d($fp)\t# load %s\n", reg, binding.at(id), id.c_str());
+  TypeBinding temp = typebind;
+  std::string var_type = temp[id];
+  if(var_type == "int"){
+    printf("\tlw\t$%d,%d($fp)\t# load %s\n", reg, binding.at(id), id.c_str());
+  }
+  else if(var_type == "float"){
+    printf("\tlwc1\t$f%d,%d($fp)\n",reg,binding.at(id));
+  }
   return 0;
 }
 
@@ -88,3 +99,7 @@ void Variable::passTypeBinding(TypeBinding &_typebind){
 std::string Variable::gettype(TypeBinding &_typebind) const{
   return _typebind[id];
 }
+
+std::string Variable::getVariableType(){
+  return typebind[id];
+ }

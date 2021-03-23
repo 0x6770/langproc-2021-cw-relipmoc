@@ -50,6 +50,10 @@ typebind = _typebind;
 }
 
 
+std::string Array::getVariableType(){
+  return "array";
+}
+
 ArrayElement::ArrayElement(ProgramPtr _left, std::string _name) {
   left = _left;
   name = _name;
@@ -133,4 +137,17 @@ typebind = _typebind;
   if (call == 1) {
     ((Program *)right)->passTypeBinding(_typebind);
   }
+}
+
+std::string ArrayElement::getVariableType(){
+  std::string var_1 = ((Program*)left)->getVariableType();
+  std::string var_2;
+  if(call == 1) var_2 = ((Program*)right)->getVariableType();
+  if(call == 1){
+    if(var_1 == "int" && var_2 == "int")return "int";
+  }
+  else{
+    if(var_1 == "int") return "int";
+  }
+  return "no type";
 }

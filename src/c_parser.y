@@ -40,7 +40,7 @@
 %type <program> array_declare expression_list function_call function_define
 %type <program> case case_list switch
 %type <integer> T_INT_VALUE
-%type <string> type T_NAME T_INT T_CHAR T_UNSIGNED
+%type <string> type T_NAME T_INT T_CHAR T_UNSIGNED T_FLOAT
 
 %start program
 
@@ -48,7 +48,7 @@
 
 type : T_INT         { $$ = $1; }
      | T_CHAR        { $$ = $1; }
-    // | T_FLOAT       { $$ = $1; }
+     | T_FLOAT       { $$ = $1; }
      | T_UNSIGNED    { $$ = $1; }
     // | T_DOUBLE      { $$ = $1;}
      ;
@@ -74,8 +74,9 @@ param_list : param                     { $$ = new Paramlist($1); }
            | param_list T_COMMA param  { ((Paramlist*)$$)->add_argument($3); }
            ;
 
-param : type T_NAME       { $$ = new Param("int", *$2, 0); }
-      | type '*' T_NAME   { $$ = new Param("pointer", *$3, 1); }
+
+param : type T_NAME       { $$ = new Param(*$1,*$2,0); }
+      | type '*' T_NAME   { $$ = new Param("pointer",*$3,1);}
       ;
 
 switch : T_SWITCH '(' assignment ')' '{' case_list '}'  { $$ = new Switch($3, $6, label++); }
@@ -260,3 +261,5 @@ int pos = 0;
 int label = 0;
 int call = 0; // used to determine if a function is a function caller
 int number_argu = 0;
+//std::string int_type = "";
+//std::string pointer_type = "";

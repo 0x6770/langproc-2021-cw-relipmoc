@@ -33,3 +33,12 @@ void Operation::passTypeBinding(TypeBinding &_typebind){
   ((Program*)left)->passTypeBinding(typebind); 
   ((Program*)right)->passTypeBinding(typebind); 
 }
+
+std::string Operation::getVariableType(){
+  std::string var_1 = ((Program*)left)->getVariableType();
+  std::string var_2 = ((Program*)right)->getVariableType();
+  if((var_1 == "int")&& (var_2 == "int")){
+    return "int";
+  }
+  return "none";
+}

@@ -52,6 +52,15 @@ void AddEqual::passTypeBinding(TypeBinding &_typebind){
   ((Program*)right)->passTypeBinding(typebind); 
 }
 
+std::string AddEqual::getVariableType(){
+  std::string var_1 = ((Program*)left)->getVariableType();
+  std::string var_2 = ((Program*)right)->getVariableType();
+  if((var_1 == "int")&& (var_2 == "int")){
+    return "int";
+  }
+  return "no type";
+}
+
 ////////////////////////////////////////
 // Subtraction Equal
 ////////////////////////////////////////
@@ -103,6 +112,15 @@ void SubEqual::passTypeBinding(TypeBinding &_typebind){
     typebind = _typebind;
   ((Program*)left)->passTypeBinding(typebind); 
   ((Program*)right)->passTypeBinding(typebind); 
+}
+
+std::string SubEqual::getVariableType(){
+  std::string var_1 = ((Program*)left)->getVariableType();
+  std::string var_2 = ((Program*)right)->getVariableType();
+  if((var_1 == "int")&& (var_2 == "int")){
+    return "int";
+  }
+  return "no type";
 }
 
 ////////////////////////////////////////
@@ -160,6 +178,15 @@ void MulEqual::passTypeBinding(TypeBinding &_typebind){
   ((Program*)right)->passTypeBinding(typebind); 
 }
 
+std::string MulEqual::getVariableType(){
+  std::string var_1 = ((Program*)left)->getVariableType();
+  std::string var_2 = ((Program*)right)->getVariableType();
+  if((var_1 == "int")&& (var_2 == "int")){
+    return "int";
+  }
+  return "no type";
+}
+
 ////////////////////////////////////////
 // Quotient assignment
 ////////////////////////////////////////
@@ -214,6 +241,15 @@ void QuoEqual::passTypeBinding(TypeBinding &_typebind){
   ((Program*)left)->passTypeBinding(typebind); 
   ((Program*)right)->passTypeBinding(typebind); 
 }
+
+std::string QuoEqual::getVariableType(){
+  std::string var_1 = ((Program*)left)->getVariableType();
+  std::string var_2 = ((Program*)right)->getVariableType();
+  if((var_1 == "int")&& (var_2 == "int")){
+    return "int";
+  }
+  return "no type";
+}
 ////////////////////////////////////////
 // Modulus assignment
 ////////////////////////////////////////
@@ -265,6 +301,15 @@ void ModEqual::passTypeBinding(TypeBinding &_typebind){
     typebind = _typebind;
   ((Program*)left)->passTypeBinding(typebind); 
   ((Program*)right)->passTypeBinding(typebind); 
+}
+
+std::string ModEqual::getVariableType(){
+  std::string var_1 = ((Program*)left)->getVariableType();
+  std::string var_2 = ((Program*)right)->getVariableType();
+  if((var_1 == "int")&& (var_2 == "int")){
+    return "int";
+  }
+  return "no type";
 }
 
 ////////////////////////////////////////
@@ -321,6 +366,15 @@ void ShiftEqual_L::passTypeBinding(TypeBinding &_typebind){
   ((Program*)right)->passTypeBinding(typebind); 
 }
 
+std::string ShiftEqual_L::getVariableType(){
+  std::string var_1 = ((Program*)left)->getVariableType();
+  std::string var_2 = ((Program*)right)->getVariableType();
+  if((var_1 == "int")&& (var_2 == "int")){
+    return "int";
+  }
+  return "no type";
+}
+
 ////////////////////////////////////////
 // shift right assignment
 ////////////////////////////////////////
@@ -372,6 +426,15 @@ void ShiftEqual_R::passTypeBinding(TypeBinding &_typebind){
     typebind = _typebind;
   ((Program*)left)->passTypeBinding(typebind); 
   ((Program*)right)->passTypeBinding(typebind); 
+}
+
+std::string ShiftEqual_R::getVariableType(){
+  std::string var_1 = ((Program*)left)->getVariableType();
+  std::string var_2 = ((Program*)right)->getVariableType();
+  if((var_1 == "int")&& (var_2 == "int")){
+    return "int";
+  }
+  return "no type";
 }
 
 ////////////////////////////////////////
@@ -428,6 +491,14 @@ void BitwiseEqual_AND::passTypeBinding(TypeBinding &_typebind){
   ((Program*)right)->passTypeBinding(typebind); 
 }
 
+std::string BitwiseEqual_AND::getVariableType(){
+  std::string var_1 = ((Program*)left)->getVariableType();
+  std::string var_2 = ((Program*)right)->getVariableType();
+  if((var_1 == "int")&& (var_2 == "int")){
+    return "int";
+  }
+  return "no type";
+}
 ////////////////////////////////////////
 // bitwise OR assignment
 ////////////////////////////////////////
@@ -479,6 +550,15 @@ void BitwiseEqual_OR::passTypeBinding(TypeBinding &_typebind){
     typebind = _typebind;
   ((Program*)left)->passTypeBinding(typebind); 
   ((Program*)right)->passTypeBinding(typebind); 
+}
+
+std::string BitwiseEqual_OR::getVariableType(){
+  std::string var_1 = ((Program*)left)->getVariableType();
+  std::string var_2 = ((Program*)right)->getVariableType();
+  if((var_1 == "int")&& (var_2 == "int")){
+    return "int";
+  }
+  return "no type";
 }
 
 ////////////////////////////////////////
@@ -533,6 +613,15 @@ void BitwiseEqual_XOR::passTypeBinding(TypeBinding &_typebind){
     typebind = _typebind;
   ((Program*)left)->passTypeBinding(typebind); 
   ((Program*)right)->passTypeBinding(typebind); 
+}
+
+std::string BitwiseEqual_XOR::getVariableType(){
+  std::string var_1 = ((Program*)left)->getVariableType();
+  std::string var_2 = ((Program*)right)->getVariableType();
+  if((var_1 == "int")&& (var_2 == "int")){
+    return "int";
+  }
+  return "no type";
 }
 
 ////////////////////////////////////////
@@ -590,6 +679,16 @@ void Increment_Post::passTypeBinding(TypeBinding &_typebind){
   ((Program*)left)->passTypeBinding(typebind); 
 }
 
+std::string Increment_Post::getVariableType(){
+  std::string var_2 = ((Program*)left)->getVariableType();
+  if((var_2 == "int")){
+    return "int";
+  }
+  else if(var_2 == "pointer"){
+    return "pointer";
+  }
+  return "no type";
+}
 ////////////////////////////////////////
 // prefix increment
 ////////////////////////////////////////
@@ -643,6 +742,16 @@ void Increment_Pre::passTypeBinding(TypeBinding &_typebind){
   ((Program*)left)->passTypeBinding(typebind); 
 }
 
+std::string Increment_Pre::getVariableType(){
+  std::string var_2 = ((Program*)left)->getVariableType();
+  if((var_2 == "int")){
+    return "int";
+  }
+    else if(var_2 == "pointer"){
+    return "pointer";
+  }
+  return "no type";
+}
 ////////////////////////////////////////
 // Postfix decrement
 ////////////////////////////////////////
@@ -699,7 +808,16 @@ void Decrement_Post::passTypeBinding(TypeBinding &_typebind){
   ((Program*)left)->passTypeBinding(typebind); 
   //((Program*)right)->passTypeBinding(typebind); 
 }
-
+std::string Decrement_Post::getVariableType(){
+  std::string var_2 = ((Program*)left)->getVariableType();
+  if((var_2 == "int")){
+    return "int";
+  }
+    else if(var_2 == "pointer"){
+    return "pointer";
+  }
+  return "no type";
+}
 ////////////////////////////////////////
 // prefix increment
 ////////////////////////////////////////
@@ -754,4 +872,15 @@ void Decrement_Pre::passTypeBinding(TypeBinding &_typebind){
     typebind = _typebind;
   ((Program*)left)->passTypeBinding(typebind); 
   //((Program*)right)->passTypeBinding(typebind); 
+}
+
+std::string Decrement_Pre::getVariableType(){
+  std::string var_2 = ((Program*)left)->getVariableType();
+  if((var_2 == "int")){
+    return "int";
+  }
+    else if(var_2 == "pointer"){
+    return "pointer";
+  }
+  return "no type";
 }

@@ -139,6 +139,9 @@ void Function::passTypeBinding(TypeBinding &_typebind) {
   //((Program *)statements)->passTypeBinding(_typebind);
 }
 
+std::string Function::getVariableType(){
+  return "none for statements";
+}
 ////////////////////////////////////////
 // MultiFunction
 ////////////////////////////////////////
@@ -174,14 +177,16 @@ void MultiFunction::passTypeBinding(TypeBinding &_typebind) {
   typebind = _typebind;
 }
 
-////////////////////////////////////////
-// Param
-////////////////////////////////////////
+
+std::string MultiFunction::getVariableType(){
+  return "none for statements";
+}
 
 Param::Param(std::string _type, std::string _name) {
   logger->info("construct one parameter\n");
   type = _type;
   name = _name;
+  //std::cout << "the variable type in Param" << var_1 << " " << var_2 << std::endl;
   is_pointer = 0;
 }
 
@@ -197,7 +202,13 @@ Param::Param(std::string _type, std::string _name, int _is_pointer) {
 int Param::codeGen(const Binding &_binding, int reg) const {
   Binding temp = binding;
   std::string variable_name = name;
-  printf("\tsw\t$%d,%d($fp)\n", reg, temp[variable_name]);
+  //std::cout << "entered here"<< std::endl;
+  if(type == "int"){
+    printf("\tsw\t$%d,%d($fp)\n", reg, temp[variable_name]);
+  }
+  else if(type == "float"){
+    printf("\tswc1\t$f%d,%d($fp)\n",reg*2+4,temp[variable_name]);
+  }
   return 0;
 }
 
@@ -228,9 +239,11 @@ void Param::passTypeBinding(TypeBinding &_typebind) {
   typebind = _typebind;
 }
 
-////////////////////////////////////////
-// Param List
-////////////////////////////////////////
+
+std::string Param::getVariableType(){
+  return "none for statements";
+}
+
 
 Paramlist::Paramlist() {
   // do nothing;
@@ -319,9 +332,15 @@ void Paramlist::passTypeBinding(TypeBinding &_typebind) {
   }*/
 }
 
+
+std::string Paramlist::getVariableType(){
+  return "none for statements";
+}
+=======
 ////////////////////////////////////////
 // FunctionCall
 ////////////////////////////////////////
+
 
 FunctionCall::FunctionCall(std::string _name, int _pos) {
   name = _name;
@@ -378,7 +397,16 @@ void FunctionCall::passFunctionName(std::string _name, int _pos) {
   pos = pos + _pos;
 }
 
+
+void FunctionCall::passTypeBinding(TypeBinding &_typebind){
+  
+}
+std::string FunctionCall::getVariableType(){
+  return "none for statements";
+}
+=======
 void FunctionCall::passTypeBinding(TypeBinding &_typebind) {}
+
 
 ExpressionList::ExpressionList(ProgramPtr _argument) {
   logger->info("Build expression list\n");
@@ -431,7 +459,20 @@ void ExpressionList::passFunctionName(std::string _name, int _pos) {
   pos = pos + _pos;
 }
 
+
+std::string ExpressionList::getVariableType(){
+  return "none for statements";
+}
+
+void ExpressionList::passTypeBinding(TypeBinding &_typebind){
+  
+}
+=======
 void ExpressionList::passTypeBinding(TypeBinding &_typebind) {}
+
+
+//////////////////////////////////////////////////////////////////////////////////////////
+
 
 FunctionDeclare::FunctionDeclare(std::string _name) { name = _name; }
 
@@ -452,4 +493,16 @@ void FunctionDeclare::bind(const Binding &_binding) {}
 
 void FunctionDeclare::passFunctionName(std::string _name, int _pos) {}
 
+
+
+void FunctionDeclare::passTypeBinding(TypeBinding &_typebind){
+  
+}
+
+std::string FunctionDeclare::getVariableType(){
+  return "none for statements";
+}
+
+=======
 void FunctionDeclare::passTypeBinding(TypeBinding &_typebind) {}
+

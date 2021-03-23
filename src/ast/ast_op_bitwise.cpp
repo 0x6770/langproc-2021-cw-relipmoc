@@ -56,6 +56,15 @@ void BitwiseAnd::passTypeBinding(TypeBinding &_typebind){
   ((Program*)right)->passTypeBinding(typebind); 
 }
 
+std::string BitwiseAnd::getVariableType(){
+  std::string var_1 = ((Program*)left)->getVariableType();
+  std::string var_2 = ((Program*)right)->getVariableType();
+  if((var_1 == "int")&& (var_2 == "int")){
+    return "int";
+  }
+  return "no type";
+}
+
 ////////////////////////////////////////
 // BitwiseOr
 ////////////////////////////////////////
@@ -108,6 +117,15 @@ void BitwiseOr::passTypeBinding(TypeBinding &_typebind){
     typebind = _typebind;
   ((Program*)left)->passTypeBinding(typebind); 
   ((Program*)right)->passTypeBinding(typebind); 
+}
+
+std::string BitwiseOr::getVariableType(){
+  std::string var_1 = ((Program*)left)->getVariableType();
+  std::string var_2 = ((Program*)right)->getVariableType();
+  if((var_1 == "int")&& (var_2 == "int")){
+    return "int";
+  }
+  return "no type";
 }
 
 ////////////////////////////////////////
@@ -164,6 +182,15 @@ void BitwiseXor::passTypeBinding(TypeBinding &_typebind){
   ((Program*)left)->passTypeBinding(typebind); 
   ((Program*)right)->passTypeBinding(typebind); 
 }
+
+std::string BitwiseXor::getVariableType(){
+  std::string var_1 = ((Program*)left)->getVariableType();
+  std::string var_2 = ((Program*)right)->getVariableType();
+  if((var_1 == "int")&& (var_2 == "int")){
+    return "int";
+  }
+  return "no type";
+}
 ////////////////////////////////////////
 // ShiftLeft
 ////////////////////////////////////////
@@ -218,6 +245,15 @@ void ShiftLeft::passTypeBinding(TypeBinding &_typebind){
     typebind = _typebind;
   ((Program*)left)->passTypeBinding(typebind); 
   ((Program*)right)->passTypeBinding(typebind); 
+}
+
+std::string ShiftLeft::getVariableType(){
+  std::string var_1 = ((Program*)left)->getVariableType();
+  std::string var_2 = ((Program*)right)->getVariableType();
+  if((var_1 == "int")&& (var_2 == "int")){
+    return "int";
+  }
+  return "no type";
 }
 ////////////////////////////////////////
 // ShiftRight
@@ -274,4 +310,13 @@ void ShiftRight::passTypeBinding(TypeBinding &_typebind){
     typebind = _typebind;
   ((Program*)left)->passTypeBinding(typebind); 
   ((Program*)right)->passTypeBinding(typebind); 
+}
+
+std::string ShiftRight::getVariableType(){
+  std::string var_1 = ((Program*)left)->getVariableType();
+  std::string var_2 = ((Program*)right)->getVariableType();
+  if((var_1 == "int")&& (var_2 == "int")){
+    return "int";
+  }
+  return "no type";
 }
