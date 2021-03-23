@@ -245,6 +245,7 @@ int Multiplication::codeGen(const Binding &_binding, int reg) const {
   if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
     printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
 
+
   printf("\tmult\t$2,$3\n");
   printf("\tmflo\t$2\n");
   printf("\tsw\t$2,%d($fp)\t# store result of multiplication\n", pos);
