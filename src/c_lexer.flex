@@ -84,6 +84,7 @@ sizeof                            {fprintf(stderr, "T_SIZEOF ");   return T_SIZE
 \[                                {fprintf(stderr, "[");    return yytext[0];}
 \]                                {fprintf(stderr, "]");    return yytext[0];}
 \;                                {fprintf(stderr, ";\n");  return yytext[0];}
+\'                                {fprintf(stderr, "'\n");  return T_CHAR_RE;}
 \<\<                              {fprintf(stderr, "<<");   return T_SHIFT_L;}
 \>\>                              {fprintf(stderr, ">>");   return T_SHIFT_R;}
 [_a-zA-Z][0-9_a-zA-Z]*            {std::string *x=new std::string(yytext); fprintf(stderr, "%s", (*x).c_str()); yylval.string=x; return T_NAME;}

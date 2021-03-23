@@ -103,3 +103,33 @@ std::string Variable::gettype(TypeBinding &_typebind) const{
 std::string Variable::getVariableType(){
   return typebind[id];
  }
+
+
+Char::Char(char _value){
+  value = _value;
+}
+
+int Char::codeGen(const Binding &_binding, int reg) const{
+  logger->info("generate code for char\n");
+  printf("\tli\t$%d,%d\t\t# load %d\n", reg, int(value), value);
+  return 0;
+}
+void Char::print(std::ostream &dst, int indentation) const{
+
+}
+int Char::evaluate(const Binding &_binding) const{
+  return 0;
+}
+void Char::bind(const Binding &_binding){
+
+}
+void Char::passFunctionName(std::string _name, int _pos){
+  function_name = _name;
+  pos = pos + _pos;
+}
+void Char::passTypeBinding(TypeBinding &_typebind){
+
+}
+std::string Char::getVariableType(){
+  return "char";
+}

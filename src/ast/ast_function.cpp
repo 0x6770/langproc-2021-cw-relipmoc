@@ -203,7 +203,7 @@ int Param::codeGen(const Binding &_binding, int reg) const {
   Binding temp = binding;
   std::string variable_name = name;
   //std::cout << "entered here"<< std::endl;
-  if(type == "float"){
+  if(type == "float" && reg<=5){
     printf("\tswc1\t$f%d,%d($fp)\n",reg*2+4,temp[variable_name]);
   }else{
     printf("\tsw\t$%d,%d($fp)\n", reg, temp[variable_name]);
