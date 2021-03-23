@@ -64,11 +64,11 @@ int Variable::codeGen(const Binding &_binding, int reg) const {
   }
   TypeBinding temp = typebind;
   std::string var_type = temp[id];
-  if(var_type == "int"){
-    printf("\tlw\t$%d,%d($fp)\t# load %s\n", reg, binding.at(id), id.c_str());
-  }
-  else if(var_type == "float"){
+  if(var_type == "float"){
     printf("\tlwc1\t$f%d,%d($fp)\n",reg,binding.at(id));
+  }
+  else{
+    printf("\tlw\t$%d,%d($fp)\t# load %s\n", reg, binding.at(id), id.c_str());
   }
   return 0;
 }

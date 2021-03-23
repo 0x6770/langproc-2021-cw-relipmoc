@@ -42,6 +42,7 @@ int Addition::codeGen(const Binding &_binding, int reg) const {
         printf("\tsll\t$3,$3,2\n");
     }
     left->codeGen(binding, 2);
+    //std::cout << "after right codegen" << std::endl;
     // only shift for point arithemetic
     if(var_type_right == "pointer"){
         printf("\tsll\t$2,$2,2\n");
@@ -131,21 +132,24 @@ int Subtraction::codeGen(const Binding &_binding, int reg) const {
   TypeBinding temp = typebind;
   std::string var_type_left = ((Program*)left)->getVariableType();
   std::string var_type_right = ((Program*)right)->getVariableType();
+
   if (left_type == 'i' || left_type == 'x' || left_type == 'a'){
-    if(var_type_right == "float") { right->codeGen(binding, 0); }
+    if(var_type_right == "float")  right->codeGen(binding, 0);
     else{
       right->codeGen(binding, 3);
     }
     // only shift for point arithemetic
     if(var_type_left == "pointer"){
-        printf("\tsll\t$3,$3,2\n");
-    }
+        printf("\tsll\t$3,$3,2\n");}
+    
     left->codeGen(binding, 2);
+    
     // only shift for point arithemetic
     if(var_type_right == "pointer"){
-        printf("\tsll\t$2,$2,2\n");
-    }
-  } else {
+        printf("\tsll\t$2,$2,2\n");}
+  } 
+  
+  else {
     left->codeGen(binding, 2);
     // only shift for point arithemetic
     if(var_type_right == "pointer"){

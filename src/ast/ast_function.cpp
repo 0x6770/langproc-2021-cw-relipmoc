@@ -203,11 +203,10 @@ int Param::codeGen(const Binding &_binding, int reg) const {
   Binding temp = binding;
   std::string variable_name = name;
   //std::cout << "entered here"<< std::endl;
-  if(type == "int"){
-    printf("\tsw\t$%d,%d($fp)\n", reg, temp[variable_name]);
-  }
-  else if(type == "float"){
+  if(type == "float"){
     printf("\tswc1\t$f%d,%d($fp)\n",reg*2+4,temp[variable_name]);
+  }else{
+    printf("\tsw\t$%d,%d($fp)\n", reg, temp[variable_name]);
   }
   return 0;
 }
@@ -336,7 +335,8 @@ void Paramlist::passTypeBinding(TypeBinding &_typebind) {
 std::string Paramlist::getVariableType(){
   return "none for statements";
 }
-=======
+
+
 ////////////////////////////////////////
 // FunctionCall
 ////////////////////////////////////////
@@ -402,10 +402,9 @@ void FunctionCall::passTypeBinding(TypeBinding &_typebind){
   
 }
 std::string FunctionCall::getVariableType(){
-  return "none for statements";
+  return "int";
 }
-=======
-void FunctionCall::passTypeBinding(TypeBinding &_typebind) {}
+
 
 
 ExpressionList::ExpressionList(ProgramPtr _argument) {
@@ -467,8 +466,8 @@ std::string ExpressionList::getVariableType(){
 void ExpressionList::passTypeBinding(TypeBinding &_typebind){
   
 }
-=======
-void ExpressionList::passTypeBinding(TypeBinding &_typebind) {}
+
+
 
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -503,6 +502,6 @@ std::string FunctionDeclare::getVariableType(){
   return "none for statements";
 }
 
-=======
-void FunctionDeclare::passTypeBinding(TypeBinding &_typebind) {}
+
+
 
