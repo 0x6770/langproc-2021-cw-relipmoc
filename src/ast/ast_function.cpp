@@ -5,10 +5,10 @@
 ////////////////////////////////////////
 
 Function::Function(std::string _type, std::string _name, ProgramPtr _statements,
-                   int _pos, int _call, int _argu_number)
+                   int _pos, int _call, int _arg_size)
     : type(_type), name(_name), statements(_statements) {
   int tmp_size = _pos + 8;
-  tmp_size = tmp_size + (_argu_number)*4 + 4;
+  tmp_size = tmp_size + (_arg_size)*4 + 4;
   // free space for the number of arguments;
   if (_call == 1) tmp_size = tmp_size + 4;
   // add 4 for store the value in $ra when there is function call in the
@@ -18,21 +18,20 @@ Function::Function(std::string _type, std::string _name, ProgramPtr _statements,
   // size = size + 16;
   logger->info("construct Function with no arguments\n");
   node_type = 'F';
-  passFunctionName(_name, _argu_number * 4);
+  passFunctionName(_name, _arg_size * 4);
   with_function_call = _call;
-  argu_size = _argu_number;
-  // std::cout << _argu_number << std::endl;
+  arg_size = _arg_size;
+  // std::cout << _arg_size << std::endl;
   // if(_statements == 0){is_define = 1;}
 }
 
 Function::Function(std::string _type, std::string _name, ProgramPtr _statements,
-                   ProgramPtr _Arguments, int _pos, int _call,
-                   int _argu_number) {
+                   ProgramPtr _arguments, int _pos, int _call, int _arg_size) {
   type = _type;
   statements = _statements;
-  Arguments = _Arguments;
+  arguments = _arguments;
   int tmp_size = _pos + 8;
-  tmp_size = tmp_size + (_argu_number)*4 + 4;
+  tmp_size = tmp_size + (_arg_size)*4 + 4;
   if (_call == 1) tmp_size = tmp_size + 4;
   size = (tmp_size % 8) ? tmp_size + 4 : tmp_size;
   // ADD spaces for four parameters:
@@ -41,13 +40,13 @@ Function::Function(std::string _type, std::string _name, ProgramPtr _statements,
   node_type = 'F';
   with_param = 1;
   // std::string function_name = _name + "_" +
-  // ((Paramlist*)Arguments)->get_type_string();
+  // ((Paramlist*)arguments)->get_type_string();
   name = _name;
-  passFunctionName(_name, _argu_number * 4);
+  passFunctionName(_name, _arg_size * 4);
   with_function_call = _call;
-  argu_size = _argu_number;
+  arg_size = _arg_size;
   // if(_statements == 0){is_define = 1;}
-  // std::cout << _argu_number << std::endl;
+  // std::cout << _arg_size << std::endl;
 }
 
 void Function::print(std::ostream &dst, int indentation) const {
@@ -59,7 +58,7 @@ void Function::print(std::ostream &dst, int indentation) const {
   dst << name;
   dst << "(";
   if (with_param == 1) {
-    Arguments->print(dst, indentation);
+    arguments->print(dst, indentation);
   }
   dst << ") {\n";
 
@@ -80,14 +79,14 @@ int Function::codeGen(const Binding &_binding, int reg) const {
   TypeBinding variable_bind;
   // when the function has arguments up-to four
   if (with_param == 1) {
-    temp = ((Paramlist *)Arguments)->return_bind(container, size);
+    temp = ((Paramlist *)arguments)->return_bind(container, size);
     ((StatementList *)statements)->bind(temp);
-    ((Paramlist*)Arguments)->passTypeBinding(variable_bind);
+    ((Paramlist *)arguments)->passTypeBinding(variable_bind);
   } else {
     ((StatementList *)statements)->bind(binding);
   }
 
-   ((Program *)statements)->passTypeBinding(variable_bind);
+  ((Program *)statements)->passTypeBinding(variable_bind);
   // set labels for key words: `continue` and `break`
   ((StatementList *)statements)->passLabel(label);
 
@@ -109,7 +108,7 @@ int Function::codeGen(const Binding &_binding, int reg) const {
   printf("\tmove\t$fp,$sp\n");
   // store the values in the register a0-a3 in the stack.
   if (with_param == 1) {
-    Arguments->codeGen(temp, 2);
+    arguments->codeGen(temp, 2);
   }
   statements->codeGen(binding, 2);  // store  result result of to $2
   printf("%s", function_end.c_str());
@@ -136,7 +135,7 @@ void Function::passFunctionName(std::string _name, int _pos) {
   ((Program *)statements)->passFunctionName(_name, _pos);
 }
 
-void Function::passTypeBinding(TypeBinding &_typebind){
+void Function::passTypeBinding(TypeBinding &_typebind) {
   //((Program *)statements)->passTypeBinding(_typebind);
 }
 
@@ -144,6 +143,7 @@ std::string Function::getVariableType(){
   return "none for statements";
 }
 ////////////////////////////////////////
+// MultiFunction
 ////////////////////////////////////////
 
 MultiFunction::MultiFunction(ProgramPtr _function) {
@@ -173,9 +173,10 @@ void MultiFunction::bind(const Binding &_binding) {}
 
 void MultiFunction::passFunctionName(std::string _name, int _pos) {}
 
-void MultiFunction::passTypeBinding(TypeBinding &_typebind){
+void MultiFunction::passTypeBinding(TypeBinding &_typebind) {
   typebind = _typebind;
 }
+
 
 std::string MultiFunction::getVariableType(){
   return "none for statements";
@@ -190,11 +191,11 @@ Param::Param(std::string _type, std::string _name) {
 }
 
 void Param::print(std::ostream &dst, int indentation) const {
-  dst << type << " " << name << " ";
+  dst << type << " " << name;
 }
-Param::Param(std::string _type, std::string _name, int _is_pointer){
+Param::Param(std::string _type, std::string _name, int _is_pointer) {
   logger->info("construct one parameter [Pointer]\n");
-    type = _type;
+  type = _type;
   name = _name;
   is_pointer = _is_pointer;
 }
@@ -220,13 +221,12 @@ void Param::passFunctionName(std::string _name, int _pos) {}
 std::string Param::getName() { return name; }
 
 Binding Param::return_bind(Binding &_binding, int pos) {
-  //std::string p_name;
-  if(is_pointer ==1){
-    //p_name = "*" + name;
+  // std::string p_name;
+  if (is_pointer == 1) {
+    // p_name = "*" + name;
     _binding[name] = pos;
-  }
-  else{
-  _binding[name] = pos;
+  } else {
+    _binding[name] = pos;
   }
   binding = _binding;
   return _binding;
@@ -234,15 +234,15 @@ Binding Param::return_bind(Binding &_binding, int pos) {
 
 std::string Param::getType() { return type; }
 
-void Param::passTypeBinding(TypeBinding &_typebind){
+void Param::passTypeBinding(TypeBinding &_typebind) {
   _typebind[name] = type;
   typebind = _typebind;
 }
 
+
 std::string Param::getVariableType(){
   return "none for statements";
 }
-
 
 
 Paramlist::Paramlist() {
@@ -319,10 +319,9 @@ void Paramlist::passFunctionName(std::string _name, int _pos) {
   pos = pos + _pos;
 }
 
-
-void Paramlist::passTypeBinding(TypeBinding &_typebind){
-  for(auto it : parameters){
-  ((Param*)it)->passTypeBinding(_typebind);
+void Paramlist::passTypeBinding(TypeBinding &_typebind) {
+  for (auto it : parameters) {
+    ((Param *)it)->passTypeBinding(_typebind);
   }
   typebind = _typebind;
   /*for(auto it: _typebind ){
@@ -333,9 +332,15 @@ void Paramlist::passTypeBinding(TypeBinding &_typebind){
   }*/
 }
 
+
 std::string Paramlist::getVariableType(){
   return "none for statements";
 }
+=======
+////////////////////////////////////////
+// FunctionCall
+////////////////////////////////////////
+
 
 FunctionCall::FunctionCall(std::string _name, int _pos) {
   name = _name;
@@ -348,21 +353,28 @@ FunctionCall::FunctionCall(std::string _name, ProgramPtr _argument, int _pos) {
   logger->info("construct function call with arguments");
   name = _name;
   pos = _pos;
-  expression_list = _argument;
+  arguments = _argument;
   with_argument = 1;
 }
 
-void FunctionCall::add_Arguments(ProgramPtr _Argument) {
+void FunctionCall::add_argument(ProgramPtr _argument) {
   // arguments.push_back(_Argument);
 }
 
-void FunctionCall::print(std::ostream &dst, int indentation) const {}
+void FunctionCall::print(std::ostream &dst, int indentation) const {
+  printIndent(dst, indentation);
+  dst << name << "(";
+  if (arguments) {
+    arguments->print(dst, --indentation);
+  }
+  dst << ")";
+}
 
 // assuming all variable types are int for now
 int FunctionCall::codeGen(const Binding &_binding, int reg) const {
   // int pos = 20;
   if (with_argument == 1) {
-    ((Program *)expression_list)->codeGen(binding, 2);
+    ((Program *)arguments)->codeGen(binding, 2);
   }
   printf("\t.option\tpic0\n");
   printf("\tjal\t%s\n", name.c_str());
@@ -377,7 +389,7 @@ int FunctionCall::evaluate(const Binding &_binding) const { return 0; }
 void FunctionCall::bind(const Binding &_binding) {
   binding = _binding;
   if (with_argument == 1) {
-    ((Program *)expression_list)->bind(binding);
+    ((Program *)arguments)->bind(binding);
   }
 }
 
@@ -385,12 +397,16 @@ void FunctionCall::passFunctionName(std::string _name, int _pos) {
   pos = pos + _pos;
 }
 
+
 void FunctionCall::passTypeBinding(TypeBinding &_typebind){
   
 }
 std::string FunctionCall::getVariableType(){
   return "none for statements";
 }
+=======
+void FunctionCall::passTypeBinding(TypeBinding &_typebind) {}
+
 
 ExpressionList::ExpressionList(ProgramPtr _argument) {
   logger->info("Build expression list\n");
@@ -443,6 +459,7 @@ void ExpressionList::passFunctionName(std::string _name, int _pos) {
   pos = pos + _pos;
 }
 
+
 std::string ExpressionList::getVariableType(){
   return "none for statements";
 }
@@ -450,6 +467,9 @@ std::string ExpressionList::getVariableType(){
 void ExpressionList::passTypeBinding(TypeBinding &_typebind){
   
 }
+=======
+void ExpressionList::passTypeBinding(TypeBinding &_typebind) {}
+
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -474,6 +494,7 @@ void FunctionDeclare::bind(const Binding &_binding) {}
 void FunctionDeclare::passFunctionName(std::string _name, int _pos) {}
 
 
+
 void FunctionDeclare::passTypeBinding(TypeBinding &_typebind){
   
 }
@@ -481,4 +502,7 @@ void FunctionDeclare::passTypeBinding(TypeBinding &_typebind){
 std::string FunctionDeclare::getVariableType(){
   return "none for statements";
 }
+
+=======
+void FunctionDeclare::passTypeBinding(TypeBinding &_typebind) {}
 

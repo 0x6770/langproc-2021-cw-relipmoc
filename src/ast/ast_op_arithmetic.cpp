@@ -10,16 +10,12 @@ Addition::Addition(ProgramPtr _left, ProgramPtr _right, int _pos)
 }
 
 void Addition::print(std::ostream &dst, int indentation) const {
-  int indent = indentation;
   printIndent(dst, indentation);
   dst << "(";
   left->print(dst, 0);
   dst << "+";
   right->print(dst, 0);
   dst << ")";
-  if (indent) {
-    dst << "\n";
-  }
 }
 
 int Addition::evaluate(const Binding &_binding) const {
@@ -29,8 +25,8 @@ int Addition::evaluate(const Binding &_binding) const {
 int Addition::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
-    //for(auto it: typebind ){
-    //std::cout << it.first << " " << it.second << std::endl;
+  // for(auto it: typebind ){
+  // std::cout << it.first << " " << it.second << std::endl;
   //}
   TypeBinding temp = typebind;
   std::string var_type_left = ((Program*)left)->getVariableType();
@@ -90,10 +86,10 @@ void Addition::passFunctionName(std::string _name, int _pos) {
   ((Program *)right)->passFunctionName(_name, _pos);
 }
 
-void Addition::passTypeBinding(TypeBinding &_typebind){
+void Addition::passTypeBinding(TypeBinding &_typebind) {
   typebind = _typebind;
-  ((Program*)left)->passTypeBinding(typebind); 
-  ((Program*)right)->passTypeBinding(typebind); 
+  ((Program *)left)->passTypeBinding(typebind);
+  ((Program *)right)->passTypeBinding(typebind);
 }
 
 std::string Addition::getVariableType(){
@@ -117,16 +113,12 @@ Subtraction::Subtraction(ProgramPtr _left, ProgramPtr _right, int _pos)
 }
 
 void Subtraction::print(std::ostream &dst, int indentation) const {
-  int indent = indentation;
   printIndent(dst, indentation);
   dst << "(";
   left->print(dst, 0);
   dst << "-";
   right->print(dst, 0);
   dst << ")";
-  if (indent) {
-    dst << "\n";
-  }
 }
 
 int Subtraction::evaluate(const Binding &_binding) const {
@@ -192,10 +184,10 @@ void Subtraction::passFunctionName(std::string _name, int _pos) {
   ((Program *)right)->passFunctionName(_name, _pos);
 }
 
-void Subtraction::passTypeBinding(TypeBinding &_typebind){
-    typebind = _typebind;
-  ((Program*)left)->passTypeBinding(typebind); 
-  ((Program*)right)->passTypeBinding(typebind); 
+void Subtraction::passTypeBinding(TypeBinding &_typebind) {
+  typebind = _typebind;
+  ((Program *)left)->passTypeBinding(typebind);
+  ((Program *)right)->passTypeBinding(typebind);
 }
 
 std::string Subtraction::getVariableType(){
@@ -232,7 +224,7 @@ int Multiplication::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
-  if (left_type == 'i' || left_type == 'x' || left_type == 'a'){
+  if (left_type == 'i' || left_type == 'x' || left_type == 'a') {
     right->codeGen(binding, 3);
     left->codeGen(binding, 2);
   } else {
@@ -259,10 +251,10 @@ void Multiplication::passFunctionName(std::string _name, int _pos) {
   ((Program *)right)->passFunctionName(_name, _pos);
 }
 
-void Multiplication::passTypeBinding(TypeBinding &_typebind){
-    typebind = _typebind;
-  ((Program*)left)->passTypeBinding(typebind); 
-  ((Program*)right)->passTypeBinding(typebind); 
+void Multiplication::passTypeBinding(TypeBinding &_typebind) {
+  typebind = _typebind;
+  ((Program *)left)->passTypeBinding(typebind);
+  ((Program *)right)->passTypeBinding(typebind);
 }
 
 std::string Multiplication::getVariableType(){
@@ -298,7 +290,7 @@ int Division::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
-  if (left_type == 'i' || left_type == 'x' || left_type == 'a'){
+  if (left_type == 'i' || left_type == 'x' || left_type == 'a') {
     right->codeGen(binding, 3);
     left->codeGen(binding, 2);
   } else {
@@ -325,10 +317,10 @@ void Division::passFunctionName(std::string _name, int _pos) {
   ((Program *)right)->passFunctionName(_name, _pos);
 }
 
-void Division::passTypeBinding(TypeBinding &_typebind){
-    typebind = _typebind;
-  ((Program*)left)->passTypeBinding(typebind); 
-  ((Program*)right)->passTypeBinding(typebind); 
+void Division::passTypeBinding(TypeBinding &_typebind) {
+  typebind = _typebind;
+  ((Program *)left)->passTypeBinding(typebind);
+  ((Program *)right)->passTypeBinding(typebind);
 }
 
 std::string Division::getVariableType(){
@@ -364,7 +356,7 @@ int Modulus::codeGen(const Binding &_binding, int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
-  if (left_type == 'i' || left_type == 'x' || left_type == 'a'){
+  if (left_type == 'i' || left_type == 'x' || left_type == 'a') {
     right->codeGen(binding, 3);
     left->codeGen(binding, 2);
   } else {
@@ -391,10 +383,10 @@ void Modulus::passFunctionName(std::string _name, int _pos) {
   ((Program *)right)->passFunctionName(_name, _pos);
 }
 
-void Modulus::passTypeBinding(TypeBinding &_typebind){
-    typebind = _typebind;
-  ((Program*)left)->passTypeBinding(typebind); 
-  ((Program*)right)->passTypeBinding(typebind); 
+void Modulus::passTypeBinding(TypeBinding &_typebind) {
+  typebind = _typebind;
+  ((Program *)left)->passTypeBinding(typebind);
+  ((Program *)right)->passTypeBinding(typebind);
 }
 
 std::string Modulus::getVariableType(){

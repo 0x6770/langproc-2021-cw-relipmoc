@@ -9,7 +9,6 @@ Statement::Statement(ProgramPtr _expression) : expression(_expression) {}
 void Statement::print(std::ostream &dst, int indentation) const {
   printIndent(dst, indentation);
   if (expression) expression->print(dst, indentation);
-  dst << ";";
 }
 
 int Statement::evaluate(const Binding &_binding) const {
@@ -38,7 +37,7 @@ void Statement::passFunctionName(std::string _name, int _pos) {
 
 void Statement::passLabel(int _label) {}
 
-void Statement::passTypeBinding(TypeBinding &_typebind){
+void Statement::passTypeBinding(TypeBinding &_typebind) {
   ((Program *)expression)->passTypeBinding(_typebind);
 }
 
@@ -60,9 +59,8 @@ VarDeclare::VarDeclare(std::string _var_type, std::string _id,
     size = 4;
     _pos += 4;
   }
- // is_pointer = _is_pointer;
+  // is_pointer = _is_pointer;
 }
-
 
 void VarDeclare::print(std::ostream &dst, int indentation) const {
   printIndent(dst, indentation);
@@ -71,7 +69,6 @@ void VarDeclare::print(std::ostream &dst, int indentation) const {
     dst << " = ";
     expression->print(dst, 0);
   }
-  dst << ";";
 }
 
 int VarDeclare::codeGen(const Binding &_binding, int reg) const {
@@ -103,9 +100,9 @@ void VarDeclare::passFunctionName(std::string _name, int _pos) {
   }
 }
 
-void VarDeclare::passTypeBinding(TypeBinding &_typebind){
+void VarDeclare::passTypeBinding(TypeBinding &_typebind) {
   _typebind[id] = var_type;
-      if (expression) {
+  if (expression) {
     ((Program *)expression)->passTypeBinding(_typebind);
   }
 }
@@ -119,12 +116,12 @@ std::string VarDeclare::getVariableType(){
 
 VarAssign::VarAssign(std::string _name, ProgramPtr _expression)
     : Statement(_expression), name(_name) {
-      with_left = 0;
-    }
+  with_left = 0;
+}
 
 VarAssign::VarAssign(ProgramPtr _left, ProgramPtr _expression)
-: Statement(_expression){
-  logger->info("construct VarAssign with derederence\n");
+    : Statement(_expression) {
+  logger->info("construct VarAssign with dereference\n");
   assign_left = _left;
   with_left = 1;
   expression = _expression;
@@ -134,33 +131,32 @@ void VarAssign::print(std::ostream &dst, int indentation) const {
   printIndent(dst, indentation);
   dst << name << " = ";
   expression->print(dst, 0);
-  dst << ";";
 }
 
 int VarAssign::codeGen(const Binding &_binding, int reg) const {
   logger->info("generate code for VarAssign\n");
-  //std::cout << "entered here"  << " " << with_left<< std::endl;
+  // std::cout << "entered here"  << " " << with_left<< std::endl;
   print_map(binding, "VarAssign");
-  //std::cout << "entered here"  << " " << with_left<< std::endl;
-  if(with_left == 0){
-    //std::cout << "entered here" << std::endl;
-  if (binding.find(name) == binding.end()) {
-    logger->error("%s has not been declared\n", name.c_str());
-    exit(1);
-  };
-  int pos_in_binding = binding.at(name);
-  expression->codeGen(binding, reg);
-  printf("\tsw\t$2,%d($fp)\t# assign %s\n", pos_in_binding, name.c_str());
+  // std::cout << "entered here"  << " " << with_left<< std::endl;
+  if (with_left == 0) {
+    // std::cout << "entered here" << std::endl;
+    if (binding.find(name) == binding.end()) {
+      logger->error("%s has not been declared\n", name.c_str());
+      exit(1);
+    };
+    int pos_in_binding = binding.at(name);
+    expression->codeGen(binding, reg);
+    printf("\tsw\t$2,%d($fp)\t# assign %s\n", pos_in_binding, name.c_str());
   }
-  if(with_left == 1){
-    ((Dereference*)assign_left)->read(1);
-    assign_left->codeGen(binding,2);
-    expression->codeGen(binding,3);
-    if(((Program*)expression)->getType() != 'i'){
-    printf("\tlw\t$%d,%d($fp)\n",3,expression->getPos(binding));
+  if (with_left == 1) {
+    ((Dereference *)assign_left)->read(1);
+    assign_left->codeGen(binding, 2);
+    expression->codeGen(binding, 3);
+    if (((Program *)expression)->getType() != 'i') {
+      printf("\tlw\t$%d,%d($fp)\n", 3, expression->getPos(binding));
     }
-    printf("\tlw\t$2,%d($fp)\n",assign_left->getPos(binding));
-    printf("\tsw\t$3,%d($%d)\n",0,2);
+    printf("\tlw\t$2,%d($fp)\n", assign_left->getPos(binding));
+    printf("\tsw\t$3,%d($%d)\n", 0, 2);
   }
   return 0;
 }
@@ -170,8 +166,8 @@ void VarAssign::bind(const Binding &_binding) {
   binding = _binding;
   print_map(binding, "VarAssign");
   ((Program *)expression)->bind(binding);
-  if(with_left == 1){
-    ((Program*)assign_left)->bind(binding);
+  if (with_left == 1) {
+    ((Program *)assign_left)->bind(binding);
   }
 }
 
@@ -180,21 +176,21 @@ void VarAssign::passFunctionName(std::string _name, int _pos) {
   if (expression) {
     ((Program *)expression)->passFunctionName(_name, _pos);
   }
-    if(with_left == 1){
-    ((Program*)assign_left)->passFunctionName(_name,_pos);
+  if (with_left == 1) {
+    ((Program *)assign_left)->passFunctionName(_name, _pos);
   }
 }
 
-void VarAssign::passTypeBinding(TypeBinding &_typebind){
-  //print_map(binding, "VarAssign type");
+void VarAssign::passTypeBinding(TypeBinding &_typebind) {
+  // print_map(binding, "VarAssign type");
   typebind = _typebind;
-    if (expression) {
+  if (expression) {
     ((Program *)expression)->passTypeBinding(_typebind);
   }
-    if(with_left == 1){
-    ((Program*)assign_left)->passTypeBinding(_typebind);
+  if (with_left == 1) {
+    ((Program *)assign_left)->passTypeBinding(_typebind);
   }
-  //std::cout << "finish assign variable" << std::endl;
+  // std::cout << "finish assign variable" << std::endl;
 }
 
 std::string VarAssign::getVariableType(){
@@ -218,7 +214,7 @@ void StatementList::addStatement(ProgramPtr _statement) {
 void StatementList::print(std::ostream &dst, int indentation) const {
   for (auto it : statements) {
     it->print(dst, indentation);
-    dst << "\n";
+    dst << ";\n";
     if (((Statement *)it)->getType() == 'r') break;
   }
 }
@@ -269,7 +265,7 @@ void StatementList::bind(const Binding &_binding) {
       ((Array *)it)->add_bind(binding);
     }
     ((Statement *)it)->bind(binding);
-    //std::cout << "entered here"  << " statements bind"<< std::endl;
+    // std::cout << "entered here"  << " statements bind"<< std::endl;
   }
   print_map(binding, std::to_string(x));
 }
@@ -287,16 +283,17 @@ void StatementList::passLabel(int _label) {
   }
 };
 
-void StatementList::passTypeBinding(TypeBinding &_typebind){
+void StatementList::passTypeBinding(TypeBinding &_typebind) {
   typebind = _typebind;
-  for(auto it: statements){
-    ((Program*)it)->passTypeBinding(_typebind);
+  for (auto it : statements) {
+    ((Program *)it)->passTypeBinding(_typebind);
   }
-  //std::cout << "the type finding for statemetnlist " << std::endl;
-  //for(auto it: _typebind ){
-   // std::cout << it.first << " " << it.second << std::endl;
+  // std::cout << "the type finding for statemetnlist " << std::endl;
+  // for(auto it: _typebind ){
+  //  std::cout << it.first << " " << it.second << std::endl;
   //}
 }
+
 
 std::string StatementList::getVariableType(){
   return "none for statements";
