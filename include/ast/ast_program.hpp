@@ -35,6 +35,7 @@ void print_map(const Binding &_binding, std::string _name);
 // decrement post 3
 // decrement pre  4
 // case           C
+// char           9
 
 class Program {
  protected:

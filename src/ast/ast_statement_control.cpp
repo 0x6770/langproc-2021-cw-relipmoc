@@ -112,6 +112,10 @@ void IfStatement::passTypeBinding(TypeBinding &_typebind) {
   if (else_statement) ((Program *)else_statement)->passTypeBinding(_typebind);
 }
 
+std::string IfStatement::getVariableType(){
+  return "none for statements";
+}
+
 ////////////////////////////////////////
 // Case in Switch
 ////////////////////////////////////////

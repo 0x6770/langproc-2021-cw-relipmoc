@@ -302,14 +302,15 @@ std::string StatementList::getVariableType(){
 ////////////////////////////////////////
 // IfStatement
 ////////////////////////////////////////
-
+/*
 IfStatement::IfStatement(ProgramPtr _condition, ProgramPtr _if_statement,
                          ProgramPtr _else_statement, int _label)
     : Statement(0),
       condition(_condition),
       if_statement(_if_statement),
       else_statement(_else_statement) {
-  setLabel(_label);
+  //setLabel(_label);
+  label = _label;
   if (!condition) {
     logger->error("expected expression\t");
     print(std::cerr, 1);
@@ -424,3 +425,4 @@ void IfStatement::passTypeBinding(TypeBinding &_typebind){
 std::string IfStatement::getVariableType(){
   return "none for statements";
 }
+*/
