@@ -22,7 +22,7 @@ if [[ ${STANDALONE} == 1 ]]; then
 fi
 
 # Compile test program using bin/c_compiler
-bin/c_compiler -S "${TEST_FILE}" -o "${TEST}".s 2>/dev/null >"${TEST}".s
+bin/c_compiler -S "${TEST_FILE}" -o "${TEST}".s 2>/dev/null
 # Assemble generated assembly code via gcc
 mips-linux-gnu-gcc -mfp32 -o "${TEST}".o -c "${TEST}".s
 # Link to main function and generate executable via gcc

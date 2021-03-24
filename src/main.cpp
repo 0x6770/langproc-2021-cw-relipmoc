@@ -19,11 +19,13 @@ int main(int argc, char **argv) {
   logger->info("OUTPUT_FILE = %s\n", arguments.output_file);
 
   FILE *source_file = fopen(arguments.source_file, "r");
+  std::ofstream output_file(arguments.output_file);
   yyin = source_file;
   const Program *ast = parseAST(source_file);
   fclose(source_file);
 
-  ast->codeGen(binding, 2);
+  ast->codeGen(output_file, binding, 2);
+  output_file.close();
 
   std::cerr << std::endl;
   ast->print(std::cerr, 0);

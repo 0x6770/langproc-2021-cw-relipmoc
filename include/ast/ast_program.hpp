@@ -59,7 +59,8 @@ class Program {
   // scope and above.
   // `reg` is the index of registor to store result.
   // return its position in stack frame if it is a variable, else return 0.
-  virtual int codeGen(const Binding &_binding, int reg) const = 0;
+  virtual int codeGen(std::ofstream &dst, const Binding &_binding,
+                      int reg) const = 0;
   int getType() const;
   int getSize() const;
   virtual int getPos(const Binding &_binding) const;

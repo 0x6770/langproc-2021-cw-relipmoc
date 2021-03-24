@@ -22,70 +22,73 @@ int Addition::evaluate(const Binding &_binding) const {
   return left->evaluate(binding) + right->evaluate(binding);
 }
 
-int Addition::codeGen(const Binding &_binding, int reg) const {
+int Addition::codeGen(std::ofstream &dst, const Binding &_binding,
+                      int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
   // for(auto it: typebind ){
   // std::cout << it.first << " " << it.second << std::endl;
   //}
   TypeBinding temp = typebind;
-  std::string var_type_left = ((Program*)left)->getVariableType();
-  std::string var_type_right = ((Program*)right)->getVariableType();
-  //std::cout << "the variable type in addition" << var_type_left << " " << var_type_right << std::endl;
-  if (left_type == 'i' || left_type == 'x' || left_type == 'a'){
-    if(var_type_right == "float") { right->codeGen(binding, 0); }
-    else{
-      right->codeGen(binding, 3);
+  std::string var_type_left = ((Program *)left)->getVariableType();
+  std::string var_type_right = ((Program *)right)->getVariableType();
+  // std::cout << "the variable type in addition" << var_type_left << " " <<
+  // var_type_right << std::endl;
+  if (left_type == 'i' || left_type == 'x' || left_type == 'a') {
+    if (var_type_right == "float") {
+      right->codeGen(dst, binding, 0);
+    } else {
+      right->codeGen(dst, binding, 3);
     }
     // only shift for point arithemetic
-    if(var_type_left == "pointer"){
-        printf("\tsll\t$3,$3,2\n");
+    if (var_type_left == "pointer") {
+      dst << "\tsll\t$3,$3,2" << std::endl;
     }
-    left->codeGen(binding, 2);
-    //std::cout << "after right codegen" << std::endl;
-    // only shift for point arithemetic
-    if(var_type_right == "pointer"){
-        printf("\tsll\t$2,$2,2\n");
+    left->codeGen(dst, binding, 2);
+    // std::cout << "after right codegen" << std::endl;
+    //  only shift for point arithemetic
+    if (var_type_right == "pointer") {
+      dst << "\tsll\t$2,$2,2" << std::endl;
     }
   } else {
-    left->codeGen(binding, 2);
+    left->codeGen(dst, binding, 2);
     // only shift for point arithemetic
-    if(var_type_right == "pointer"){
-        printf("\tsll\t$2,$2,2\n");
+    if (var_type_right == "pointer") {
+      dst << "\tsll\t$2,$2,2" << std::endl;
     }
-    if(var_type_right == "float") { right->codeGen(binding, 0); }
-    else{
-      right->codeGen(binding, 3);
+    if (var_type_right == "float") {
+      right->codeGen(dst, binding, 0);
+    } else {
+      right->codeGen(dst, binding, 3);
     }
-    if(var_type_left == "pointer"){
-        printf("\tsll\t$3,$3,2\n");
-    }
-  }
-
-  if (!((left_type == 'i') | (left_type == 'x') || (left_type == 'a'))){
-    if(var_type_left == "float"){
-      printf("\tlwc1\t$f2,%d($fp)\n", left->getPos(binding));
-    }
-    else{
-      printf("\tlw\t$2,%d($fp)\n", left->getPos(binding));
-    }
-  }
-  if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a'))){
-    if(var_type_right == "float"){
-      printf("\tlwc1\t$f0,%d($fp)\n", right->getPos(binding));
-    }
-    else{
-      printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
+    if (var_type_left == "pointer") {
+      dst << "\tsll\t$3,$3,2" << std::endl;
     }
   }
 
-  if(var_type_left == "float" && var_type_right == "float"){
-    printf("\tadd.s\t$f0,$f2,$f0\n");
-    printf("\tswc1\t$f0,%d($fp)\t# store result of addition\n", pos);
+  if (!((left_type == 'i') | (left_type == 'x') || (left_type == 'a'))) {
+    if (var_type_left == "float") {
+      dst << "\tlwc1\t$f2," << left->getPos(binding) << "($fp)" << std::endl;
+    } else {
+      dst << "\tlw\t\t$2," << left->getPos(binding) << "($fp)" << std::endl;
+    }
   }
-  else{ 
-    printf("\tadd\t$2,$2,$3\n");
-    printf("\tsw\t$2,%d($fp)\t# store result of addition\n", pos);
+  if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a'))) {
+    if (var_type_right == "float") {
+      dst << "\tlwc1\t$f0," << right->getPos(binding) << "($fp)" << std::endl;
+    } else {
+      dst << "\tlw\t\t$3," << right->getPos(binding) << "($fp)" << std::endl;
+    }
+  }
+
+  if (var_type_left == "float" && var_type_right == "float") {
+    dst << "\tadd.s\t$f0,$f2,$f0" << std::endl;
+    dst << "\tswc1\t$f0," << pos << "($fp)\t\t# store result of addition"
+        << std::endl;
+  } else {
+    dst << "\tadd\t$2,$2,$3" << std::endl;
+    dst << "\tsw\t\t$2," << pos << "($fp)\t\t# store result of addition"
+        << std::endl;
   }
 
   return 0;
@@ -104,15 +107,14 @@ void Addition::passTypeBinding(TypeBinding &_typebind) {
   ((Program *)right)->passTypeBinding(typebind);
 }
 
-std::string Addition::getVariableType(){
-  std::string var_1 = ((Program*)left)->getVariableType();
-  std::string var_2 = ((Program*)right)->getVariableType();
-  if((var_1 == "int")&& (var_2 == "int")){
+std::string Addition::getVariableType() {
+  std::string var_1 = ((Program *)left)->getVariableType();
+  std::string var_2 = ((Program *)right)->getVariableType();
+  if ((var_1 == "int") && (var_2 == "int")) {
     return "int";
-  }else if((var_1 == "pointer") || (var_2 == "pointer")){
+  } else if ((var_1 == "pointer") || (var_2 == "pointer")) {
     return "pointer";
-  }
-  else if((var_1 == "float") && (var_2 == "float")){
+  } else if ((var_1 == "float") && (var_2 == "float")) {
     return "float";
   }
   return "no type";
@@ -140,68 +142,72 @@ int Subtraction::evaluate(const Binding &_binding) const {
   return left->evaluate(binding) - right->evaluate(binding);
 }
 
-int Subtraction::codeGen(const Binding &_binding, int reg) const {
+int Subtraction::codeGen(std::ofstream &dst, const Binding &_binding,
+                         int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
   TypeBinding temp = typebind;
-  std::string var_type_left = ((Program*)left)->getVariableType();
-  std::string var_type_right = ((Program*)right)->getVariableType();
+  std::string var_type_left = ((Program *)left)->getVariableType();
+  std::string var_type_right = ((Program *)right)->getVariableType();
 
-  if (left_type == 'i' || left_type == 'x' || left_type == 'a'){
-    if(var_type_right == "float")  right->codeGen(binding, 0);
-    else{
-      right->codeGen(binding, 3);
+  if (left_type == 'i' || left_type == 'x' || left_type == 'a') {
+    if (var_type_right == "float")
+      right->codeGen(dst, binding, 0);
+    else {
+      right->codeGen(dst, binding, 3);
     }
     // only shift for point arithemetic
-    if(var_type_left == "pointer"){
-        printf("\tsll\t$3,$3,2\n");}
-    
-    left->codeGen(binding, 2);
-    
+    if (var_type_left == "pointer") {
+      dst << "\tsll\t$3,$3,2" << std::endl;
+    }
+
+    left->codeGen(dst, binding, 2);
+
     // only shift for point arithemetic
-    if(var_type_right == "pointer"){
-        printf("\tsll\t$2,$2,2\n");}
-  } 
-  
+    if (var_type_right == "pointer") {
+      dst << "\tsll\t$2,$2,2" << std::endl;
+    }
+  }
+
   else {
-    left->codeGen(binding, 2);
+    left->codeGen(dst, binding, 2);
     // only shift for point arithemetic
-    if(var_type_right == "pointer"){
-        printf("\tsll\t$2,$2,2\n");
+    if (var_type_right == "pointer") {
+      dst << "\tsll\t$2,$2,2" << std::endl;
     }
-    if(var_type_right == "float") { right->codeGen(binding, 0); }
-    else{
-      right->codeGen(binding, 3);
+    if (var_type_right == "float") {
+      right->codeGen(dst, binding, 0);
+    } else {
+      right->codeGen(dst, binding, 3);
     }
-    if(var_type_left == "pointer"){
-        printf("\tsll\t$3,$3,2\n");
-    }
-  }
-
-  if (!((left_type == 'i') | (left_type == 'x') || (left_type == 'a'))){
-    if(var_type_left == "float"){
-      printf("\tlwc1\t$f2,%d($fp)\n", left->getPos(binding));
-    }
-    else{
-      printf("\tlw\t$2,%d($fp)\n", left->getPos(binding));
-    }
-  }
-  if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a'))){
-    if(var_type_right == "float"){
-      printf("\tlwc1\t$f0,%d($fp)\n", right->getPos(binding));
-    }
-    else{
-      printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
+    if (var_type_left == "pointer") {
+      dst << "\tsll\t$3,$3,2" << std::endl;
     }
   }
 
-  if(var_type_left == "float" && var_type_right == "float"){
-    printf("\tsub.s\t$f0,$f2,$f0\n");
-    printf("\tswc1\t$f0,%d($fp)\t# store result of addition\n", pos);
+  if (!((left_type == 'i') | (left_type == 'x') || (left_type == 'a'))) {
+    if (var_type_left == "float") {
+      dst << "\tlwc1\t$f2," << left->getPos(binding) << "($fp)" << std::endl;
+    } else {
+      dst << "\tlw\t\t$2," << left->getPos(binding) << "($fp)" << std::endl;
+    }
   }
-  else{ 
-    printf("\tsub\t$2,$2,$3\n");
-    printf("\tsw\t$2,%d($fp)\t# store result of addition\n", pos);
+  if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a'))) {
+    if (var_type_right == "float") {
+      dst << "\tlwc1\t$f0," << right->getPos(binding) << "($fp)" << std::endl;
+    } else {
+      dst << "\tlw\t\t$3," << right->getPos(binding) << "($fp)" << std::endl;
+    }
+  }
+
+  if (var_type_left == "float" && var_type_right == "float") {
+    dst << "\tsub.s\t$f0,$f2,$f0" << std::endl;
+    dst << "\tswc1\t$f0," << pos << "($fp)\t\t\t# store result of addition"
+        << std::endl;
+  } else {
+    dst << "\tsub\t$2,$2,$3" << std::endl;
+    dst << "\tsw\t\t$2," << pos << "($fp)\t\t\t# store result of addition"
+        << std::endl;
   }
 
   return 0;
@@ -220,13 +226,12 @@ void Subtraction::passTypeBinding(TypeBinding &_typebind) {
   ((Program *)right)->passTypeBinding(typebind);
 }
 
-std::string Subtraction::getVariableType(){
-  std::string var_1 = ((Program*)left)->getVariableType();
-  std::string var_2 = ((Program*)right)->getVariableType();
-  if((var_1 == "int")&& (var_2 == "int")){
+std::string Subtraction::getVariableType() {
+  std::string var_1 = ((Program *)left)->getVariableType();
+  std::string var_2 = ((Program *)right)->getVariableType();
+  if ((var_1 == "int") && (var_2 == "int")) {
     return "int";
-  }
-  else if((var_1 == "float") && (var_2 == "float")){
+  } else if ((var_1 == "float") && (var_2 == "float")) {
     return "float";
   }
   return "no type";
@@ -253,55 +258,54 @@ int Multiplication::evaluate(const Binding &_binding) const {
   return left->evaluate(binding) * right->evaluate(binding);
 }
 
-int Multiplication::codeGen(const Binding &_binding, int reg) const {
+int Multiplication::codeGen(std::ofstream &dst, const Binding &_binding,
+                            int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
-  std::string var_type_left = ((Program*)left)->getVariableType();
-  std::string var_type_right = ((Program*)right)->getVariableType();
+  std::string var_type_left = ((Program *)left)->getVariableType();
+  std::string var_type_right = ((Program *)right)->getVariableType();
 
   if (left_type == 'i' || left_type == 'x' || left_type == 'a') {
-    if(var_type_right == "float")  right->codeGen(binding, 0);
-    else{
-      right->codeGen(binding, 3);
+    if (var_type_right == "float")
+      right->codeGen(dst, binding, 0);
+    else {
+      right->codeGen(dst, binding, 3);
     }
-    left->codeGen(binding, 2);
+    left->codeGen(dst, binding, 2);
   } else {
-    left->codeGen(binding, 2);
-    if(var_type_right == "float") { right->codeGen(binding, 0); }
-    else{
-      right->codeGen(binding, 3);
+    left->codeGen(dst, binding, 2);
+    if (var_type_right == "float") {
+      right->codeGen(dst, binding, 0);
+    } else {
+      right->codeGen(dst, binding, 3);
     }
   }
 
-  if (!((left_type == 'i') | (left_type == 'x') || (left_type == 'a'))){
-    if(var_type_left == "float"){
-      printf("\tlwc1\t$f2,%d($fp)\n", left->getPos(binding));
-    }
-    else{
-      printf("\tlw\t$2,%d($fp)\n", left->getPos(binding));
+  if (!((left_type == 'i') | (left_type == 'x') || (left_type == 'a'))) {
+    if (var_type_left == "float") {
+      dst << "\tlwc1\t$f2," << left->getPos(binding) << "($fp)" << std::endl;
+    } else {
+      dst << "\tlw\t\t$2," << left->getPos(binding) << "($fp)" << std::endl;
     }
   }
-  if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a'))){
-    if(var_type_right == "float"){
-      printf("\tlwc1\t$f0,%d($fp)\n", right->getPos(binding));
-    }
-    else{
-      printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
+  if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a'))) {
+    if (var_type_right == "float") {
+      dst << "\tlwc1\t$f0," << right->getPos(binding) << "($fp)" << std::endl;
+    } else {
+      dst << "\tlw\t\t$3," << right->getPos(binding) << "($fp)" << std::endl;
     }
   }
 
-
-
-  if(var_type_left == "float" && var_type_right == "float"){
-     printf("\tmul.s\t$f0,$f0,$f2\n");
-     //printf("\tmflo.s\t$f0\n");
-     printf("\tswc1\t$f0,%d($fp)\t# store result of multiplication\n", pos);
-  }
-  else{
-     printf("\tmult\t$2,$3\n");
-     printf("\tmflo\t$2\n");
-     printf("\tsw\t$2,%d($fp)\t# store result of multiplication\n", pos);
+  if (var_type_left == "float" && var_type_right == "float") {
+    dst << "\tmul.s\t$f0,$f0,$f2" << std::endl;
+    dst << "\tswc1\t$f0," << pos
+        << "($fp)\t\t\t# store result of multiplication" << std::endl;
+  } else {
+    dst << "\tmult\t$2,$3" << std::endl;
+    dst << "\tmflo\t$2" << std::endl;
+    dst << "\tsw\t\t$2," << pos << "($fp)\t\t\t# store result of multiplication"
+        << std::endl;
   }
   return 0;
 }
@@ -319,13 +323,12 @@ void Multiplication::passTypeBinding(TypeBinding &_typebind) {
   ((Program *)right)->passTypeBinding(typebind);
 }
 
-std::string Multiplication::getVariableType(){
-  std::string var_1 = ((Program*)left)->getVariableType();
-  std::string var_2 = ((Program*)right)->getVariableType();
-  if((var_1 == "int")&& (var_2 == "int")){
+std::string Multiplication::getVariableType() {
+  std::string var_1 = ((Program *)left)->getVariableType();
+  std::string var_2 = ((Program *)right)->getVariableType();
+  if ((var_1 == "int") && (var_2 == "int")) {
     return "int";
-  }
-  else if((var_1 == "float") && (var_2 == "float")){
+  } else if ((var_1 == "float") && (var_2 == "float")) {
     return "float";
   }
   return "no type";
@@ -351,47 +354,49 @@ int Division::evaluate(const Binding &_binding) const {
   return left->evaluate(binding) / right->evaluate(binding);
 }
 
-int Division::codeGen(const Binding &_binding, int reg) const {
+int Division::codeGen(std::ofstream &dst, const Binding &_binding,
+                      int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
-  std::string var_type_left = ((Program*)left)->getVariableType();
-  std::string var_type_right = ((Program*)right)->getVariableType();
+  std::string var_type_left = ((Program *)left)->getVariableType();
+  std::string var_type_right = ((Program *)right)->getVariableType();
 
   if (left_type == 'i' || left_type == 'x' || left_type == 'a') {
-    if(var_type_right == "float")  right->codeGen(binding, 0);
-    else{
-      right->codeGen(binding, 3);
+    if (var_type_right == "float")
+      right->codeGen(dst, binding, 0);
+    else {
+      right->codeGen(dst, binding, 3);
     }
-    left->codeGen(binding, 2);
+    left->codeGen(dst, binding, 2);
   } else {
-    left->codeGen(binding, 2);
-    if(var_type_right == "float") { right->codeGen(binding, 0); }
-    else{
-      right->codeGen(binding, 3);
+    left->codeGen(dst, binding, 2);
+    if (var_type_right == "float") {
+      right->codeGen(dst, binding, 0);
+    } else {
+      right->codeGen(dst, binding, 3);
     }
   }
 
-if (!((left_type == 'i') | (left_type == 'x') || (left_type == 'a'))){
-    if(var_type_left == "float"){
-      printf("\tlwc1\t$f2,%d($fp)\n", left->getPos(binding));
-    }
-    else{
-      printf("\tlw\t$2,%d($fp)\n", left->getPos(binding));
+  if (!((left_type == 'i') | (left_type == 'x') || (left_type == 'a'))) {
+    if (var_type_left == "float") {
+      dst << "\tlwc1\t$f2," << left->getPos(binding) << "($fp)" << std::endl;
+    } else {
+      dst << "\tlw\t\t$2," << left->getPos(binding) << "($fp)" << std::endl;
     }
   }
-  if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a'))){
-    if(var_type_right == "float"){
-      printf("\tlwc1\t$f0,%d($fp)\n", right->getPos(binding));
+  if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a'))) {
+    if (var_type_right == "float") {
+      dst << "\tlwc1\t$f0," << right->getPos(binding) << "($fp)" << std::endl;
+    } else {
+      dst << "\tlw\t\t$3," << right->getPos(binding) << "($fp)" << std::endl;
     }
-    else{
-      printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
-    }
-}
+  }
 
-  printf("\tdiv\t$2,$3\n");
-  printf("\tmflo\t$2\n");
-  printf("\tsw\t$2,%d($fp)\t# store result of division\n", pos);
+  dst << "\tdiv\t$2,$3" << std::endl;
+  dst << "\tmflo\t$2" << std::endl;
+  dst << "\tsw\t\t$2," << pos << "($fp)\t\t\t# store result of division"
+      << std::endl;
 
   return 0;
 }
@@ -409,10 +414,10 @@ void Division::passTypeBinding(TypeBinding &_typebind) {
   ((Program *)right)->passTypeBinding(typebind);
 }
 
-std::string Division::getVariableType(){
-  std::string var_1 = ((Program*)left)->getVariableType();
-  std::string var_2 = ((Program*)right)->getVariableType();
-  if((var_1 == "int")&& (var_2 == "int")){
+std::string Division::getVariableType() {
+  std::string var_1 = ((Program *)left)->getVariableType();
+  std::string var_2 = ((Program *)right)->getVariableType();
+  if ((var_1 == "int") && (var_2 == "int")) {
     return "int";
   }
   return "no type";
@@ -438,47 +443,49 @@ int Modulus::evaluate(const Binding &_binding) const {
   return (left->evaluate(binding) % right->evaluate(binding));
 }
 
-int Modulus::codeGen(const Binding &_binding, int reg) const {
+int Modulus::codeGen(std::ofstream &dst, const Binding &_binding,
+                     int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
-  std::string var_type_left = ((Program*)left)->getVariableType();
-  std::string var_type_right = ((Program*)right)->getVariableType();
+  std::string var_type_left = ((Program *)left)->getVariableType();
+  std::string var_type_right = ((Program *)right)->getVariableType();
 
   if (left_type == 'i' || left_type == 'x' || left_type == 'a') {
-    if(var_type_right == "float")  right->codeGen(binding, 0);
-    else{
-      right->codeGen(binding, 3);
+    if (var_type_right == "float")
+      right->codeGen(dst, binding, 0);
+    else {
+      right->codeGen(dst, binding, 3);
     }
-    left->codeGen(binding, 2);
+    left->codeGen(dst, binding, 2);
   } else {
-    left->codeGen(binding, 2);
-    if(var_type_right == "float") { right->codeGen(binding, 0); }
-    else{
-      right->codeGen(binding, 3);
+    left->codeGen(dst, binding, 2);
+    if (var_type_right == "float") {
+      right->codeGen(dst, binding, 0);
+    } else {
+      right->codeGen(dst, binding, 3);
     }
   }
 
-  if (!((left_type == 'i') | (left_type == 'x') || (left_type == 'a'))){
-    if(var_type_left == "float"){
-      printf("\tlwc1\t$f2,%d($fp)\n", left->getPos(binding));
-    }
-    else{
-      printf("\tlw\t$2,%d($fp)\n", left->getPos(binding));
+  if (!((left_type == 'i') | (left_type == 'x') || (left_type == 'a'))) {
+    if (var_type_left == "float") {
+      dst << "\tlwc1\t$f2," << left->getPos(binding) << "($fp)" << std::endl;
+    } else {
+      dst << "\tlw\t\t$2," << left->getPos(binding) << "($fp)" << std::endl;
     }
   }
-  if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a'))){
-    if(var_type_right == "float"){
-      printf("\tlwc1\t$f0,%d($fp)\n", right->getPos(binding));
-    }
-    else{
-      printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
+  if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a'))) {
+    if (var_type_right == "float") {
+      dst << "\tlwc1\t$f0," << right->getPos(binding) << "($fp)" << std::endl;
+    } else {
+      dst << "\tlw\t\t$3," << right->getPos(binding) << "($fp)" << std::endl;
     }
   }
 
-  printf("\tdiv\t$2,$3\n");
-  printf("\tmfhi\t$2\n");
-  printf("\tsw\t$2,%d($fp)\t# store result of modulus\n", pos);
+  dst << "\tdiv\t$2,$3" << std::endl;
+  dst << "\tmfhi\t$2" << std::endl;
+  dst << "\tsw\t\t$2," << pos << "($fp)\t\t\t# store result of modulus"
+      << std::endl;
 
   return 0;
 }
@@ -496,10 +503,10 @@ void Modulus::passTypeBinding(TypeBinding &_typebind) {
   ((Program *)right)->passTypeBinding(typebind);
 }
 
-std::string Modulus::getVariableType(){
-  std::string var_1 = ((Program*)left)->getVariableType();
-  std::string var_2 = ((Program*)right)->getVariableType();
-  if((var_1 == "int")&& (var_2 == "int")){
+std::string Modulus::getVariableType() {
+  std::string var_1 = ((Program *)left)->getVariableType();
+  std::string var_2 = ((Program *)right)->getVariableType();
+  if ((var_1 == "int") && (var_2 == "int")) {
     return "int";
   }
   return "no type";
@@ -524,11 +531,13 @@ int Negation::evaluate(const Binding &_binding) const {
   return -(right->evaluate(binding));
 }
 
-int Negation::codeGen(const Binding &_binding, int reg) const {
-  std::string var_type_right = ((Program*)right)->getVariableType();
-  right->codeGen(binding, 2);
-  printf("\tsub\t$2,$0,$2\n");
-  printf("\tsw\t$2,%d($fp)\t# store result of Negation\n", pos);
+int Negation::codeGen(std::ofstream &dst, const Binding &_binding,
+                      int reg) const {
+  std::string var_type_right = ((Program *)right)->getVariableType();
+  right->codeGen(dst, binding, 2);
+  dst << "\tsub\t$2,$0,$2" << std::endl;
+  dst << "\tsw\t\t$2," << pos << "($fp)\t\t\t# store result of Negation"
+      << std::endl;
 
   return 0;
 }
@@ -539,15 +548,14 @@ void Negation::passFunctionName(std::string _name, int _pos) {
   ((Program *)right)->passFunctionName(_name, _pos);
 }
 
-
-void Negation::passTypeBinding(TypeBinding &_typebind){
-    typebind = _typebind; 
-  ((Program*)right)->passTypeBinding(typebind); 
+void Negation::passTypeBinding(TypeBinding &_typebind) {
+  typebind = _typebind;
+  ((Program *)right)->passTypeBinding(typebind);
 }
 
-std::string Negation::getVariableType(){
-  std::string var_2 = ((Program*)right)->getVariableType();
-  if(var_2 == "int"){
+std::string Negation::getVariableType() {
+  std::string var_2 = ((Program *)right)->getVariableType();
+  if (var_2 == "int") {
     return "int";
   }
   return "no type";

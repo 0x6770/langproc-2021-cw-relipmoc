@@ -21,24 +21,27 @@ int BitwiseAnd::evaluate(const Binding &_binding) const {
   return (left->evaluate(binding) & right->evaluate(binding));
 }
 
-int BitwiseAnd::codeGen(const Binding &_binding, int reg) const {
+int BitwiseAnd::codeGen(std::ofstream &dst, const Binding &_binding,
+                        int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
   if (left_type == 'i' || left_type == 'x' || left_type == 'a') {
-    right->codeGen(binding, 3);
-    left->codeGen(binding, 2);
+    right->codeGen(dst, binding, 3);
+    left->codeGen(dst, binding, 2);
   } else {
-    left->codeGen(binding, 2);
-    right->codeGen(binding, 3);
+    left->codeGen(dst, binding, 2);
+    right->codeGen(dst, binding, 3);
   }
 
   if (!((left_type == 'i') | (left_type == 'x') || (left_type == 'a')))
-    printf("\tlw\t$2,%d($fp)\n", left->getPos(binding));
+    dst << "\tlw\t\t$2," << left->getPos(binding) << "($fp)" << std::endl;
   if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
-    printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
-  printf("\tand\t$2,$2,$3\n");
-  printf("\tsw\t$2,%d($fp)\t# store result of and bitwise operation\n", pos);
+    dst << "\tlw\t\t$3," << right->getPos(binding) << "($fp)" << std::endl;
+
+  dst << "\tand\t$2,$2,$3" << std::endl;
+  dst << "\tsw\t\t$2," << pos
+      << "($fp)\t\t# store result of and bitwise operation" << std::endl;
 
   return 0;
 }
@@ -50,16 +53,16 @@ void BitwiseAnd::passFunctionName(std::string _name, int _pos) {
   ((Program *)right)->passFunctionName(_name, _pos);
 }
 
-void BitwiseAnd::passTypeBinding(TypeBinding &_typebind){
-    typebind = _typebind;
-  ((Program*)left)->passTypeBinding(typebind); 
-  ((Program*)right)->passTypeBinding(typebind); 
+void BitwiseAnd::passTypeBinding(TypeBinding &_typebind) {
+  typebind = _typebind;
+  ((Program *)left)->passTypeBinding(typebind);
+  ((Program *)right)->passTypeBinding(typebind);
 }
 
-std::string BitwiseAnd::getVariableType(){
-  std::string var_1 = ((Program*)left)->getVariableType();
-  std::string var_2 = ((Program*)right)->getVariableType();
-  if((var_1 == "int")&& (var_2 == "int")){
+std::string BitwiseAnd::getVariableType() {
+  std::string var_1 = ((Program *)left)->getVariableType();
+  std::string var_2 = ((Program *)right)->getVariableType();
+  if ((var_1 == "int") && (var_2 == "int")) {
     return "int";
   }
   return "no type";
@@ -86,24 +89,27 @@ int BitwiseOr::evaluate(const Binding &_binding) const {
   return (left->evaluate(binding) | right->evaluate(binding));
 }
 
-int BitwiseOr::codeGen(const Binding &_binding, int reg) const {
+int BitwiseOr::codeGen(std::ofstream &dst, const Binding &_binding,
+                       int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
   if (left_type == 'i' || left_type == 'x' || left_type == 'a') {
-    right->codeGen(binding, 3);
-    left->codeGen(binding, 2);
+    right->codeGen(dst, binding, 3);
+    left->codeGen(dst, binding, 2);
   } else {
-    left->codeGen(binding, 2);
-    right->codeGen(binding, 3);
+    left->codeGen(dst, binding, 2);
+    right->codeGen(dst, binding, 3);
   }
 
   if (!((left_type == 'i') | (left_type == 'x') || (left_type == 'a')))
-    printf("\tlw\t$2,%d($fp)\n", left->getPos(binding));
+    dst << "\tlw\t\t$2," << left->getPos(binding) << "($fp)" << std::endl;
   if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
-    printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
-  printf("\tor\t$2,$2,$3\n");
-  printf("\tsw\t$2,%d($fp)\t# store result of or bitwise operation\n", pos);
+    dst << "\tlw\t\t$3," << right->getPos(binding) << "($fp)" << std::endl;
+
+  dst << "\tor\t\t$2,$2,$3" << std::endl;
+  dst << "\tsw\t\t$2," << pos
+      << "($fp)\t\t# store result of or bitwise operation" << std::endl;
 
   return 0;
 }
@@ -113,16 +119,16 @@ void BitwiseOr::passFunctionName(std::string _name, int _pos) {
   ((Program *)left)->passFunctionName(_name, _pos);
   ((Program *)right)->passFunctionName(_name, _pos);
 }
-void BitwiseOr::passTypeBinding(TypeBinding &_typebind){
-    typebind = _typebind;
-  ((Program*)left)->passTypeBinding(typebind); 
-  ((Program*)right)->passTypeBinding(typebind); 
+void BitwiseOr::passTypeBinding(TypeBinding &_typebind) {
+  typebind = _typebind;
+  ((Program *)left)->passTypeBinding(typebind);
+  ((Program *)right)->passTypeBinding(typebind);
 }
 
-std::string BitwiseOr::getVariableType(){
-  std::string var_1 = ((Program*)left)->getVariableType();
-  std::string var_2 = ((Program*)right)->getVariableType();
-  if((var_1 == "int")&& (var_2 == "int")){
+std::string BitwiseOr::getVariableType() {
+  std::string var_1 = ((Program *)left)->getVariableType();
+  std::string var_2 = ((Program *)right)->getVariableType();
+  if ((var_1 == "int") && (var_2 == "int")) {
     return "int";
   }
   return "no type";
@@ -149,24 +155,27 @@ int BitwiseXor::evaluate(const Binding &_binding) const {
   return (left->evaluate(binding) ^ right->evaluate(binding));
 }
 
-int BitwiseXor::codeGen(const Binding &_binding, int reg) const {
+int BitwiseXor::codeGen(std::ofstream &dst, const Binding &_binding,
+                        int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
   if (left_type == 'i' || left_type == 'x' || left_type == 'a') {
-    right->codeGen(binding, 3);
-    left->codeGen(binding, 2);
+    right->codeGen(dst, binding, 3);
+    left->codeGen(dst, binding, 2);
   } else {
-    left->codeGen(binding, 2);
-    right->codeGen(binding, 3);
+    left->codeGen(dst, binding, 2);
+    right->codeGen(dst, binding, 3);
   }
 
   if (!((left_type == 'i') | (left_type == 'x') || (left_type == 'a')))
-    printf("\tlw\t$2,%d($fp)\n", left->getPos(binding));
+    dst << "\tlw\t\t$2," << left->getPos(binding) << "($fp)" << std::endl;
   if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
-    printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
-  printf("\txor\t$2,$2,$3\n");
-  printf("\tsw\t$2,%d($fp)\t# store result of xor bitwise operation\n", pos);
+    dst << "\tlw\t\t$3," << right->getPos(binding) << "($fp)" << std::endl;
+
+  dst << "\txor\t$2,$2,$3" << std::endl;
+  dst << "\tsw\t\t$2," << pos
+      << "($fp)\t\t# store result of xor bitwise operation" << std::endl;
   return 0;
 }
 
@@ -177,16 +186,16 @@ void BitwiseXor::passFunctionName(std::string _name, int _pos) {
   ((Program *)right)->passFunctionName(_name, _pos);
 }
 
-void BitwiseXor::passTypeBinding(TypeBinding &_typebind){
-    typebind = _typebind;
-  ((Program*)left)->passTypeBinding(typebind); 
-  ((Program*)right)->passTypeBinding(typebind); 
+void BitwiseXor::passTypeBinding(TypeBinding &_typebind) {
+  typebind = _typebind;
+  ((Program *)left)->passTypeBinding(typebind);
+  ((Program *)right)->passTypeBinding(typebind);
 }
 
-std::string BitwiseXor::getVariableType(){
-  std::string var_1 = ((Program*)left)->getVariableType();
-  std::string var_2 = ((Program*)right)->getVariableType();
-  if((var_1 == "int")&& (var_2 == "int")){
+std::string BitwiseXor::getVariableType() {
+  std::string var_1 = ((Program *)left)->getVariableType();
+  std::string var_2 = ((Program *)right)->getVariableType();
+  if ((var_1 == "int") && (var_2 == "int")) {
     return "int";
   }
   return "no type";
@@ -212,24 +221,27 @@ int ShiftLeft::evaluate(const Binding &_binding) const {
   return (left->evaluate(binding) << right->evaluate(binding));
 }
 
-int ShiftLeft::codeGen(const Binding &_binding, int reg) const {
+int ShiftLeft::codeGen(std::ofstream &dst, const Binding &_binding,
+                       int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
   if (left_type == 'i' || left_type == 'x' || left_type == 'a') {
-    right->codeGen(binding, 3);
-    left->codeGen(binding, 2);
+    right->codeGen(dst, binding, 3);
+    left->codeGen(dst, binding, 2);
   } else {
-    left->codeGen(binding, 2);
-    right->codeGen(binding, 3);
+    left->codeGen(dst, binding, 2);
+    right->codeGen(dst, binding, 3);
   }
 
   if (!((left_type == 'i') | (left_type == 'x') || (left_type == 'a')))
-    printf("\tlw\t$2,%d($fp)\n", left->getPos(binding));
+    dst << "\tlw\t\t$2," << left->getPos(binding) << "($fp)" << std::endl;
   if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
-    printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
-  printf("\tsll\t$2,$2,$3\n");
-  printf("\tsw\t$2,%d($fp)\t# store result of left shift operation\n", pos);
+    dst << "\tlw\t\t$3," << right->getPos(binding) << "($fp)" << std::endl;
+
+  dst << "\tsll\t$2,$2,$3" << std::endl;
+  dst << "\tsw\t\t$2," << pos
+      << "($fp)\t\t# store result of left shift operation" << std::endl;
 
   return 0;
 }
@@ -241,16 +253,16 @@ void ShiftLeft::passFunctionName(std::string _name, int _pos) {
   ((Program *)right)->passFunctionName(_name, _pos);
 }
 
-void ShiftLeft::passTypeBinding(TypeBinding &_typebind){
-    typebind = _typebind;
-  ((Program*)left)->passTypeBinding(typebind); 
-  ((Program*)right)->passTypeBinding(typebind); 
+void ShiftLeft::passTypeBinding(TypeBinding &_typebind) {
+  typebind = _typebind;
+  ((Program *)left)->passTypeBinding(typebind);
+  ((Program *)right)->passTypeBinding(typebind);
 }
 
-std::string ShiftLeft::getVariableType(){
-  std::string var_1 = ((Program*)left)->getVariableType();
-  std::string var_2 = ((Program*)right)->getVariableType();
-  if((var_1 == "int")&& (var_2 == "int")){
+std::string ShiftLeft::getVariableType() {
+  std::string var_1 = ((Program *)left)->getVariableType();
+  std::string var_2 = ((Program *)right)->getVariableType();
+  if ((var_1 == "int") && (var_2 == "int")) {
     return "int";
   }
   return "no type";
@@ -276,25 +288,27 @@ int ShiftRight::evaluate(const Binding &_binding) const {
   return (left->evaluate(binding) >> right->evaluate(binding));
 }
 
-int ShiftRight::codeGen(const Binding &_binding, int reg) const {
+int ShiftRight::codeGen(std::ofstream &dst, const Binding &_binding,
+                        int reg) const {
   int left_type = left->getType();
   int right_type = right->getType();
 
   if (left_type == 'i' || left_type == 'x' || left_type == 'a') {
-    right->codeGen(binding, 3);
-    left->codeGen(binding, 2);
+    right->codeGen(dst, binding, 3);
+    left->codeGen(dst, binding, 2);
   } else {
-    left->codeGen(binding, 2);
-    right->codeGen(binding, 3);
+    left->codeGen(dst, binding, 2);
+    right->codeGen(dst, binding, 3);
   }
 
   if (!((left_type == 'i') | (left_type == 'x') || (left_type == 'a')))
-    printf("\tlw\t$2,%d($fp)\n", left->getPos(binding));
+    dst << "\tlw\t\t$2," << left->getPos(binding) << "($fp)" << std::endl;
   if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
-    printf("\tlw\t$3,%d($fp)\n", right->getPos(binding));
+    dst << "\tlw\t\t$3," << right->getPos(binding) << "($fp)" << std::endl;
 
-  printf("\tsra\t$2,$2,$3\n");
-  printf("\tsw\t$2,%d($fp)\t# store result of right shift operation\n", pos);
+  dst << "\tsra\t$2,$2,$3" << std::endl;
+  dst << "\tsw\t\t$2," << pos
+      << "($fp)\t\t# store result of right shift operation" << std::endl;
 
   return 0;
 }
@@ -306,16 +320,16 @@ void ShiftRight::passFunctionName(std::string _name, int _pos) {
   ((Program *)right)->passFunctionName(_name, _pos);
 }
 
-void ShiftRight::passTypeBinding(TypeBinding &_typebind){
-    typebind = _typebind;
-  ((Program*)left)->passTypeBinding(typebind); 
-  ((Program*)right)->passTypeBinding(typebind); 
+void ShiftRight::passTypeBinding(TypeBinding &_typebind) {
+  typebind = _typebind;
+  ((Program *)left)->passTypeBinding(typebind);
+  ((Program *)right)->passTypeBinding(typebind);
 }
 
-std::string ShiftRight::getVariableType(){
-  std::string var_1 = ((Program*)left)->getVariableType();
-  std::string var_2 = ((Program*)right)->getVariableType();
-  if((var_1 == "int")&& (var_2 == "int")){
+std::string ShiftRight::getVariableType() {
+  std::string var_1 = ((Program *)left)->getVariableType();
+  std::string var_2 = ((Program *)right)->getVariableType();
+  if ((var_1 == "int") && (var_2 == "int")) {
     return "int";
   }
   return "no type";

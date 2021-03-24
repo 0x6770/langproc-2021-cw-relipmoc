@@ -10,7 +10,8 @@
 class Addition : public Operation {
  public:
   Addition(ProgramPtr _left, ProgramPtr _right, int _pos);
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void passFunctionName(std::string _name, int _pos) override;
@@ -25,7 +26,8 @@ class Addition : public Operation {
 class Subtraction : public Operation {
  public:
   Subtraction(ProgramPtr _left, ProgramPtr _right, int _pos);
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void passFunctionName(std::string _name, int _pos) override;
@@ -40,7 +42,8 @@ class Subtraction : public Operation {
 class Multiplication : public Operation {
  public:
   Multiplication(ProgramPtr _left, ProgramPtr _right, int _pos);
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void passFunctionName(std::string _name, int _pos) override;
@@ -55,7 +58,8 @@ class Multiplication : public Operation {
 class Division : public Operation {
  public:
   Division(ProgramPtr _left, ProgramPtr _right, int _pos);
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void passFunctionName(std::string _name, int _pos) override;
@@ -70,7 +74,8 @@ class Division : public Operation {
 class Modulus : public Operation {
  public:
   Modulus(ProgramPtr _left, ProgramPtr _right, int _pos);
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void passFunctionName(std::string _name, int _pos) override;
@@ -85,15 +90,13 @@ class Modulus : public Operation {
 class Negation : public Operation {
  public:
   Negation(ProgramPtr _right, int _pos);
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void passFunctionName(std::string _name, int _pos) override;
   virtual void passTypeBinding(TypeBinding &_typebind) override;
   virtual std::string getVariableType() override;
 };
-
-
-
 
 #endif

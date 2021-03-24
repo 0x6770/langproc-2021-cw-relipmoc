@@ -12,7 +12,8 @@ class AddEqual : public Operation {
   AddEqual(ProgramPtr _left, ProgramPtr _right, int _pos);
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   void passFunctionName(std::string _name, int _pos) override;
   void passTypeBinding(TypeBinding &_typebind) override;
   std::string getVariableType() override;
@@ -27,7 +28,8 @@ class SubEqual : public Operation {
   SubEqual(ProgramPtr _left, ProgramPtr _right, int _pos);
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   void passFunctionName(std::string _name, int _pos) override;
   void passTypeBinding(TypeBinding &_typebind) override;
   std::string getVariableType() override;
@@ -42,7 +44,8 @@ class MulEqual : public Operation {
   MulEqual(ProgramPtr _left, ProgramPtr _right, int _pos);
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   void passFunctionName(std::string _name, int _pos) override;
   void passTypeBinding(TypeBinding &_typebind) override;
   std::string getVariableType() override;
@@ -57,7 +60,8 @@ class QuoEqual : public Operation {
   QuoEqual(ProgramPtr _left, ProgramPtr _right, int _pos);
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   void passFunctionName(std::string _name, int _pos) override;
   void passTypeBinding(TypeBinding &_typebind) override;
   std::string getVariableType() override;
@@ -72,7 +76,8 @@ class ModEqual : public Operation {
   ModEqual(ProgramPtr _left, ProgramPtr _right, int _pos);
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   void passFunctionName(std::string _name, int _pos) override;
   void passTypeBinding(TypeBinding &_typebind) override;
   std::string getVariableType() override;
@@ -87,7 +92,8 @@ class ShiftEqual_L : public Operation {
   ShiftEqual_L(ProgramPtr _left, ProgramPtr _right, int _pos);
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   void passFunctionName(std::string _name, int _pos) override;
   void passTypeBinding(TypeBinding &_typebind) override;
   std::string getVariableType() override;
@@ -102,7 +108,8 @@ class ShiftEqual_R : public Operation {
   ShiftEqual_R(ProgramPtr _left, ProgramPtr _right, int _pos);
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   void passFunctionName(std::string _name, int _pos) override;
   void passTypeBinding(TypeBinding &_typebind) override;
   std::string getVariableType() override;
@@ -117,7 +124,8 @@ class BitwiseEqual_AND : public Operation {
   BitwiseEqual_AND(ProgramPtr _left, ProgramPtr _right, int _pos);
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   void passFunctionName(std::string _name, int _pos) override;
   void passTypeBinding(TypeBinding &_typebind) override;
   std::string getVariableType() override;
@@ -132,7 +140,8 @@ class BitwiseEqual_OR : public Operation {
   BitwiseEqual_OR(ProgramPtr _left, ProgramPtr _right, int _pos);
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   void passFunctionName(std::string _name, int _pos) override;
   void passTypeBinding(TypeBinding &_typebind) override;
   std::string getVariableType() override;
@@ -147,7 +156,8 @@ class BitwiseEqual_XOR : public Operation {
   BitwiseEqual_XOR(ProgramPtr _left, ProgramPtr _right, int _pos);
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   void passFunctionName(std::string _name, int _pos) override;
   void passTypeBinding(TypeBinding &_typebind) override;
   std::string getVariableType() override;
@@ -159,7 +169,8 @@ class BitwiseEqual_XOR : public Operation {
 class Increment_Post : public Operation {
  public:
   Increment_Post(ProgramPtr _left, int _pos);
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void passFunctionName(std::string _name, int _pos) override;
@@ -174,12 +185,13 @@ class Increment_Post : public Operation {
 class Increment_Pre : public Operation {
  public:
   Increment_Pre(ProgramPtr _left, int _pos);
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void passFunctionName(std::string _name, int _pos) override;
   void passTypeBinding(TypeBinding &_typebind) override;
- std::string getVariableType() override;
+  std::string getVariableType() override;
 };
 
 ////////////////////////////////////////
@@ -189,12 +201,13 @@ class Increment_Pre : public Operation {
 class Decrement_Post : public Operation {
  public:
   Decrement_Post(ProgramPtr _left, int _pos);
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void passFunctionName(std::string _name, int _pos) override;
   void passTypeBinding(TypeBinding &_typebind) override;
- std::string getVariableType() override;
+  std::string getVariableType() override;
 };
 
 ////////////////////////////////////////
@@ -204,12 +217,13 @@ class Decrement_Post : public Operation {
 class Decrement_Pre : public Operation {
  public:
   Decrement_Pre(ProgramPtr _left, int _pos);
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void passFunctionName(std::string _name, int _pos) override;
   void passTypeBinding(TypeBinding &_typebind) override;
- std::string getVariableType() override;
+  std::string getVariableType() override;
 };
 
 #endif

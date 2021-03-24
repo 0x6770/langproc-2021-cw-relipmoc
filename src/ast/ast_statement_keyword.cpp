@@ -15,13 +15,15 @@ void Return::print(std::ostream &dst, int indentation) const {
   expression->print(dst, 0);
 }
 
-int Return::codeGen(const Binding &_binding, int reg) const {
+int Return::codeGen(std::ofstream &dst, const Binding &_binding,
+                    int reg) const {
   logger->info("generate code for Return\n");
-  expression->codeGen(binding, 2);
+  expression->codeGen(dst, binding, 2);
   std::string return_end = "end" + function_name;
-  printf("\tb\t%s", return_end.c_str());
-  printf("\t\t# \033[1;33m[RETURN]\033[0m jump to end of function\n");
-  printf("\tnop\n\n");
+  dst << "\tb\t\t\t" << return_end.c_str();
+  dst << "\t\t\t# \033[1;33m[RETURN]\033[0m jump to end of function"
+      << std::endl;
+  dst << "\tnop\n" << std::endl;
   return 0;
 }
 
@@ -40,9 +42,7 @@ void Return::passTypeBinding(TypeBinding &_typebind) {
   ((Program *)expression)->passTypeBinding(_typebind);
 }
 
-std::string Return::getVariableType(){
-  return "none for statements";
-}
+std::string Return::getVariableType() { return "none for statements"; }
 
 ////////////////////////////////////////
 // Continue
@@ -58,12 +58,13 @@ void Continue::print(std::ostream &dst, int indentation) const {
   dst << "continue";
 }
 
-int Continue::codeGen(const Binding &_binding, int reg) const {
+int Continue::codeGen(std::ofstream &dst, const Binding &_binding,
+                      int reg) const {
   logger->info("generate code for Continue\n");
   int loop_start = label * 2;
-  printf("\tb\t$L%d", loop_start);
-  printf("\t\t# \033[1;33m[CONTINUE]\033[0m jump to the start\n");
-  printf("\tnop\n\n");
+  dst << "\tb\t\t\t$L" << loop_start;
+  dst << "\t\t\t# \033[1;33m[CONTINUE]\033[0m jump to the start" << std::endl;
+  dst << "\tnop\n" << std::endl;
   return 0;
 }
 
@@ -81,14 +82,9 @@ void Continue::passLabel(int _label) {
   label = _label;
 }
 
+void Continue::passTypeBinding(TypeBinding &_typebind) {}
 
-void Continue::passTypeBinding(TypeBinding &_typebind){
-  
-}
-
-std::string Continue::getVariableType(){
-  return "none for statements";
-}
+std::string Continue::getVariableType() { return "none for statements"; }
 ////////////////////////////////////////
 // Break
 ////////////////////////////////////////
@@ -103,12 +99,12 @@ void Break::print(std::ostream &dst, int indentation) const {
   dst << "break";
 }
 
-int Break::codeGen(const Binding &_binding, int reg) const {
+int Break::codeGen(std::ofstream &dst, const Binding &_binding, int reg) const {
   logger->info("generate code for Break\n");
   int loop_end = label * 2 + 1;
-  printf("\tb\t$L%d", loop_end);
-  printf("\t\t# \033[1;33m[BREAK]\033[0m jump to the end\n");
-  printf("\tnop\n\n");
+  dst << "\tb\t\t\t$L" << loop_end;
+  dst << "\t\t\t# \033[1;33m[BREAK]\033[0m jump to the end" << std::endl;
+  dst << "\tnop\n" << std::endl;
   return 0;
 }
 
@@ -126,11 +122,6 @@ void Break::passLabel(int _label) {
   label = _label;
 }
 
+void Break::passTypeBinding(TypeBinding &_typebind) {}
 
-void Break::passTypeBinding(TypeBinding &_typebind){
-  
-}
-
-std::string Break::getVariableType(){
-  return "none for statements";
-}
+std::string Break::getVariableType() { return "none for statements"; }

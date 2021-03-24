@@ -71,7 +71,8 @@ int Function::evaluate(const Binding &_binding) const {
   return 0;
 }
 
-int Function::codeGen(const Binding &_binding, int reg) const {
+int Function::codeGen(std::ofstream &dst, const Binding &_binding,
+                      int reg) const {
   logger->info("====================\n");
   logger->info("Build variable mapping in Function\n");
   Binding container;
@@ -95,36 +96,36 @@ int Function::codeGen(const Binding &_binding, int reg) const {
   logger->info("====================\n");
   logger->info("generate code for Function\n");
   logger->info("size of stack frame: %d\n", getSize());
-  printf(".global\t%s\n", name.c_str());
-  printf("\n");
-  printf("%s:\n", name.c_str());
-  printf("\taddiu\t$sp,$sp,%d\n", -size);
+  dst << ".global\t" << name.c_str() << std::endl;
+  dst << std::endl;
+  dst << name.c_str() << ":" << std::endl;
+  dst << "\taddiu\t$sp,$sp," << -size << std::endl;
   if (with_function_call == 1) {
-    printf("\tsw\t$31,%d($sp)\n", (size - 4));
-    printf("\tsw\t$fp,%d($sp)\n", (size - 8));
+    dst << "\tsw\t\t$31," << (size - 4) << "($sp)" << std::endl;
+    dst << "\tsw\t\t$fp," << (size - 8) << "($sp)" << std::endl;
   } else {
-    printf("\tsw\t$fp,%d($sp)\n", (size - 4));
+    dst << "\tsw\t\t$fp," << (size - 4) << "($sp)" << std::endl;
   }
-  printf("\tmove\t$fp,$sp\n");
+  dst << "\tmove\t$fp,$sp" << std::endl;
   // store the values in the register a0-a3 in the stack.
   if (with_param == 1) {
-    arguments->codeGen(temp, 2);
+    arguments->codeGen(dst, temp, 2);
   }
-  statements->codeGen(binding, 2);  // store  result result of to $2
-  printf("%s", function_end.c_str());
-  printf(":\t\t\t\t# \033[1;036m[LABEL]\033[0m end of function\n");
+  statements->codeGen(dst, binding, 2);  // store  result result of to $2
+  dst << function_end.c_str();
+  dst << ":\t\t\t\t# \033[1;036m[LABEL]\033[0m end of function" << std::endl;
   // TODO: return statement to determine the label part
-  printf("\tmove\t$sp,$fp\n");
+  dst << "\tmove\t$sp,$fp" << std::endl;
   if (with_function_call == 1) {
-    printf("\tlw\t$31,%d($sp)\n", (size - 4));
-    printf("\tlw\t$fp,%d($sp)\n", (size - 8));
+    dst << "\tlw\t\t$31," << size - 4 << "($sp)" << std::endl;
+    dst << "\tlw\t\t$fp," << size - 8 << "($sp)" << std::endl;
   } else {
-    printf("\tlw\t$fp,%d($sp)\n", (size - 4));
+    dst << "\tlw\t\t$fp," << size - 4 << "($sp)" << std::endl;
   }
-  printf("\taddiu\t$sp,$sp,%d\n", size);
-  printf("\tjr\t$31\n");
-  printf("\tnop\n");
-  printf("\n");
+  dst << "\taddiu\t$sp,$sp," << size << std::endl;
+  dst << "\tjr\t\t$31" << std::endl;
+  dst << "\tnop" << std::endl;
+  dst << std::endl;
 
   return 0;
 }
@@ -139,9 +140,7 @@ void Function::passTypeBinding(TypeBinding &_typebind) {
   //((Program *)statements)->passTypeBinding(_typebind);
 }
 
-std::string Function::getVariableType(){
-  return "none for statements";
-}
+std::string Function::getVariableType() { return "none for statements"; }
 ////////////////////////////////////////
 // MultiFunction
 ////////////////////////////////////////
@@ -161,9 +160,10 @@ void MultiFunction::print(std::ostream &dst, int indentation) const {
     function->print(dst, indentation);
   }
 }
-int MultiFunction::codeGen(const Binding &_binding, int reg) const {
+int MultiFunction::codeGen(std::ofstream &dst, const Binding &_binding,
+                           int reg) const {
   for (auto it : functions) {
-    ((Program *)it)->codeGen(binding, 2);
+    ((Program *)it)->codeGen(dst, binding, 2);
   }
   return 0;
 }
@@ -177,16 +177,14 @@ void MultiFunction::passTypeBinding(TypeBinding &_typebind) {
   typebind = _typebind;
 }
 
-
-std::string MultiFunction::getVariableType(){
-  return "none for statements";
-}
+std::string MultiFunction::getVariableType() { return "none for statements"; }
 
 Param::Param(std::string _type, std::string _name) {
   logger->info("construct one parameter\n");
   type = _type;
   name = _name;
-  //std::cout << "the variable type in Param" << var_1 << " " << var_2 << std::endl;
+  // std::cout << "the variable type in Param" << var_1 << " " << var_2 <<
+  // std::endl;
   is_pointer = 0;
 }
 
@@ -199,14 +197,16 @@ Param::Param(std::string _type, std::string _name, int _is_pointer) {
   name = _name;
   is_pointer = _is_pointer;
 }
-int Param::codeGen(const Binding &_binding, int reg) const {
+int Param::codeGen(std::ofstream &dst, const Binding &_binding, int reg) const {
   Binding temp = binding;
   std::string variable_name = name;
-  //std::cout << "entered here"<< std::endl;
-  if(type == "float" && reg<=5){
-    printf("\tswc1\t$f%d,%d($fp)\n",reg*2+4,temp[variable_name]);
-  }else{
-    printf("\tsw\t$%d,%d($fp)\n", reg, temp[variable_name]);
+  // std::cout << "entered here"<< std::endl;
+  if (type == "float" && reg <= 5) {
+    dst << "\tswc1\t$f" << reg * 2 + 4 << "," << temp[variable_name] << "($fp)"
+        << std::endl;
+  } else {
+    dst << "\tsw\t\t$" << reg << "," << temp[variable_name] << "($fp)"
+        << std::endl;
   }
   return 0;
 }
@@ -238,11 +238,7 @@ void Param::passTypeBinding(TypeBinding &_typebind) {
   typebind = _typebind;
 }
 
-
-std::string Param::getVariableType(){
-  return "none for statements";
-}
-
+std::string Param::getVariableType() { return "none for statements"; }
 
 Paramlist::Paramlist() {
   // do nothing;
@@ -264,15 +260,15 @@ void Paramlist::print(std::ostream &dst, int indentation) const {
   }
 }
 
-int Paramlist::codeGen(const Binding &_binding, int reg) const {
+int Paramlist::codeGen(std::ofstream &dst, const Binding &_binding,
+                       int reg) const {
   std::string key;
   int regtemp = 4;
-
   int count = 1;
 
   for (auto it : parameters) {
     if (count <= 4) {
-      ((Param *)it)->codeGen(binding, regtemp);
+      ((Param *)it)->codeGen(dst, binding, regtemp);
       regtemp = regtemp + 1;
       count = count + 1;
     }
@@ -331,16 +327,11 @@ void Paramlist::passTypeBinding(TypeBinding &_typebind) {
   }*/
 }
 
-
-std::string Paramlist::getVariableType(){
-  return "none for statements";
-}
-
+std::string Paramlist::getVariableType() { return "none for statements"; }
 
 ////////////////////////////////////////
 // FunctionCall
 ////////////////////////////////////////
-
 
 FunctionCall::FunctionCall(std::string _name, int _pos) {
   name = _name;
@@ -371,16 +362,18 @@ void FunctionCall::print(std::ostream &dst, int indentation) const {
 }
 
 // assuming all variable types are int for now
-int FunctionCall::codeGen(const Binding &_binding, int reg) const {
+int FunctionCall::codeGen(std::ofstream &dst, const Binding &_binding,
+                          int reg) const {
   // int pos = 20;
   if (with_argument == 1) {
-    ((Program *)arguments)->codeGen(binding, 2);
+    ((Program *)arguments)->codeGen(dst, binding, 2);
   }
-  printf("\t.option\tpic0\n");
-  printf("\tjal\t%s\n", name.c_str());
-  printf("\tnop\n");
-  printf("\t.option\tpic2\n");
-  printf("\tsw\t$2,%d($fp)\t# store the value after function call\n", pos);
+  dst << "\t.option\tpic0" << std::endl;
+  dst << "\tjal\t" << name.c_str() << std::endl;
+  dst << "\tnop" << std::endl;
+  dst << "\t.option\tpic2" << std::endl;
+  dst << "\tsw\t\t$2," << pos
+      << "($fp)\t\t# store the value after function call" << std::endl;
   return 0;
 }
 
@@ -397,15 +390,8 @@ void FunctionCall::passFunctionName(std::string _name, int _pos) {
   pos = pos + _pos;
 }
 
-
-void FunctionCall::passTypeBinding(TypeBinding &_typebind){
-  
-}
-std::string FunctionCall::getVariableType(){
-  return "int";
-}
-
-
+void FunctionCall::passTypeBinding(TypeBinding &_typebind) {}
+std::string FunctionCall::getVariableType() { return "int"; }
 
 ExpressionList::ExpressionList(ProgramPtr _argument) {
   logger->info("Build expression list\n");
@@ -423,22 +409,23 @@ void ExpressionList::print(std::ostream &dst, int indentation) const {
   }
 }
 
-int ExpressionList::codeGen(const Binding &_binding, int reg) const {
+int ExpressionList::codeGen(std::ofstream &dst, const Binding &_binding,
+                            int reg) const {
   int reg_temp = 4;
   int temp_location = 16;
 
   if (arguments.size() > 4) {
     for (unsigned int j = 4; j < arguments.size(); j++) {
-      ((Program *)arguments[j])->codeGen(binding, 2);
-      printf("\tsw\t$2,%d($fp)\n", temp_location);
+      ((Program *)arguments[j])->codeGen(dst, binding, 2);
+      dst << "\tsw\t\t$2," << temp_location << "($fp)" << std::endl;
       temp_location = temp_location + 4;
     }
   }
 
   for (unsigned int i = 0; i < 4; i++) {
     if (i < arguments.size()) {
-      ((Program *)arguments[i])->codeGen(binding, 2);
-      printf("\tmove\t$%d,$2\n", reg_temp);
+      ((Program *)arguments[i])->codeGen(dst, binding, 2);
+      dst << "\tmove\t$" << reg_temp << ",$2" << std::endl;
       reg_temp = reg_temp + 1;
     }
   }
@@ -458,20 +445,11 @@ void ExpressionList::passFunctionName(std::string _name, int _pos) {
   pos = pos + _pos;
 }
 
+std::string ExpressionList::getVariableType() { return "none for statements"; }
 
-std::string ExpressionList::getVariableType(){
-  return "none for statements";
-}
-
-void ExpressionList::passTypeBinding(TypeBinding &_typebind){
-  
-}
-
-
-
+void ExpressionList::passTypeBinding(TypeBinding &_typebind) {}
 
 //////////////////////////////////////////////////////////////////////////////////////////
-
 
 FunctionDeclare::FunctionDeclare(std::string _name) { name = _name; }
 
@@ -482,7 +460,8 @@ FunctionDeclare::FunctionDeclare(std::string _name, ProgramPtr _param_list) {
 
 void FunctionDeclare::print(std::ostream &dst, int indentation) const {}
 
-int FunctionDeclare::codeGen(const Binding &_binding, int reg) const {
+int FunctionDeclare::codeGen(std::ofstream &dst, const Binding &_binding,
+                             int reg) const {
   return 0;
 }
 
@@ -492,16 +471,6 @@ void FunctionDeclare::bind(const Binding &_binding) {}
 
 void FunctionDeclare::passFunctionName(std::string _name, int _pos) {}
 
+void FunctionDeclare::passTypeBinding(TypeBinding &_typebind) {}
 
-
-void FunctionDeclare::passTypeBinding(TypeBinding &_typebind){
-  
-}
-
-std::string FunctionDeclare::getVariableType(){
-  return "none for statements";
-}
-
-
-
-
+std::string FunctionDeclare::getVariableType() { return "none for statements"; }

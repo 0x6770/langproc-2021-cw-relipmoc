@@ -15,9 +15,11 @@ void Integer::print(std::ostream &dst, int indentation) const { dst << value; }
 
 int Integer::evaluate(const Binding &_binding) const { return value; }
 
-int Integer::codeGen(const Binding &_binding, int reg) const {
+int Integer::codeGen(std::ofstream &dst, const Binding &_binding,
+                     int reg) const {
   logger->info("generate code for integer\n");
-  printf("\tli\t$%d,%d\t\t# load %d\n", reg, value, value);
+  dst << "\tli\t\t$" << reg << "," << value << "\t\t\t# load " << value
+      << std::endl;
   return 0;
 }
 
@@ -27,13 +29,9 @@ void Integer::passFunctionName(std::string _name, int _pos) {
   pos = pos + _pos;
 }
 
-void Integer::passTypeBinding(TypeBinding &_typebind){
-  typebind = _typebind;
-}
+void Integer::passTypeBinding(TypeBinding &_typebind) { typebind = _typebind; }
 
-std::string Integer::getVariableType(){
-  return "int";
-}
+std::string Integer::getVariableType() { return "int"; }
 
 ////////////////////////////////////////
 // Variable
@@ -55,20 +53,21 @@ int Variable::evaluate(const Binding &_binding) const {
   return 0;
 }
 
-int Variable::codeGen(const Binding &_binding, int reg) const {
+int Variable::codeGen(std::ofstream &dst, const Binding &_binding,
+                      int reg) const {
   logger->info("generate code for variable\n");
-  print_map(binding,"variable");
+  print_map(binding, "variable");
   if (binding.find(id) == binding.end()) {
     logger->error("\"%s\" has not been declared\n", id.c_str());
     exit(1);
   }
   TypeBinding temp = typebind;
   std::string var_type = temp[id];
-  if(var_type == "float"){
-    printf("\tlwc1\t$f%d,%d($fp)\n",reg,binding.at(id));
-  }
-  else{
-    printf("\tlw\t$%d,%d($fp)\t# load %s\n", reg, binding.at(id), id.c_str());
+  if (var_type == "float") {
+    dst << "\tlwc1\t$f" << reg << "," << binding.at(id) << "($fp)" << std::endl;
+  } else {
+    dst << "\tlw\t\t$" << reg << "," << binding.at(id) << "($fp)\t\t\t# load "
+        << id.c_str() << std::endl;
   }
   return 0;
 }
@@ -91,45 +90,29 @@ void Variable::passFunctionName(std::string _name, int _pos) {
   function_name = _name;
 }
 
-void Variable::passTypeBinding(TypeBinding &_typebind){
-  typebind = _typebind;
-}
+void Variable::passTypeBinding(TypeBinding &_typebind) { typebind = _typebind; }
 
 // get the variable type
-std::string Variable::gettype(TypeBinding &_typebind) const{
+std::string Variable::gettype(TypeBinding &_typebind) const {
   return _typebind[id];
 }
 
-std::string Variable::getVariableType(){
-  return typebind[id];
- }
+std::string Variable::getVariableType() { return typebind[id]; }
 
+Char::Char(char _value) { value = _value; }
 
-Char::Char(char _value){
-  value = _value;
-}
-
-int Char::codeGen(const Binding &_binding, int reg) const{
+int Char::codeGen(std::ofstream &dst, const Binding &_binding, int reg) const {
   logger->info("generate code for char\n");
-  printf("\tli\t$%d,%d\t\t# load %d\n", reg, int(value), value);
+  dst << "\tli\t\t$" << reg << "," << int(value) << "\t\t\t# load " << value
+      << std::endl;
   return 0;
 }
-void Char::print(std::ostream &dst, int indentation) const{
-
-}
-int Char::evaluate(const Binding &_binding) const{
-  return 0;
-}
-void Char::bind(const Binding &_binding){
-
-}
-void Char::passFunctionName(std::string _name, int _pos){
+void Char::print(std::ostream &dst, int indentation) const {}
+int Char::evaluate(const Binding &_binding) const { return 0; }
+void Char::bind(const Binding &_binding) {}
+void Char::passFunctionName(std::string _name, int _pos) {
   function_name = _name;
   pos = pos + _pos;
 }
-void Char::passTypeBinding(TypeBinding &_typebind){
-
-}
-std::string Char::getVariableType(){
-  return "char";
-}
+void Char::passTypeBinding(TypeBinding &_typebind) {}
+std::string Char::getVariableType() { return "char"; }

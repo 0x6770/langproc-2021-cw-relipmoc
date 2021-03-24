@@ -13,7 +13,7 @@ void Array::print(std::ostream &dst, int indentation) const {
   dst << variable_type << " " << name << "[" << size << "]" << std::endl;
 }
 
-int Array::codeGen(const Binding &_binding, int reg) const {
+int Array::codeGen(std::ofstream &dst, const Binding &_binding, int reg) const {
   // do nothing
   return 0;
 }
@@ -40,19 +40,14 @@ void Array::passFunctionName(std::string _name, int _pos) {
 
 uint32_t Array::getSize() { return size * 4; }
 
-
-
 std::string Array::getName() { return name; }
 
 void Array::passTypeBinding(TypeBinding &_typebind) {
-_typebind[name] = "array";
-typebind = _typebind;
+  _typebind[name] = "array";
+  typebind = _typebind;
 }
 
-
-std::string Array::getVariableType(){
-  return "array";
-}
+std::string Array::getVariableType() { return "array"; }
 
 ArrayElement::ArrayElement(ProgramPtr _left, std::string _name) {
   left = _left;
@@ -75,9 +70,10 @@ void ArrayElement::array_assignment(ProgramPtr _right) {
 }
 
 void ArrayElement::print(std::ostream &dst, int indentation) const {}
-int ArrayElement::codeGen(const Binding &_binding, int reg) const {
+int ArrayElement::codeGen(std::ofstream &dst, const Binding &_binding,
+                          int reg) const {
   std::string temp = name + "_" + std::to_string(0);
-  //int start_location = 0;
+  // int start_location = 0;
   /*for (auto it : binding) {
     if (it.first == temp) {
       start_location = it.second;
@@ -86,27 +82,31 @@ int ArrayElement::codeGen(const Binding &_binding, int reg) const {
   TypeBinding var_binding = typebind;
   Binding pos_bind = binding;
   std::string variable_type = var_binding[name];
-  if(variable_type == "array"){
-  left->codeGen(binding, 2);
-  printf("\tsll\t$2,$2,2\n");
-  printf("\taddiu\t$3,$fp,8\n");
-  printf("\taddu\t$2,$3,$2\n");
-  if (call == 1) {
-    right->codeGen(binding, 3);
-    printf("\tnop\n");
-    printf("\tsw\t$3,%d($2)\t # store an element in an array\n", 4);
-  } else {
-    printf("\tnop\n");
-    printf("\tlw\t$%d,%d($2)\t# load an element in an array\n",reg, 4);
+  if (variable_type == "array") {
+    left->codeGen(dst, binding, 2);
+    dst << "\tsll\t$2,$2,2" << std::endl;
+    dst << "\taddiu\t$3,$fp,8" << std::endl;
+    dst << "\taddu\t$2,$3,$2" << std::endl;
+    if (call == 1) {
+      right->codeGen(dst, binding, 3);
+      dst << "\tnop" << std::endl;
+      ;
+      dst << "\tsw\t\t$3," << 4 << "($2)\t\t# store an element in an array"
+          << std::endl;
+    } else {
+      dst << "\tnop" << std::endl;
+      ;
+      dst << "\tlw\t\t$" << reg << "," << 4
+          << "($2)\t\t# load an element in an array" << std::endl;
+    }
   }
-  }
-  if(variable_type == "pointer"){
-    left->codeGen(binding,2);
-    printf("\tsll\t$2,$2,2\n");
-    printf("\tlw\t$3,%d($fp)\n",pos_bind[name]);
-    printf("\tnop\n");
-    printf("\taddu\t$2,$2,$3\n");
-    printf("\tlw\t$%d,0($2)\n",reg);
+  if (variable_type == "pointer") {
+    left->codeGen(dst, binding, 2);
+    dst << "\tsll\t$2,$2,2" << std::endl;
+    dst << "\tlw\t\t$3," << pos_bind[name] << "($fp)" << std::endl;
+    dst << "\tnop" << std::endl;
+    dst << "\taddu\t$2,$2,$3" << std::endl;
+    dst << "\tlw\t\t$" << reg << ",0($2)" << std::endl;
   }
 
   return 0;
@@ -129,9 +129,8 @@ void ArrayElement::passFunctionName(std::string _name, int _pos) {
   }
 }
 
-
-void ArrayElement::passTypeBinding(TypeBinding &_typebind){
-typebind = _typebind;
+void ArrayElement::passTypeBinding(TypeBinding &_typebind) {
+  typebind = _typebind;
   typebind = _typebind;
   ((Program *)left)->passTypeBinding(_typebind);
   if (call == 1) {
@@ -139,15 +138,14 @@ typebind = _typebind;
   }
 }
 
-std::string ArrayElement::getVariableType(){
-  std::string var_1 = ((Program*)left)->getVariableType();
+std::string ArrayElement::getVariableType() {
+  std::string var_1 = ((Program *)left)->getVariableType();
   std::string var_2;
-  if(call == 1) var_2 = ((Program*)right)->getVariableType();
-  if(call == 1){
-    if(var_1 == "int" && var_2 == "int")return "int";
-  }
-  else{
-    if(var_1 == "int") return "int";
+  if (call == 1) var_2 = ((Program *)right)->getVariableType();
+  if (call == 1) {
+    if (var_1 == "int" && var_2 == "int") return "int";
+  } else {
+    if (var_1 == "int") return "int";
   }
   return "no type";
 }

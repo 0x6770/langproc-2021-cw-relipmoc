@@ -14,7 +14,8 @@ class Statement : public Program {
 
  public:
   Statement(ProgramPtr _expression);
-  virtual int codeGen(const Binding &_binding, int reg) const override;
+  virtual int codeGen(std::ofstream &dst, const Binding &_binding,
+                      int reg) const override;
   virtual void print(std::ostream &dst, int indentation) const override;
   virtual int evaluate(const Binding &_binding) const override;
   virtual void bind(const Binding &_binding) override;
@@ -32,7 +33,8 @@ class Statement : public Program {
 class Return : public Statement {
  public:
   Return(ProgramPtr _expression);
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   void bind(const Binding &_binding) override;
   void passFunctionName(std::string _name, int _pos) override;
@@ -47,7 +49,8 @@ class Return : public Statement {
 class Continue : public Statement {
  public:
   Continue();
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   void bind(const Binding &_binding) override;
   void passFunctionName(std::string _name, int _pos) override;
@@ -63,7 +66,8 @@ class Continue : public Statement {
 class Break : public Statement {
  public:
   Break();
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   void bind(const Binding &_binding) override;
   void passFunctionName(std::string _name, int _pos) override;
@@ -86,7 +90,8 @@ class VarDeclare : public Statement {
  public:
   VarDeclare(std::string _var_type, std::string _id, ProgramPtr _expression,
              int _pos);
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   void bind(const Binding &_binding) override;
   std::string getId() const;
@@ -108,7 +113,8 @@ class VarAssign : public Statement {
  public:
   VarAssign(std::string _name, ProgramPtr _expression);
   VarAssign(ProgramPtr _left, ProgramPtr _expression);
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   void bind(const Binding &_binding) override;
   void passFunctionName(std::string _name, int _pos) override;
@@ -128,7 +134,8 @@ class StatementList : public Statement {
  public:
   StatementList();
   void addStatement(ProgramPtr _statement);
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void bind(const Binding &_binding) override;
@@ -151,7 +158,8 @@ class IfStatement : public Statement {
  public:
   IfStatement(ProgramPtr _condition, ProgramPtr _if_statement,
               ProgramPtr _else_statement, int _label);
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void bind(const Binding &_binding) override;
@@ -172,7 +180,8 @@ class WhileLoop : public Statement {
 
  public:
   WhileLoop(ProgramPtr _condition, ProgramPtr _statement_list, int _label);
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void bind(const Binding &_binding) override;
@@ -198,7 +207,8 @@ class ForLoop : public Statement {
  public:
   ForLoop(ProgramPtr _init_expr, ProgramPtr _test_expr, ProgramPtr _update_expr,
           ProgramPtr _statement_list, int _label);
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void bind(const Binding &_binding) override;
@@ -218,7 +228,8 @@ class Switch : public Statement {
 
  public:
   Switch(ProgramPtr _expression, ProgramPtr _cases, int _label);
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void bind(const Binding &_binding) override;
@@ -239,7 +250,8 @@ class Case : public Statement {
  public:
   Case(ProgramPtr _statements);
   Case(int _constant, ProgramPtr _statements);
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void bind(const Binding &_binding) override;
@@ -262,8 +274,10 @@ class Cases : public Statement {
  public:
   Cases();
   void addCase(ProgramPtr _cases);
-  int codeGen(const Binding &_binding, int reg) const override;
-  int codeGen(const Binding &_binding, int reg, int switch_expr_res) const;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding, int reg,
+              int switch_expr_res) const;
   void print(std::ostream &dst, int indentation) const override;
   int evaluate(const Binding &_binding) const override;
   void bind(const Binding &_binding) override;
