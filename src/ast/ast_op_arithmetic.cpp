@@ -42,19 +42,19 @@ int Addition::codeGen(std::ofstream &dst, const Binding &_binding,
     }
     // only shift for point arithemetic
     if (var_type_left == "pointer") {
-      dst << "\tsll\t\t$3,$3,2" << std::endl;
+      dst << "\tsll\t$3,$3,2" << std::endl;
     }
     left->codeGen(dst, binding, 2);
     // std::cout << "after right codegen" << std::endl;
     //  only shift for point arithemetic
     if (var_type_right == "pointer") {
-      dst << "\tsll\t\t$2,$2,2" << std::endl;
+      dst << "\tsll\t$2,$2,2" << std::endl;
     }
   } else {
     left->codeGen(dst, binding, 2);
     // only shift for point arithemetic
     if (var_type_right == "pointer") {
-      dst << "\tsll\t\t$2,$2,2" << std::endl;
+      dst << "\tsll\t$2,$2,2" << std::endl;
     }
     if (var_type_right == "float") {
       right->codeGen(dst, binding, 0);
@@ -62,7 +62,7 @@ int Addition::codeGen(std::ofstream &dst, const Binding &_binding,
       right->codeGen(dst, binding, 3);
     }
     if (var_type_left == "pointer") {
-      dst << "\tsll\t\t$3,$3,2" << std::endl;
+      dst << "\tsll\t$3,$3,2" << std::endl;
     }
   }
 
@@ -83,11 +83,11 @@ int Addition::codeGen(std::ofstream &dst, const Binding &_binding,
 
   if (var_type_left == "float" && var_type_right == "float") {
     dst << "\tadd.s\t$f0,$f2,$f0" << std::endl;
-    dst << "\tswc1\t$f0," << pos << "($fp)\t# store result of addition"
+    dst << "\tswc1\t$f0," << pos << "($fp)\t\t# store result of addition"
         << std::endl;
   } else {
-    dst << "\tadd\t\t$2,$2,$3" << std::endl;
-    dst << "\tsw\t\t$2," << pos << "($fp)\t# store result of addition"
+    dst << "\tadd\t$2,$2,$3" << std::endl;
+    dst << "\tsw\t\t$2," << pos << "($fp)\t\t# store result of addition"
         << std::endl;
   }
 
@@ -158,14 +158,14 @@ int Subtraction::codeGen(std::ofstream &dst, const Binding &_binding,
     }
     // only shift for point arithemetic
     if (var_type_left == "pointer") {
-      dst << "\tsll\t\t$3,$3,2" << std::endl;
+      dst << "\tsll\t$3,$3,2" << std::endl;
     }
 
     left->codeGen(dst, binding, 2);
 
     // only shift for point arithemetic
     if (var_type_right == "pointer") {
-      dst << "\tsll\t\t$2,$2,2" << std::endl;
+      dst << "\tsll\t$2,$2,2" << std::endl;
     }
   }
 
@@ -173,7 +173,7 @@ int Subtraction::codeGen(std::ofstream &dst, const Binding &_binding,
     left->codeGen(dst, binding, 2);
     // only shift for point arithemetic
     if (var_type_right == "pointer") {
-      dst << "\tsll\t\t$2,$2,2" << std::endl;
+      dst << "\tsll\t$2,$2,2" << std::endl;
     }
     if (var_type_right == "float") {
       right->codeGen(dst, binding, 0);
@@ -181,7 +181,7 @@ int Subtraction::codeGen(std::ofstream &dst, const Binding &_binding,
       right->codeGen(dst, binding, 3);
     }
     if (var_type_left == "pointer") {
-      dst << "\tsll\t\t$3,$3,2" << std::endl;
+      dst << "\tsll\t$3,$3,2" << std::endl;
     }
   }
 
@@ -202,11 +202,11 @@ int Subtraction::codeGen(std::ofstream &dst, const Binding &_binding,
 
   if (var_type_left == "float" && var_type_right == "float") {
     dst << "\tsub.s\t$f0,$f2,$f0" << std::endl;
-    dst << "\tswc1\t$f0," << pos << "($fp)\t# store result of addition"
+    dst << "\tswc1\t$f0," << pos << "($fp)\t\t\t# store result of addition"
         << std::endl;
   } else {
-    dst << "\tsub\t\t$2,$2,$3" << std::endl;
-    dst << "\tsw\t\t$2," << pos << "($fp)\t# store result of addition"
+    dst << "\tsub\t$2,$2,$3" << std::endl;
+    dst << "\tsw\t\t$2," << pos << "($fp)\t\t\t# store result of addition"
         << std::endl;
   }
 
@@ -299,12 +299,12 @@ int Multiplication::codeGen(std::ofstream &dst, const Binding &_binding,
 
   if (var_type_left == "float" && var_type_right == "float") {
     dst << "\tmul.s\t$f0,$f0,$f2" << std::endl;
-    dst << "\tswc1\t$f0," << pos << "($fp)\t# store result of multiplication"
-        << std::endl;
+    dst << "\tswc1\t$f0," << pos
+        << "($fp)\t\t\t# store result of multiplication" << std::endl;
   } else {
     dst << "\tmult\t$2,$3" << std::endl;
     dst << "\tmflo\t$2" << std::endl;
-    dst << "\tsw\t\t$2," << pos << "($fp)\t# store result of multiplication"
+    dst << "\tsw\t\t$2," << pos << "($fp)\t\t\t# store result of multiplication"
         << std::endl;
   }
   return 0;
@@ -393,9 +393,9 @@ int Division::codeGen(std::ofstream &dst, const Binding &_binding,
     }
   }
 
-  dst << "\tdiv\t\t$2,$3" << std::endl;
+  dst << "\tdiv\t$2,$3" << std::endl;
   dst << "\tmflo\t$2" << std::endl;
-  dst << "\tsw\t\t$2," << pos << "($fp)\t# store result of division"
+  dst << "\tsw\t\t$2," << pos << "($fp)\t\t\t# store result of division"
       << std::endl;
 
   return 0;
@@ -482,9 +482,9 @@ int Modulus::codeGen(std::ofstream &dst, const Binding &_binding,
     }
   }
 
-  dst << "\tdiv\t\t$2,$3" << std::endl;
+  dst << "\tdiv\t$2,$3" << std::endl;
   dst << "\tmfhi\t$2" << std::endl;
-  dst << "\tsw\t\t$2," << pos << "($fp)\t# store result of modulus"
+  dst << "\tsw\t\t$2," << pos << "($fp)\t\t\t# store result of modulus"
       << std::endl;
 
   return 0;
@@ -535,8 +535,8 @@ int Negation::codeGen(std::ofstream &dst, const Binding &_binding,
                       int reg) const {
   std::string var_type_right = ((Program *)right)->getVariableType();
   right->codeGen(dst, binding, 2);
-  dst << "\tsub\t\t$2,$0,$2" << std::endl;
-  dst << "\tsw\t\t$2," << pos << "($fp)\t# store result of Negation"
+  dst << "\tsub\t$2,$0,$2" << std::endl;
+  dst << "\tsw\t\t$2," << pos << "($fp)\t\t\t# store result of Negation"
       << std::endl;
 
   return 0;

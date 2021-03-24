@@ -84,28 +84,25 @@ int ArrayElement::codeGen(std::ofstream &dst, const Binding &_binding,
   std::string variable_type = var_binding[name];
   if (variable_type == "array") {
     left->codeGen(dst, binding, 2);
-    dst << "\tsll\t\t$2,$2,2" << std::endl;
-    ;
+    dst << "\tsll\t$2,$2,2" << std::endl;
     dst << "\taddiu\t$3,$fp,8" << std::endl;
-    ;
     dst << "\taddu\t$2,$3,$2" << std::endl;
-    ;
     if (call == 1) {
       right->codeGen(dst, binding, 3);
       dst << "\tnop" << std::endl;
       ;
-      dst << "\tsw\t\t$3," << 4 << "($2)\t # store an element in an array"
+      dst << "\tsw\t\t$3," << 4 << "($2)\t\t# store an element in an array"
           << std::endl;
     } else {
       dst << "\tnop" << std::endl;
       ;
       dst << "\tlw\t\t$" << reg << "," << 4
-          << "($2)\t# load an element in an array" << std::endl;
+          << "($2)\t\t# load an element in an array" << std::endl;
     }
   }
   if (variable_type == "pointer") {
     left->codeGen(dst, binding, 2);
-    dst << "\tsll\t\t$2,$2,2" << std::endl;
+    dst << "\tsll\t$2,$2,2" << std::endl;
     dst << "\tlw\t\t$3," << pos_bind[name] << "($fp)" << std::endl;
     dst << "\tnop" << std::endl;
     dst << "\taddu\t$2,$2,$3" << std::endl;

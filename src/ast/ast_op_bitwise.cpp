@@ -39,9 +39,9 @@ int BitwiseAnd::codeGen(std::ofstream &dst, const Binding &_binding,
   if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
     dst << "\tlw\t\t$3," << right->getPos(binding) << "($fp)" << std::endl;
 
-  dst << "\tand\t\t$2,$2,$3" << std::endl;
+  dst << "\tand\t$2,$2,$3" << std::endl;
   dst << "\tsw\t\t$2," << pos
-      << "($fp)\t# store result of and bitwise operation" << std::endl;
+      << "($fp)\t\t# store result of and bitwise operation" << std::endl;
 
   return 0;
 }
@@ -108,8 +108,8 @@ int BitwiseOr::codeGen(std::ofstream &dst, const Binding &_binding,
     dst << "\tlw\t\t$3," << right->getPos(binding) << "($fp)" << std::endl;
 
   dst << "\tor\t\t$2,$2,$3" << std::endl;
-  dst << "\tsw\t\t$2," << pos << "($fp)\t# store result of or bitwise operation"
-      << std::endl;
+  dst << "\tsw\t\t$2," << pos
+      << "($fp)\t\t# store result of or bitwise operation" << std::endl;
 
   return 0;
 }
@@ -173,9 +173,9 @@ int BitwiseXor::codeGen(std::ofstream &dst, const Binding &_binding,
   if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
     dst << "\tlw\t\t$3," << right->getPos(binding) << "($fp)" << std::endl;
 
-  dst << "\txor\t\t$2,$2,$3" << std::endl;
+  dst << "\txor\t$2,$2,$3" << std::endl;
   dst << "\tsw\t\t$2," << pos
-      << "($fp)\t# store result of xor bitwise operation" << std::endl;
+      << "($fp)\t\t# store result of xor bitwise operation" << std::endl;
   return 0;
 }
 
@@ -239,9 +239,9 @@ int ShiftLeft::codeGen(std::ofstream &dst, const Binding &_binding,
   if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
     dst << "\tlw\t\t$3," << right->getPos(binding) << "($fp)" << std::endl;
 
-  dst << "\tsll\t\t$2,$2,$3" << std::endl;
-  dst << "\tsw\t\t$2," << pos << "($fp)\t# store result of left shift operation"
-      << std::endl;
+  dst << "\tsll\t$2,$2,$3" << std::endl;
+  dst << "\tsw\t\t$2," << pos
+      << "($fp)\t\t# store result of left shift operation" << std::endl;
 
   return 0;
 }
@@ -306,9 +306,9 @@ int ShiftRight::codeGen(std::ofstream &dst, const Binding &_binding,
   if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
     dst << "\tlw\t\t$3," << right->getPos(binding) << "($fp)" << std::endl;
 
-  dst << "\tsra\t\t$2,$2,$3" << std::endl;
+  dst << "\tsra\t$2,$2,$3" << std::endl;
   dst << "\tsw\t\t$2," << pos
-      << "($fp)\t# store result of right shift operation" << std::endl;
+      << "($fp)\t\t# store result of right shift operation" << std::endl;
 
   return 0;
 }

@@ -145,8 +145,8 @@ int VarAssign::codeGen(std::ofstream &dst, const Binding &_binding,
     };
     int pos_in_binding = binding.at(name);
     expression->codeGen(dst, binding, reg);
-    dst << "\tsw\t\t$2," << pos_in_binding << "($fp)\t# assign " << name.c_str()
-        << "" << std::endl;
+    dst << "\tsw\t\t$2," << pos_in_binding << "($fp)\t\t\t# assign "
+        << name.c_str() << "" << std::endl;
   }
   if (with_left == 1) {
     ((Dereference *)assign_left)->read(1);

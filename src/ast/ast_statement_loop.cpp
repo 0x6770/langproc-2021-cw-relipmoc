@@ -38,7 +38,7 @@ int WhileLoop::codeGen(std::ofstream &dst, const Binding &_binding,
   int label_condition = label * 2;
   int label_end = label * 2 + 1;
 
-  dst << "\t\t\t\t# \u001b[38;5;" << random_id % 256 << "m";
+  dst << "\t\t\t\t\t# \u001b[38;5;" << random_id % 256 << "m";
   dst << "#### BEGIN WHILE LOOP ##### " << random_id << "\u001b[0m"
       << std::endl;
 
@@ -48,22 +48,22 @@ int WhileLoop::codeGen(std::ofstream &dst, const Binding &_binding,
 
   // condition for while loop
   dst << "$L" << label_condition << ":";
-  dst << "\t\t\t\t# \033[1;36m[LABEL]\033[0m WHILE condition" << std::endl;
+  dst << "\t\t\t\t\t# \033[1;36m[LABEL]\033[0m WHILE condition" << std::endl;
   condition->codeGen(dst, binding, reg);
-  dst << "\tbeq\t\t$2,$0,$L" << label_end;
-  dst << "\t# jump to end of WHILE" << std::endl;  // check condition again
+  dst << "\tbeq\t$2,$0,$L" << label_end;
+  dst << "\t\t# jump to end of WHILE" << std::endl;  // check condition again
 
   // body of while loop
   if (statement_list) statement_list->codeGen(dst, binding, reg);
-  dst << "\tb\t$L" << label_condition;
-  dst << "\t\t# jump to condition" << std::endl;  // check condition again
+  dst << "\tb\t\t\t$L" << label_condition;
+  dst << "\t\t\t# jump to condition" << std::endl;  // check condition again
   dst << "\tnop" << std::endl;
   dst << std::endl;
 
   dst << "$L" << label_end << ":";
-  dst << "\t\t\t\t# \033[1;36m[LABEL]\033[0m end of WHILE" << std::endl;
+  dst << "\t\t\t\t\t# \033[1;36m[LABEL]\033[0m end of WHILE" << std::endl;
 
-  dst << "\t\t\t\t# \u001b[38;5;" << random_id % 256 << "m";
+  dst << "\t\t\t\t\t# \u001b[38;5;" << random_id % 256 << "m";
   dst << "#### END   WHILE LOOP ##### " << random_id << "\u001b[0m"
       << std::endl;
 
@@ -122,18 +122,19 @@ int ForLoop::codeGen(std::ofstream &dst, const Binding &_binding,
   int label_test = label * 2;
   int label_end = label * 2 + 1;
 
-  dst << "\t\t\t\t# \u001b[38;5;" << random_id % 256 << "m";
+  dst << "\t\t\t\t\t# \u001b[38;5;" << random_id % 256 << "m";
   dst << "#### BEGIN FOR LOOP ##### " << random_id << "\u001b[0m" << std::endl;
 
   if (init_expr) init_expr->codeGen(dst, binding, reg);
 
   dst << "$L" << label_test << ":";
-  dst << "\t\t\t\t# \033[1;36m[LABEL]\033[0m FOR test expression" << std::endl;
+  dst << "\t\t\t\t\t# \033[1;36m[LABEL]\033[0m FOR test expression"
+      << std::endl;
 
   if (test_expr) {
     test_expr->codeGen(dst, binding, reg);
-    dst << "\tbeq\t\t$2,$0,$L" << label_end;
-    dst << "\t# jump to end of FOR" << std::endl;
+    dst << "\tbeq\t$2,$0,$L" << label_end;
+    dst << "\t\t# jump to end of FOR" << std::endl;
     dst << "\tnop" << std::endl;
     dst << std::endl;
   }
@@ -141,15 +142,15 @@ int ForLoop::codeGen(std::ofstream &dst, const Binding &_binding,
   if (statement_list) statement_list->codeGen(dst, binding, reg);
   if (update_expr) update_expr->codeGen(dst, binding, reg);
 
-  dst << "\tb\t$L" << label_test << "";
-  dst << "\t\t# jump to start of FOR" << std::endl;
+  dst << "\tb\t\t\t$L" << label_test << "";
+  dst << "\t\t\t# jump to start of FOR" << std::endl;
   dst << "\tnop" << std::endl;
   dst << std::endl;
 
   dst << "$L" << label_end << ":";
-  dst << "\t\t\t\t# \033[1;36m[LABEL]\033[0m end of FOR" << std::endl;
+  dst << "\t\t\t\t\t# \033[1;36m[LABEL]\033[0m end of FOR" << std::endl;
 
-  dst << "\t\t\t\t# \u001b[38;5;" << random_id % 256 << "m";
+  dst << "\t\t\t\t\t# \u001b[38;5;" << random_id % 256 << "m";
   dst << "#### END   FOR LOOP ##### " << random_id << "\u001b[0m" << std::endl;
 
   return 0;

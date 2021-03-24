@@ -18,7 +18,7 @@ int Integer::evaluate(const Binding &_binding) const { return value; }
 int Integer::codeGen(std::ofstream &dst, const Binding &_binding,
                      int reg) const {
   logger->info("generate code for integer\n");
-  dst << "\tli\t\t$" << reg << "," << value << "\t\t# load " << value
+  dst << "\tli\t\t$" << reg << "," << value << "\t\t\t# load " << value
       << std::endl;
   return 0;
 }
@@ -66,7 +66,7 @@ int Variable::codeGen(std::ofstream &dst, const Binding &_binding,
   if (var_type == "float") {
     dst << "\tlwc1\t$f" << reg << "," << binding.at(id) << "($fp)" << std::endl;
   } else {
-    dst << "\tlw\t\t$" << reg << "," << binding.at(id) << "($fp)\t# load "
+    dst << "\tlw\t\t$" << reg << "," << binding.at(id) << "($fp)\t\t\t# load "
         << id.c_str() << std::endl;
   }
   return 0;
@@ -103,7 +103,7 @@ Char::Char(char _value) { value = _value; }
 
 int Char::codeGen(std::ofstream &dst, const Binding &_binding, int reg) const {
   logger->info("generate code for char\n");
-  dst << "\tli\t\t$" << reg << "," << int(value) << "\t\t# load " << value
+  dst << "\tli\t\t$" << reg << "," << int(value) << "\t\t\t# load " << value
       << std::endl;
   return 0;
 }

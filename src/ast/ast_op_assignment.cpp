@@ -36,7 +36,7 @@ int AddEqual::codeGen(std::ofstream &dst, const Binding &_binding,
   if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
     dst << "\tlw\t\t$3," << right->getPos(binding) << "($fp)" << std::endl;
 
-  dst << "\tadd\t\t$2,$2,$3" << std::endl;
+  dst << "\tadd\t$2,$2,$3" << std::endl;
   dst << "\tsw\t\t$2," << left->getPos(binding) << "($fp)" << std::endl;
   return 0;
 }
@@ -99,7 +99,7 @@ int SubEqual::codeGen(std::ofstream &dst, const Binding &_binding,
   if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
     dst << "\tlw\t\t$3," << right->getPos(binding) << "($fp)" << std::endl;
 
-  dst << "\tsub\t\t$2,$2,$3" << std::endl;
+  dst << "\tsub\t$2,$2,$3" << std::endl;
   dst << "\tsw\t\t$2," << left->getPos(binding) << "($fp)" << std::endl;
   // std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" <<
   // "#store the result for sub equal" << std::endl;
@@ -229,7 +229,7 @@ int QuoEqual::codeGen(std::ofstream &dst, const Binding &_binding,
   if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
     dst << "\tlw\t\t$3," << right->getPos(binding) << "($fp)" << std::endl;
 
-  dst << "\tdiv\t\t$2,$3" << std::endl;
+  dst << "\tdiv\t$2,$3" << std::endl;
   dst << "\tmflo\t$2" << std::endl;
   dst << "\tsw\t\t$2," << left->getPos(binding) << "($fp)" << std::endl;
   // std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" <<
@@ -293,7 +293,7 @@ int ModEqual::codeGen(std::ofstream &dst, const Binding &_binding,
   if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
     dst << "\tlw\t\t$3," << right->getPos(binding) << "($fp)" << std::endl;
 
-  dst << "\tdiv\t\t$2,$3" << std::endl;
+  dst << "\tdiv\t$2,$3" << std::endl;
   dst << "\tmfhi\t$2" << std::endl;
   dst << "\tsw\t\t$2," << left->getPos(binding) << "($fp)" << std::endl;
   // std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" <<
@@ -358,7 +358,7 @@ int ShiftEqual_L::codeGen(std::ofstream &dst, const Binding &_binding,
   if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
     dst << "\tlw\t\t$3," << right->getPos(binding) << "($fp)" << std::endl;
 
-  dst << "\tsll\t\t$2,$2,$3" << std::endl;
+  dst << "\tsll\t$2,$2,$3" << std::endl;
   dst << "\tsw\t\t$2," << left->getPos(binding) << "($fp)" << std::endl;
   // std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" <<
   // "#store the result for shift left equal" << std::endl;
@@ -423,7 +423,7 @@ int ShiftEqual_R::codeGen(std::ofstream &dst, const Binding &_binding,
   if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
     dst << "\tlw\t\t$3," << right->getPos(binding) << "($fp)" << std::endl;
 
-  dst << "\tsra\t\t$2,$2,$3" << std::endl;
+  dst << "\tsra\t$2,$2,$3" << std::endl;
   dst << "\tsw\t\t$2," << left->getPos(binding) << "($fp)" << std::endl;
   // std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" <<
   // "#store the result for shift right equal" << std::endl;
@@ -488,7 +488,7 @@ int BitwiseEqual_AND::codeGen(std::ofstream &dst, const Binding &_binding,
   if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
     dst << "\tlw\t\t$3," << right->getPos(binding) << "($fp)" << std::endl;
 
-  dst << "\tand\t\t$2,$2,$3" << std::endl;
+  dst << "\tand\t$2,$2,$3" << std::endl;
   dst << "\tsw\t\t$2," << left->getPos(binding) << "($fp)" << std::endl;
   // std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" <<
   // "#store the result for bitwise and equal" << std::endl;
@@ -616,7 +616,7 @@ int BitwiseEqual_XOR::codeGen(std::ofstream &dst, const Binding &_binding,
   if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
     dst << "\tlw\t\t$3," << right->getPos(binding) << "($fp)" << std::endl;
 
-  dst << "\txor\t\t$2,$2,$3" << std::endl;
+  dst << "\txor\t$2,$2,$3" << std::endl;
   dst << "\tsw\t\t$2," << left->getPos(binding) << "($fp)" << std::endl;
   // std::cout << "sw $2,"  << left->getPos(binding) << "($fp)"<< "\t" <<
   // "#store the result for bitwise xor equal" << std::endl;
@@ -679,13 +679,14 @@ int Increment_Post::codeGen(std::ofstream &dst, const Binding &_binding,
 
   TypeBinding temp = typebind;
   if (((Variable *)left)->gettype(temp) == "pointer") {
-    dst << "\taddiu\t$3,$2,4\t#" << pos << std::endl;
+    dst << "\taddiu\t$3,$2,4\t\t#" << pos << std::endl;
   } else {
-    dst << "\taddiu\t$3,$2,1\t#" << pos << std::endl;
+    dst << "\taddiu\t$3,$2,1\t\t#" << pos << std::endl;
   }
 
-  dst << "\tsw\t\t$2," << pos << "($fp)\t# initial value x0" << std::endl;
-  dst << "\tsw\t\t$3," << left->getPos(binding) << "($fp)\t# x0+1" << std::endl;
+  dst << "\tsw\t\t$2," << pos << "($fp)\t\t# initial value x0" << std::endl;
+  dst << "\tsw\t\t$3," << left->getPos(binding) << "($fp)\t\t# x0+1"
+      << std::endl;
   return 0;
 }
 void Increment_Post::passFunctionName(std::string _name, int _pos) {
@@ -741,14 +742,14 @@ int Increment_Pre::codeGen(std::ofstream &dst, const Binding &_binding,
   left->codeGen(dst, binding, 2);
   TypeBinding temp = typebind;
   if (((Variable *)left)->gettype(temp) == "pointer") {
-    dst << "\taddiu\t$2,$2,4\t#" << pos << std::endl;
+    dst << "\taddiu\t$2,$2,4\t\t#" << pos << std::endl;
   } else {
-    dst << "\taddiu\t$2,$2,1\t#" << pos << std::endl;
+    dst << "\taddiu\t$2,$2,1\t\t#" << pos << std::endl;
   }
-  dst << "\tsw\t\t$2," << pos << "($fp)\t# store result of pre increment"
+  dst << "\tsw\t\t$2," << pos << "($fp)\t\t# store result of pre increment"
       << std::endl;
   dst << "\tsw\t\t$2," << left->getPos(binding)
-      << "($fp)\t# store result of pre increment" << std::endl;
+      << "($fp)\t\t# store result of pre increment" << std::endl;
   return 0;
 }
 void Increment_Pre::passFunctionName(std::string _name, int _pos) {
@@ -806,13 +807,14 @@ int Decrement_Post::codeGen(std::ofstream &dst, const Binding &_binding,
 
   TypeBinding temp = typebind;
   if (((Variable *)left)->gettype(temp) == "pointer") {
-    dst << "\taddiu\t$3,$2,-4\t#" << pos << "" << std::endl;
+    dst << "\taddiu\t$3,$2,-4\t\t#" << pos << "" << std::endl;
   } else {
-    dst << "\taddiu\t$3,$2,-1\t# " << pos << "" << std::endl;
+    dst << "\taddiu\t$3,$2,-1\t\t# " << pos << "" << std::endl;
   }
 
-  dst << "\tsw\t\t$2," << pos << "($fp)\t# initial value x0" << std::endl;
-  dst << "\tsw\t\t$3," << left->getPos(binding) << "($fp)\t# x0-1" << std::endl;
+  dst << "\tsw\t\t$2," << pos << "($fp)\t\t# initial value x0" << std::endl;
+  dst << "\tsw\t\t$3," << left->getPos(binding) << "($fp)\t\t# x0-1"
+      << std::endl;
   return 0;
 }
 
@@ -870,14 +872,14 @@ int Decrement_Pre::codeGen(std::ofstream &dst, const Binding &_binding,
 
   TypeBinding temp = typebind;
   if (((Variable *)left)->gettype(temp) == "pointer") {
-    dst << "\taddiu\t$2,$2,-4\t# " << pos << std::endl;
+    dst << "\taddiu\t$2,$2,-4\t\t# " << pos << std::endl;
   } else {
-    dst << "\taddiu\t$2,$2,-1\t# " << pos << std::endl;
+    dst << "\taddiu\t$2,$2,-1\t\t# " << pos << std::endl;
   }
 
   dst << "\tsw\t\t$2," << left->getPos(binding)
-      << "($fp)\t# store result of pre decrement" << std::endl;
-  dst << "\tsw\t\t$2," << pos << "($fp)\t# store result of pre decrement"
+      << "($fp)\t\t# store result of pre decrement" << std::endl;
+  dst << "\tsw\t\t$2," << pos << "($fp)\t\t# store result of pre decrement"
       << std::endl;
   return 0;
 }

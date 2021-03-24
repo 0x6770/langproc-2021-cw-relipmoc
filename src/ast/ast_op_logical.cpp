@@ -49,15 +49,15 @@ int LessEqual::codeGen(std::ofstream &dst, const Binding &_binding,
     dst << "\tlw\t\t$3," << right->getPos(binding) << "($fp)" << std::endl;
 
   if (is_equal == 1) {
-    dst << "\tslt\t\t$2,$3,$2" << std::endl;
+    dst << "\tslt\t$2,$3,$2" << std::endl;
     dst << "\txori\t$2,$2,0x1" << std::endl;
   } else {
-    dst << "\tslt\t\t$2,$2,$3" << std::endl;
+    dst << "\tslt\t$2,$2,$3" << std::endl;
   }
   dst << "\tandi\t$2,$2,0x00ff" << std::endl;
   //  TODO: there is also a line " andi $2,$2,0x00ff" in the online converter.
   dst << "\tsw\t\t$2," << pos
-      << "($fp)\t# store result of logical less or less equal" << std::endl;
+      << "($fp)\t\t# store result of logical less or less equal" << std::endl;
 
   return 0;
 }
@@ -130,12 +130,12 @@ int GreaterEqual::codeGen(std::ofstream &dst, const Binding &_binding,
   if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
     dst << "\tlw\t\t$3," << right->getPos(binding) << "($fp)" << std::endl;
 
-  dst << "\tslt\t\t$2,$3,$2" << std::endl;
+  dst << "\tslt\t$2,$3,$2" << std::endl;
   if (is_equal == 1) {
     dst << "\txori\t$2,$2,0x1" << std::endl;
   }
   dst << "\tsw\t\t$2," << pos
-      << "($fp)\t# store result of logical greater or greater than"
+      << "($fp)\t\t# store result of logical greater or greater than"
       << std::endl;
 
   return 0;
@@ -208,14 +208,14 @@ int Equal::codeGen(std::ofstream &dst, const Binding &_binding, int reg) const {
   if (!((right_type == 'i') | (right_type == 'x') || (right_type == 'a')))
     dst << "\tlw\t\t$3," << right->getPos(binding) << "($fp)" << std::endl;
 
-  dst << "\txor\t\t$2,$2,$3" << std::endl;
+  dst << "\txor\t$2,$2,$3" << std::endl;
   if (is_equal == 1) {
     dst << "\tsltu\t$2,$0,$2" << std::endl;
   } else {
     dst << "\tsltiu\t$2,$2,1" << std::endl;
   }
   dst << "\tsw\t\t$2," << pos
-      << "($fp)\t# store result of logical equal or logical not equal"
+      << "($fp)\t\t# store result of logical equal or logical not equal"
       << std::endl;
 
   return 0;
@@ -272,7 +272,7 @@ int LogicalAnd::codeGen(std::ofstream &dst, const Binding &_binding,
   // TODO： add counter to create unique label:
   // std::cout << "\tbeq $0,$2,"
   //          << labelL2 << std::endl;
-  dst << "\tbeq\t\t$0,$2," << labelL2.c_str() << std::endl;
+  dst << "\tbeq\t$0,$2," << labelL2.c_str() << std::endl;
   dst << "\tnop" << std::endl;  // Add empty delay slot
 
   right->codeGen(dst, binding, 2);
@@ -280,7 +280,7 @@ int LogicalAnd::codeGen(std::ofstream &dst, const Binding &_binding,
   // TODO： add counter to create unique label:
   // std::cout << "\tbeq $0,$2,"
   //          << labelL2 << std::endl;
-  dst << "\tbeq\t\t$0,$2," << labelL2.c_str() << std::endl;
+  dst << "\tbeq\t$0,$2," << labelL2.c_str() << std::endl;
   dst << "\tnop" << std::endl;
 
   dst << "\tli\t\t$2,1" << std::endl;
@@ -293,7 +293,7 @@ int LogicalAnd::codeGen(std::ofstream &dst, const Binding &_binding,
   dst << "\tmove\t$2,$0" << std::endl;
   dst << "" << labelL3.c_str() << ":" << std::endl;
   // std::cout << "\t" <<labelL3 <<":" << std::endl;
-  dst << "\tsw\t\t$2," << pos << "($fp)\t# store result of logical and"
+  dst << "\tsw\t\t$2," << pos << "($fp)\t\t# store result of logical and"
       << std::endl;
   dst << "\tlw\t\t$2," << pos << "($fp)" << std::endl;
 
@@ -351,7 +351,7 @@ int LogicalOr::codeGen(std::ofstream &dst, const Binding &_binding,
   // TODO： add counter to create unique label:
   // std::cout << "bne $2,$0,"
   //          << labelL2 << std::endl;
-  dst << "\tbne\t\t$2,$0," << labelL2.c_str() << std::endl;
+  dst << "\tbne\t$2,$0," << labelL2.c_str() << std::endl;
   dst << "\tnop" << std::endl;  // Add empty delay slot
 
   right->codeGen(dst, binding, 2);
@@ -359,7 +359,7 @@ int LogicalOr::codeGen(std::ofstream &dst, const Binding &_binding,
   // TODO： add counter to create unique label:
   // std::cout << "beq $2,$0,"
   //          << labelL3 << std::endl;
-  dst << "\tbeq\t\t$2,$0," << labelL3.c_str() << std::endl;
+  dst << "\tbeq\t$2,$0," << labelL3.c_str() << std::endl;
   dst << "\tnop" << std::endl;
 
   dst << "" << labelL2.c_str() << ":" << std::endl;
@@ -374,7 +374,7 @@ int LogicalOr::codeGen(std::ofstream &dst, const Binding &_binding,
   dst << "\tmove\t$2,$0" << std::endl;
   dst << "" << labelL4.c_str() << ":" << std::endl;
   // std::cout << labelL4 << ":" << std::endl;
-  dst << "\tsw\t\t$2," << pos << "($fp)\t #store the value of logical or"
+  dst << "\tsw\t\t$2," << pos << "($fp)\t\t#store the value of logical or"
       << std::endl;
   dst << "\tlw\t\t$2," << pos << "($fp)" << std::endl;
 

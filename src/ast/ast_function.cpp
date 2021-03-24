@@ -101,10 +101,10 @@ int Function::codeGen(std::ofstream &dst, const Binding &_binding,
   dst << name.c_str() << ":" << std::endl;
   dst << "\taddiu\t$sp,$sp," << -size << std::endl;
   if (with_function_call == 1) {
-    dst << "\tsw\t\t\t$31," << (size - 4) << "($sp)" << std::endl;
-    dst << "\tsw\t\t\t$fp," << (size - 8) << "($sp)" << std::endl;
+    dst << "\tsw\t\t$31," << (size - 4) << "($sp)" << std::endl;
+    dst << "\tsw\t\t$fp," << (size - 8) << "($sp)" << std::endl;
   } else {
-    dst << "\tsw\t\t\t$fp," << (size - 4) << "($sp)" << std::endl;
+    dst << "\tsw\t\t$fp," << (size - 4) << "($sp)" << std::endl;
   }
   dst << "\tmove\t$fp,$sp" << std::endl;
   // store the values in the register a0-a3 in the stack.
@@ -117,13 +117,13 @@ int Function::codeGen(std::ofstream &dst, const Binding &_binding,
   // TODO: return statement to determine the label part
   dst << "\tmove\t$sp,$fp" << std::endl;
   if (with_function_call == 1) {
-    dst << "\tlw\t\t\t$31," << size - 4 << "($sp)" << std::endl;
-    dst << "\tlw\t\t\t$fp," << size - 8 << "($sp)" << std::endl;
+    dst << "\tlw\t\t$31," << size - 4 << "($sp)" << std::endl;
+    dst << "\tlw\t\t$fp," << size - 8 << "($sp)" << std::endl;
   } else {
-    dst << "\tlw\t\t\t$fp," << size - 4 << "($sp)" << std::endl;
+    dst << "\tlw\t\t$fp," << size - 4 << "($sp)" << std::endl;
   }
   dst << "\taddiu\t$sp,$sp," << size << std::endl;
-  dst << "\tjr\t\t\t$31" << std::endl;
+  dst << "\tjr\t\t$31" << std::endl;
   dst << "\tnop" << std::endl;
   dst << std::endl;
 
@@ -369,11 +369,11 @@ int FunctionCall::codeGen(std::ofstream &dst, const Binding &_binding,
     ((Program *)arguments)->codeGen(dst, binding, 2);
   }
   dst << "\t.option\tpic0" << std::endl;
-  dst << "\tjal\t\t" << name.c_str() << std::endl;
+  dst << "\tjal\t" << name.c_str() << std::endl;
   dst << "\tnop" << std::endl;
   dst << "\t.option\tpic2" << std::endl;
-  dst << "\tsw\t\t$2," << pos << "($fp)\t# store the value after function call"
-      << std::endl;
+  dst << "\tsw\t\t$2," << pos
+      << "($fp)\t\t# store the value after function call" << std::endl;
   return 0;
 }
 
