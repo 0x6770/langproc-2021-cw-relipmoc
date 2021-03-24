@@ -41,12 +41,12 @@ int IfStatement::evaluate(const Binding &_binding) const { return 0; }
 
 int IfStatement::codeGen(std::ofstream &dst, const Binding &_binding,
                          int reg) const {
-  int random_id = rand() % 10000;
+  //int random_id = rand() % 10000;
   int label_else = label * 2;
   int label_end = label * 2 + 1;
 
-  printf("\t\t\t\t\t# \u001b[38;5;%dm", random_id % 256);
-  printf("#### BEGIN IF ELSE STATEMENT ##### %d\u001b[0m\n", random_id);
+  //printf("\t\t\t\t\t# \u001b[38;5;%dm", random_id % 256);
+  //printf("#### BEGIN IF ELSE STATEMENT ##### %d\u001b[0m\n", random_id);
 
   condition->codeGen(dst, binding, 2);
 
@@ -75,8 +75,8 @@ int IfStatement::codeGen(std::ofstream &dst, const Binding &_binding,
   dst << "$L" << label_end << ":";  // next label
   dst << "\t\t\t\t\t# \033[1;36m[LABEL]\033[0m end of IF ELSE" << std::endl;
 
-  printf("\t\t\t\t\t# \u001b[38;5;%dm", random_id % 256);
-  printf("#### END   IF ELSE STATEMENT ##### %d\u001b[0m\n", random_id);
+  //printf("\t\t\t\t\t# \u001b[38;5;%dm", random_id % 256);
+  //printf("#### END   IF ELSE STATEMENT ##### %d\u001b[0m\n", random_id);
 
   return 0;
 }
@@ -299,11 +299,11 @@ Switch::Switch(ProgramPtr _expression, ProgramPtr _cases, int _label)
 
 int Switch::codeGen(std::ofstream &dst, const Binding &_binding,
                     int reg) const {
-  int random_id = rand() % 10000;
+  //int random_id = rand() % 10000;
   int label_switch_end = label * 2 + 1;
 
-  printf("\t\t\t\t\t# \u001b[38;5;%dm", random_id % 256);
-  printf("#### BEGIN SWITCH STATEMENT ##### %d\u001b[0m\n", random_id);
+  //printf("\t\t\t\t\t# \u001b[38;5;%dm", random_id % 256);
+  //printf("#### BEGIN SWITCH STATEMENT ##### %d\u001b[0m\n", random_id);
 
   expression->codeGen(dst, binding, reg);
 
@@ -311,8 +311,8 @@ int Switch::codeGen(std::ofstream &dst, const Binding &_binding,
 
   dst << "$L" << label_switch_end << ":" << std::endl;
 
-  printf("\t\t\t\t\t# \u001b[38;5;%dm", random_id % 256);
-  printf("#### END   SWITCH STATEMENT ##### %d\u001b[0m\n", random_id);
+  //printf("\t\t\t\t\t# \u001b[38;5;%dm", random_id % 256);
+  //printf("#### END   SWITCH STATEMENT ##### %d\u001b[0m\n", random_id);
   return 0;
 };
 

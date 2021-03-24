@@ -6,7 +6,7 @@
 
 Addition::Addition(ProgramPtr _left, ProgramPtr _right, int _pos)
     : Operation(_left, _right, _pos) {
-  fprintf(stderr, "construct Addition\n");
+  //fprintf(stderr, "construct Addition\n");
 }
 
 void Addition::print(std::ostream &dst, int indentation) const {
@@ -126,7 +126,7 @@ std::string Addition::getVariableType() {
 
 Subtraction::Subtraction(ProgramPtr _left, ProgramPtr _right, int _pos)
     : Operation(_left, _right, _pos) {
-  fprintf(stderr, "construct subOperator\n");
+  //fprintf(stderr, "construct subOperator\n");
 }
 
 void Subtraction::print(std::ostream &dst, int indentation) const {
@@ -243,7 +243,7 @@ std::string Subtraction::getVariableType() {
 
 Multiplication::Multiplication(ProgramPtr _left, ProgramPtr _right, int _pos)
     : Operation(_left, _right, _pos) {
-  fprintf(stderr, "construct MulOperator\n");
+  //fprintf(stderr, "construct MulOperator\n");
 }
 
 void Multiplication::print(std::ostream &dst, int indentation) const {
@@ -339,7 +339,7 @@ std::string Multiplication::getVariableType() {
 
 Division::Division(ProgramPtr _left, ProgramPtr _right, int _pos)
     : Operation(_left, _right, _pos) {
-  fprintf(stderr, "construct DivOperator\n");
+  //fprintf(stderr, "construct DivOperator\n");
 }
 
 void Division::print(std::ostream &dst, int indentation) const {
@@ -428,7 +428,7 @@ std::string Division::getVariableType() {
 
 Modulus::Modulus(ProgramPtr _left, ProgramPtr _right, int _pos)
     : Operation(_left, _right, _pos) {
-  fprintf(stderr, "construct ModOperator\n");
+  //fprintf(stderr, "construct ModOperator\n");
 }
 
 void Modulus::print(std::ostream &dst, int indentation) const {
@@ -517,7 +517,7 @@ std::string Modulus::getVariableType() {
 ////////////////////////////////////////
 
 Negation::Negation(ProgramPtr _right, int _pos) : Operation(0, _right, _pos) {
-  fprintf(stderr, "construct Negation\n");
+  //fprintf(stderr, "construct Negation\n");
 }
 
 void Negation::print(std::ostream &dst, int indentation) const {

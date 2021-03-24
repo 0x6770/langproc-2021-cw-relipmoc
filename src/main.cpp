@@ -27,9 +27,9 @@ int main(int argc, char **argv) {
   ast->codeGen(output_file, binding, 2);
   output_file.close();
 
-  std::cerr << std::endl;
-  ast->print(std::cerr, 0);
-  std::cerr << std::endl;
+  //std::cerr << std::endl;
+  //ast->print(std::cerr, 0);
+  //std::cerr << std::endl;
 
   exit(0);
 }
