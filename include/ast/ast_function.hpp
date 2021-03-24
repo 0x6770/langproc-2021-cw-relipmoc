@@ -26,7 +26,8 @@ class Function : public Program {
   Function(std::string _type, std::string _name, ProgramPtr _statements,
            ProgramPtr _arguments, int _pos, int _call, int _arg_size);
   void print(std::ostream &dst, int indentation) const override;
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   int evaluate(const Binding &_binding) const override;
   virtual void bind(const Binding &_binding) override;
   virtual void passFunctionName(std::string _name, int _pos) override;
@@ -47,7 +48,8 @@ class Param : public Program {
   Param(std::string _type, std::string _name);
   Param(std::string _type, std::string _name, int _is_pointer);
   void print(std::ostream &dst, int indentation) const override;
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   int evaluate(const Binding &_binding) const override;
   virtual void bind(const Binding &_binding) override;
   Binding return_bind(Binding &_binding, int pos);
@@ -69,7 +71,8 @@ class Paramlist : public Program {
   Paramlist();
   Paramlist(ProgramPtr _argument);
   void print(std::ostream &dst, int indentation) const override;
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   int evaluate(const Binding &_binding) const override;
   virtual void bind(const Binding &_binding) override;
   Binding return_bind(const Binding &_binding, int _pos);
@@ -91,7 +94,8 @@ class MultiFunction : public Program {
   MultiFunction(ProgramPtr _function);
   void add_function(ProgramPtr _function);
   void print(std::ostream &dst, int indentation) const override;
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   int evaluate(const Binding &_binding) const override;
   virtual void bind(const Binding &_binding) override;
   virtual void passFunctionName(std::string _name, int _pos) override;
@@ -116,7 +120,8 @@ class FunctionCall : public Program {
   FunctionCall(std::string _name, ProgramPtr _argument, int _pos);
   void add_argument(ProgramPtr _argument);
   void print(std::ostream &dst, int indentation) const override;
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   int evaluate(const Binding &_binding) const override;
   virtual void bind(const Binding &_binding) override;
   virtual void passFunctionName(std::string _name, int _pos) override;
@@ -135,7 +140,8 @@ class ExpressionList : public Program {
   ExpressionList(ProgramPtr _argument);
   void add_argument_expression(ProgramPtr _expr);
   void print(std::ostream &dst, int indentation) const override;
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   int evaluate(const Binding &_binding) const override;
   virtual void bind(const Binding &_binding) override;
   virtual void passFunctionName(std::string _name, int _pos) override;
@@ -152,7 +158,8 @@ class FunctionDeclare : public Program {
 
  public:
   void print(std::ostream &dst, int indentation) const override;
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   int evaluate(const Binding &_binding) const override;
   virtual void bind(const Binding &_binding) override;
   FunctionDeclare(std::string _name, ProgramPtr _param_list);

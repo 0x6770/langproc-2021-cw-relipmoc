@@ -39,7 +39,8 @@ void IfStatement::print(std::ostream &dst, int indentation) const {
 
 int IfStatement::evaluate(const Binding &_binding) const { return 0; }
 
-int IfStatement::codeGen(const Binding &_binding, int reg) const {
+int IfStatement::codeGen(std::ofstream &dst, const Binding &_binding,
+                         int reg) const {
   int random_id = rand() % 10000;
   int label_else = label * 2;
   int label_end = label * 2 + 1;
@@ -47,31 +48,32 @@ int IfStatement::codeGen(const Binding &_binding, int reg) const {
   printf("\t\t\t\t# \u001b[38;5;%dm", random_id % 256);
   printf("#### BEGIN IF ELSE STATEMENT ##### %d\u001b[0m\n", random_id);
 
-  condition->codeGen(binding, 2);
+  condition->codeGen(dst, binding, 2);
 
   if (else_statement) {
-    printf("\tnop\n");
-    printf("\tbeq\t$2,$0,$L%d\t# jump to \"else statement\" if !condition\n",
-           label_else);
-    printf("\tnop\n\n");
-    if_statement->codeGen(binding, 2);
+    dst << "\tnop" << std::endl;
+    dst << "\tbeq\t\t\t$2,$0,$L" << label_else
+        << "\t# jump to \"else statement\" if !condition" << std::endl;
+    dst << "\tnop\n" << std::endl;
+    if_statement->codeGen(dst, binding, 2);
     // TODO: use return to generate the label code;
-    printf("\tnop\n");
-    printf("\tb\t$L%d\t\t# jump to \"next statement\"\n", label_end);
-    printf("\tnop\n\n");
-    printf("$L%d:", label_else);
-    printf("\t\t\t\t# \033[1;36m[LABEL]\033[0m else statement\n");
-    else_statement->codeGen(binding, 2);
+    dst << "\tnop" << std::endl;
+    dst << "\tb\t$L" << label_end << "\t\t# jump to \"next statement\""
+        << std::endl;
+    dst << "\tnop\n" << std::endl;
+    dst << "$L" << label_else << ":";
+    dst << "\t\t\t\t# \033[1;36m[LABEL]\033[0m else statement" << std::endl;
+    else_statement->codeGen(dst, binding, 2);
   } else {
-    printf("\tnop\n");
-    printf("\tbeq\t$2,$0,$L%d\t# jump to \"end of IF ELSE\" if !condition\n",
-           label_end);
-    printf("\tnop\n\n");
-    if_statement->codeGen(binding, 2);
+    dst << "\tnop" << std::endl;
+    dst << "\tbeq\t\t\t$2,$0,$L" << label_end
+        << "\t# jump to \"end of IF ELSE\" if !condition" << std::endl;
+    dst << "\tnop\n" << std::endl;
+    if_statement->codeGen(dst, binding, 2);
   }
 
-  printf("$L%d:", label_end);  // next label
-  printf("\t\t\t\t# \033[1;36m[LABEL]\033[0m end of IF ELSE\n");
+  dst << "$L" << label_end << ":";  // next label
+  dst << "\t\t\t\t# \033[1;36m[LABEL]\033[0m end of IF ELSE" << std::endl;
 
   printf("\t\t\t\t# \u001b[38;5;%dm", random_id % 256);
   printf("#### END   IF ELSE STATEMENT ##### %d\u001b[0m\n", random_id);
@@ -112,9 +114,7 @@ void IfStatement::passTypeBinding(TypeBinding &_typebind) {
   if (else_statement) ((Program *)else_statement)->passTypeBinding(_typebind);
 }
 
-std::string IfStatement::getVariableType(){
-  return "none for statements";
-}
+std::string IfStatement::getVariableType() { return "none for statements"; }
 
 ////////////////////////////////////////
 // Case in Switch
@@ -132,9 +132,9 @@ Case::Case(int _constant, ProgramPtr _statements)
   logger->info("construct Case\n");
 };
 
-int Case::codeGen(const Binding &_binding, int reg) const {
+int Case::codeGen(std::ofstream &dst, const Binding &_binding, int reg) const {
   if (statements) {
-    statements->codeGen(binding, reg);
+    statements->codeGen(dst, binding, reg);
   }
   return 0;
 };
@@ -209,15 +209,17 @@ void Cases::addCase(ProgramPtr _case) {
   cases.push_back(_case);
 };
 
-int Cases::codeGen(const Binding &_binding, int reg) const {
+int Cases::codeGen(std::ofstream &dst, const Binding &_binding, int reg) const {
   logger->error(
       "please use the Cases::codeGen overload below. \n"
-      "int Cases::codeGen(const Binding &_binding, int reg, int switch_expr) "
+      "int Cases::codeGen(std::ofstream &dst, const Binding &_binding, int "
+      "reg, int switch_expr) "
       "const\n");
   return 0;
 }
 
-int Cases::codeGen(const Binding &_binding, int reg, int switch_expr) const {
+int Cases::codeGen(std::ofstream &dst, const Binding &_binding, int reg,
+                   int switch_expr) const {
   int label_switch = label * 2;
   int label_default = -1;
   int index = 0;
@@ -225,11 +227,12 @@ int Cases::codeGen(const Binding &_binding, int reg, int switch_expr) const {
   for (auto it : cases) {
     // skip default case
     if (!((Case *)it)->getDefault()) {
-      printf("\tlw\t$2,%d($fp)\n", switch_expr);
-      printf("\tli\t$3,%d\n", ((Case *)it)->getConstant());
-      printf("\tbeq\t$2,$3,$L%d_%d\n", label_switch, index++);
-      printf("\tnop\n");
-      printf("\n");
+      dst << "\tlw\t\t\t$2," << switch_expr << "($fp)" << std::endl;
+      dst << "\tli\t\t\t$3," << ((Case *)it)->getConstant() << "" << std::endl;
+      dst << "\tbeq\t\t\t$2,$3,$L" << label_switch << "_" << index++ << ""
+          << std::endl;
+      dst << "\tnop" << std::endl;
+      dst << std::endl;
     } else {
       label_default = index++;
     }
@@ -239,15 +242,15 @@ int Cases::codeGen(const Binding &_binding, int reg, int switch_expr) const {
       logger->error("no label index for default case\n");
       exit(1);
     }
-    printf("\tb\t$L%d_%d\n", label_switch, label_default);
-    printf("\tnop\n");
-    printf("\n");
+    dst << "\tb\t$L" << label_switch << "_" << label_default << "" << std::endl;
+    dst << "\tnop" << std::endl;
+    dst << std::endl;
   }
 
   index = 0;
   for (auto it : cases) {
-    printf("$L%d_%d:\n", label_switch, index++);
-    it->codeGen(binding, reg);
+    dst << "$L" << label_switch << "_" << index++ << ":" << std::endl;
+    it->codeGen(dst, binding, reg);
   }
 
   return 0;
@@ -293,18 +296,19 @@ Switch::Switch(ProgramPtr _expression, ProgramPtr _cases, int _label)
   logger->info("construct Switch\n");
 };
 
-int Switch::codeGen(const Binding &_binding, int reg) const {
+int Switch::codeGen(std::ofstream &dst, const Binding &_binding,
+                    int reg) const {
   int random_id = rand() % 10000;
   int label_switch_end = label * 2 + 1;
 
   printf("\t\t\t\t# \u001b[38;5;%dm", random_id % 256);
   printf("#### BEGIN SWITCH STATEMENT ##### %d\u001b[0m\n", random_id);
 
-  expression->codeGen(binding, reg);
+  expression->codeGen(dst, binding, reg);
 
-  ((Cases *)cases)->codeGen(binding, reg, expression->getPos(binding));
+  ((Cases *)cases)->codeGen(dst, binding, reg, expression->getPos(binding));
 
-  printf("$L%d:\n", label_switch_end);
+  dst << "$L" << label_switch_end << ":" << std::endl;
 
   printf("\t\t\t\t# \u001b[38;5;%dm", random_id % 256);
   printf("#### END   SWITCH STATEMENT ##### %d\u001b[0m\n", random_id);

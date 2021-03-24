@@ -14,7 +14,8 @@ class Array : public Program {
   Array(std::string _variable_type, uint32_t _size, std::string _name,
         int _pos);
   void print(std::ostream &dst, int indentation) const override;
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   int evaluate(const Binding &_binding) const override;
   virtual void bind(const Binding &_binding) override;
   void add_bind(Binding &_binding);
@@ -39,7 +40,8 @@ class ArrayElement : public Program {
   ArrayElement(ProgramPtr _left, ProgramPtr _right, std::string _name);
   void array_assignment(ProgramPtr _right);
   void print(std::ostream &dst, int indentation) const override;
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   int evaluate(const Binding &_binding) const override;
   virtual void bind(const Binding &_binding) override;
   virtual void passFunctionName(std::string _name, int _pos) override;

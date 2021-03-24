@@ -3,14 +3,15 @@
 
 #include "ast_program.hpp"
 
+class AddressOf : public Program {
+ private:
+  ProgramPtr left;
 
-class AddressOf : public Program{
- private: 
-    ProgramPtr left;
- public: 
+ public:
   AddressOf(ProgramPtr _expression, int _pos);
   void print(std::ostream &dst, int indentation) const override;
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   int evaluate(const Binding &_binding) const override;
   virtual void bind(const Binding &_binding) override;
   virtual void passFunctionName(std::string _name, int _pos) override;
@@ -18,14 +19,16 @@ class AddressOf : public Program{
   std::string getVariableType() override;
 };
 
-class Dereference : public Program{
-  private: 
-    ProgramPtr left;
-    int is_write;
-  public:
+class Dereference : public Program {
+ private:
+  ProgramPtr left;
+  int is_write;
+
+ public:
   Dereference(ProgramPtr _expression, int _pos);
   void print(std::ostream &dst, int indentation) const override;
-  int codeGen(const Binding &_binding, int reg) const override;
+  int codeGen(std::ofstream &dst, const Binding &_binding,
+              int reg) const override;
   int evaluate(const Binding &_binding) const override;
   virtual void bind(const Binding &_binding) override;
   virtual void passFunctionName(std::string _name, int _pos) override;

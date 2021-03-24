@@ -31,37 +31,41 @@ void WhileLoop::print(std::ostream &dst, int indentation) const {
 
 int WhileLoop::evaluate(const Binding &_binding) const { return 0; }
 
-int WhileLoop::codeGen(const Binding &_binding, int reg) const {
+int WhileLoop::codeGen(std::ofstream &dst, const Binding &_binding,
+                       int reg) const {
   int random_id = rand() % 10000;
 
   int label_condition = label * 2;
   int label_end = label * 2 + 1;
 
-  printf("\t\t\t\t# \u001b[38;5;%dm", random_id % 256);
-  printf("#### BEGIN WHILE LOOP ##### %d\u001b[0m\n", random_id);
+  dst << "\t\t\t\t# \u001b[38;5;" << random_id % 256 << "m";
+  dst << "#### BEGIN WHILE LOOP ##### " << random_id << "\u001b[0m"
+      << std::endl;
 
   print_map(binding, "WhileLoop");
 
   logger->info("generate code for WhileLoop\n");
 
   // condition for while loop
-  printf("$L%d:", label_condition);
-  printf("\t\t\t\t# \033[1;36m[LABEL]\033[0m WHILE condition\n");
-  condition->codeGen(binding, reg);
-  printf("\tbeq\t$2,$0,$L%d", label_end);
-  printf("\t# jump to end of WHILE\n");  // check condition again
+  dst << "$L" << label_condition << ":";
+  dst << "\t\t\t\t# \033[1;36m[LABEL]\033[0m WHILE condition" << std::endl;
+  condition->codeGen(dst, binding, reg);
+  dst << "\tbeq\t\t$2,$0,$L" << label_end;
+  dst << "\t# jump to end of WHILE" << std::endl;  // check condition again
 
   // body of while loop
-  if (statement_list) statement_list->codeGen(binding, reg);
-  printf("\tb\t$L%d", label_condition);
-  printf("\t\t# jump to condition\n");  // check condition again
-  printf("\tnop\n\n");
+  if (statement_list) statement_list->codeGen(dst, binding, reg);
+  dst << "\tb\t$L" << label_condition;
+  dst << "\t\t# jump to condition" << std::endl;  // check condition again
+  dst << "\tnop" << std::endl;
+  dst << std::endl;
 
-  printf("$L%d:", label_end);
-  printf("\t\t\t\t# \033[1;36m[LABEL]\033[0m end of WHILE\n");
+  dst << "$L" << label_end << ":";
+  dst << "\t\t\t\t# \033[1;36m[LABEL]\033[0m end of WHILE" << std::endl;
 
-  printf("\t\t\t\t# \u001b[38;5;%dm", random_id % 256);
-  printf("#### END   WHILE LOOP ##### %d\u001b[0m\n", random_id);
+  dst << "\t\t\t\t# \u001b[38;5;" << random_id % 256 << "m";
+  dst << "#### END   WHILE LOOP ##### " << random_id << "\u001b[0m"
+      << std::endl;
 
   return 0;
 }
@@ -92,9 +96,7 @@ void WhileLoop::passTypeBinding(TypeBinding &_typebind) {
   if (statement_list) ((Statement *)statement_list)->passTypeBinding(_typebind);
 }
 
-std::string WhileLoop::getVariableType(){
-  return "none for statements";
-}
+std::string WhileLoop::getVariableType() { return "none for statements"; }
 
 ////////////////////////////////////////
 // For Loop
@@ -114,38 +116,41 @@ ForLoop::ForLoop(ProgramPtr _init_expr, ProgramPtr _test_expr,
   logger->info("construct For Loop\n");
 };
 
-int ForLoop::codeGen(const Binding &_binding, int reg) const {
+int ForLoop::codeGen(std::ofstream &dst, const Binding &_binding,
+                     int reg) const {
   int random_id = rand() % 10000;
   int label_test = label * 2;
   int label_end = label * 2 + 1;
 
-  printf("\t\t\t\t# \u001b[38;5;%dm", random_id % 256);
-  printf("#### BEGIN FOR LOOP ##### %d\u001b[0m\n", random_id);
+  dst << "\t\t\t\t# \u001b[38;5;" << random_id % 256 << "m";
+  dst << "#### BEGIN FOR LOOP ##### " << random_id << "\u001b[0m" << std::endl;
 
-  if (init_expr) init_expr->codeGen(binding, reg);
+  if (init_expr) init_expr->codeGen(dst, binding, reg);
 
-  printf("$L%d:", label_test);
-  printf("\t\t\t\t# \033[1;36m[LABEL]\033[0m FOR test expression\n");
+  dst << "$L" << label_test << ":";
+  dst << "\t\t\t\t# \033[1;36m[LABEL]\033[0m FOR test expression" << std::endl;
 
   if (test_expr) {
-    test_expr->codeGen(binding, reg);
-    printf("\tbeq\t$2,$0,$L%d", label_end);
-    printf("\t# jump to end of FOR\n");
-    printf("\tnop\n\n");
+    test_expr->codeGen(dst, binding, reg);
+    dst << "\tbeq\t\t$2,$0,$L" << label_end;
+    dst << "\t# jump to end of FOR" << std::endl;
+    dst << "\tnop" << std::endl;
+    dst << std::endl;
   }
 
-  if (statement_list) statement_list->codeGen(binding, reg);
-  if (update_expr) update_expr->codeGen(binding, reg);
+  if (statement_list) statement_list->codeGen(dst, binding, reg);
+  if (update_expr) update_expr->codeGen(dst, binding, reg);
 
-  printf("\tb\t$L%d", label_test);
-  printf("\t\t# jump to start of FOR\n");
-  printf("\tnop\n\n");
+  dst << "\tb\t$L" << label_test << "";
+  dst << "\t\t# jump to start of FOR" << std::endl;
+  dst << "\tnop" << std::endl;
+  dst << std::endl;
 
-  printf("$L%d:", label_end);
-  printf("\t\t\t\t# \033[1;36m[LABEL]\033[0m end of FOR\n");
+  dst << "$L" << label_end << ":";
+  dst << "\t\t\t\t# \033[1;36m[LABEL]\033[0m end of FOR" << std::endl;
 
-  printf("\t\t\t\t# \u001b[38;5;%dm", random_id % 256);
-  printf("#### END   FOR LOOP ##### %d\u001b[0m\n", random_id);
+  dst << "\t\t\t\t# \u001b[38;5;" << random_id % 256 << "m";
+  dst << "#### END   FOR LOOP ##### " << random_id << "\u001b[0m" << std::endl;
 
   return 0;
 }
@@ -201,10 +206,7 @@ void ForLoop::passLabel(int _label) {
   }
 }
 
-
-std::string ForLoop::getVariableType(){
-  return "none for statements";
-}
+std::string ForLoop::getVariableType() { return "none for statements"; }
 void ForLoop::passTypeBinding(TypeBinding &_typebind) {
   typebind = _typebind;
   if (init_expr) ((Program *)init_expr)->passTypeBinding(_typebind);
