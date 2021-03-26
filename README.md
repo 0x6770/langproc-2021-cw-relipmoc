@@ -88,7 +88,7 @@ More time spent on this because a lot of new classes are introduced, eg Param, P
 The plans for `switch`, `break`, `continue` are delayed to next week. 
 
 
-## Week 3 (March 15th to March 21th)
+## Week 4 (March 15th to March 21th)
 
 | Milestone                                                    | Time(planed) | Time(Spent) | Contributor |
 | ------------------------------------------------------------ | ------------ | ----------- | ----------- |
@@ -107,4 +107,35 @@ Most intermediate requirements are met, and part of the advanced features are ab
 * All tests in `type`
 * switch tests in `misc
 
-`
+
+
+## Week 5 (March 22th to March 26th)  --- final week: for checking errors and formats
+| Milestone                                                    | Time(planed) | Time(Spent) | Contributor |
+| ------------------------------------------------------------ | ------------ | ----------- | ----------- |
+| supports type checks for each expression                     | 3            |      3       |        2     |
+| Surport full pointer arithemetics for(++,--,+,-)                        | 3            |      3       |        2     |
+| Support Sizeof on an expression                        | 2            |      3       |        2     |
+| Change the program outputs in a file                        | 4            |      5       |        1     |
+| Delete all debug outputs and clean some prints                        | 2            |      2       |        1     |
+
+
+Conclusion:
+
+The main task for this week is to make the program outputs tidy, and check for potential errors.
+
+
+Most intermediate requirements are met, and part of the advanced features are able to work well, the program now is able to pass: 
+
+* partial tests in `float`
+
+
+
+## Final status: 
+
+* pass 69/87 tests in `compiler_tests` provided
+
+
+
+
+
+
